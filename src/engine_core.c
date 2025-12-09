@@ -8,6 +8,7 @@ ZObject objects[MAX_OBJECTS];
 ZGameState game_state;
 ZObjectID player = OBJ_PLAYER;
 ZObjectID current_room = NOTHING;
+bool game_running = true;
 
 void init_game() {
     memset(objects, 0, sizeof(objects));
@@ -119,10 +120,3 @@ void obj_rob(ZObjectID victim, ZObjectID dest) {
     }
 }
 
-void tell(const char* msg) {
-    printf("%s", msg);
-}
-
-void tell_ln(const char* msg) {
-    printf("%s\n", msg);
-}

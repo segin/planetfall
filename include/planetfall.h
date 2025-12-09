@@ -4,21 +4,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include "ids.h"
 
 // Max number of objects in the game
 #define MAX_OBJECTS 1000
 
 // Object IDs
 typedef int ZObjectID;
-#define NOTHING 0
-
-// Common Object IDs (To be populated)
-#define OBJ_ROOMS 1
-#define OBJ_GLOBAL_OBJECTS 2
-#define OBJ_LOCAL_GLOBALS 3
-#define OBJ_PLAYER 10
-#define O_ALL 11
-#define OBJ_DECK_NINE 100 // Example
 
 // Boolean Flags (Attributes)
 typedef enum {
@@ -75,8 +67,10 @@ typedef struct {
     // Action routine ID (to be mapped to function dispatch)
     int action_id;
     
+    // Function pointer for object action (Returns true if handled)
+    bool (*action)(void);
+
     // Room specific properties (Exits)
-    // 0 means no exit or standard block. 
     ZObjectID north;
     ZObjectID south;
     ZObjectID east;
@@ -90,11 +84,7 @@ typedef struct {
     ZObjectID in;
     ZObjectID out;
     
-    // ZIL "GLOBAL" property: List of objects visible here but not "in" here.
     ZObjectID globals[10];
-    
-    // For conditional exits, we might need function pointers or special IDs
-    // For now, we assume simple connections.
     
 } ZObject;
 
@@ -110,6 +100,9 @@ typedef struct {
     int blowup_counter;
     int trip_counter;
     int sink_counter;
+    int brigs_up;
+    int blather_leave_counter;
+    int ambassador_leave_counter;
     bool verbose;
 } ZGameState;
 
@@ -121,7 +114,10 @@ extern ZObjectID current_room;
 
 // Core Engine API
 void init_game();
+void init_game_data();
 void init_objects();
+
+extern bool game_running;
 
 // Object Manipulation
 ZObject* get_obj(ZObjectID id);
@@ -138,9 +134,19 @@ ZObjectID obj_next_sibling(ZObjectID obj);
 ZObjectID obj_parent(ZObjectID obj);
 void obj_rob(ZObjectID victim, ZObjectID dest);
 
+// Output
+#include "output.h"
+
 // Parser/Output
-void tell(const char* msg);
-void tell_ln(const char* msg);
 void perform_look();
+
+// Events (Included from events.h generally, but we need forward decls if not including)
+// Actually, circular include if events.h includes planetfall.h?
+// events.h doesn't seem to include planetfall.h (it just includes stdbool).
+// So I can include it.
+#include "events.h"
+
+// Globals
+extern int brigs_up;
 
 #endif

@@ -3,6 +3,8 @@
 #include "planetfall.h"
 #include "events.h"
 
+int brigs_up = 0;
+
 // Mock logic
 void routine_mock() {
     printf("Mock Event Ran\n");
@@ -18,23 +20,20 @@ void test_events() {
     // But we can test behavior.
     
     // Clear events
-    for (int i=0; i<MAX_EVENTS; i++) dequeue_event(i);
+    // EventID max is MAX_EVENTS. But events are mapped.
+    // We assume test works with current event IDs.
     
-    // Queue event 1 for 2 ticks
-    queue_event(1, 2);
-    assert(is_event_enabled(1));
+    int test_evt = EVT_SINK_POD; 
+    queue_event(test_evt, 2);
+    assert(is_event_enabled(test_evt));
     
     // Run events (Tick 1)
-    // run_events() returns bool.
-    // It calls routines based on ID. 
-    // We can't mock the switch statement inside events.c easily without refactoring events.c to use function pointers.
-    // For this test, we verify the enabling logic.
     
     run_events(); // Tick 1 (Remaining: 1)
-    assert(is_event_enabled(1));
+    assert(is_event_enabled(test_evt));
     
     run_events(); // Tick 2 (Remaining: 0 -> Run)
-    assert(!is_event_enabled(1)); // Should be disabled after running (timer)
+    assert(!is_event_enabled(test_evt)); // Should be disabled after running (timer)
     
     printf("Event Queue Passed.\n");
 }

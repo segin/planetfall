@@ -3,13 +3,10 @@
 #include "planetfall.h"
 #include "feinstein.h"
 #include "events.h"
+#include "output.h" 
+#include "actions.h"
 
-// State Variables
-int blather_leave_counter = 0;
-int ambassador_leave_counter = 0;
-int blowup_counter = 0;
-int trip_counter = 0;
-int sink_counter = 0;
+// Note: Globals moved to game_state in planetfall.h
 
 void init_feinstein_act() {
     // === ROOMS ===
@@ -216,137 +213,168 @@ void init_feinstein_act() {
     // Blather appears randomly or via logic, but we'll queue the checker
     queue_event(EVT_BLATHER, -1);
     queue_event(EVT_AMBASSADOR, -1);
-    queue_event(EVT_BLOWUP_FEINSTEIN, -1); // Starts the sequence logic
+    queue_event(EVT_BLOWUP_FEINSTEIN, 5); // Delay before explosion sequence (matches ZIL random delay somewhat)
     queue_event(EVT_HUNGER_WARNINGS, -1);
 }
 
 void routine_blowup_feinstein() {
-    // If pod trip has started (counter > 0), behave differently
-    if (trip_counter > 0) {
-        // We are away.
-        // ZIL Logic: At counter 5 (relative to explosion start), explode ship visible from window.
-        // My blowup_counter tracks separately.
-        // If trip is active, we just wait for the right moment or disable if we are safe.
-        // ZIL: If BLOWUP-COUNTER == 5 ... 
-        
-        // Let's increment blowup counter even if away
-        blowup_counter++;
-        
-        if (blowup_counter == 20) {
-             printf("\nThrough the viewport of the pod you see the Feinstein dwindle as you head\n"
-                    "away. Bursts of light dot its hull. Suddenly, a huge explosion blows the\n"
-                    "Feinstein into tiny pieces, sending the escape pod tumbling away!\n");
-             dequeue_event(EVT_BLOWUP_FEINSTEIN);
-        }
-        return;
-    }
+    // Re-queue as daemon if it was a timer
+    queue_event(EVT_BLOWUP_FEINSTEIN, -1);
 
-    blowup_counter++;
+    game_state.blowup_counter++;
     
-    // Trigger points
-    if (game_state.internal_moves == 10 && blowup_counter < 5) {
-         printf("\nEnsign Blather rushes past you, screaming about 'Explosions! abandon ship!'\n");
-    }
-    
-    if (blowup_counter == 20) {
-        if (current_room == R_DECK_NINE || current_room == R_BRIG || current_room == R_REACTOR_LOBBY) {
-            printf("\nAn enormous explosion tears the walls of the ship apart. You die.\n");
-            // exit(0);
+    // ZIL Parity Logic
+    if (game_state.blowup_counter == 1) {
+        tellf("\nA massive explosion rocks the ship. Echoes from the explosion resound\n"
+               "deafeningly down the halls.\n");
+        if (current_room == R_DECK_NINE) {
+            tellf("The door to port slides open.\n");
+            obj_set_flag(O_POD_DOOR, F_OPENBIT);
+            
+            if (obj_in(O_AMBASSADOR, R_DECK_NINE)) {
+                obj_remove(O_AMBASSADOR);
+                obj_remove(O_CELERY);
+                tellf("The ambassador squawks frantically, evacuates a massive load of gooey\n"
+                       "slime, and rushes away.\n");
+            } else if (obj_in(O_BLATHER, R_DECK_NINE)) {
+                obj_remove(O_BLATHER);
+                tellf("Blather, confused by this non-routine occurrence, orders you to continue\n"
+                       "scrubbing the floor, and then dashes off.\n");
+            }
         } else {
-            // In Pod but haven't launched? Or somewhere else?
-            // If in pod and door closed, trip should have started.
-            // If in pod and door open, you die.
-            printf("\nThe ship explodes around you. You die.\n");
+            obj_set_flag(O_POD_DOOR, F_OPENBIT);
+        }
+    }
+    else if (game_state.blowup_counter == 2) {
+        tellf("\nYou are deafened by more explosions and by the sound of emergency bulkheads\n"
+               "slamming closed.\n");
+        // Close bulkheads logic if needed
+    }
+    else if (game_state.blowup_counter == 3) {
+        obj_clear_flag(O_POD_DOOR, F_OPENBIT); // Close Door
+        if (current_room == R_DECK_NINE) {
+            tellf("\nMore powerful explosions buffet the ship. The lights flicker madly,\n"
+                   "and the escape-pod bulkhead clangs shut.\n");
+        } else if (current_room == R_ESCAPE_POD) {
+            tellf("\nThe pod door clangs shut as heavy explosions continue to buffet the\n"
+                   "Feinstein.\n");
+            // Check if we should launch?
+            if (!is_event_enabled(EVT_POD_TRIP)) {
+                 queue_event(EVT_POD_TRIP, -1);
+            }
+        } else {
+            jigs_up("\nThe ship rocks from the force of multiple explosions. The lights go out, and\n"
+                   "you feel a sudden drop in pressure accompanied by a loud hissing. Too bad you\n"
+                   "weren't in the escape pod...");
+        }
+    }
+    else if (game_state.blowup_counter == 4) {
+        if (current_room == R_DECK_NINE) {
+            tellf("\nExplosions continue to rock the ship.\n");
+        } else if (current_room == R_ESCAPE_POD) {
+            tellf("\nYou feel the pod begin to slide down its ejection tube as explosions shake\n"
+                   "the mother ship.\n");
+        }
+    }
+    else if (game_state.blowup_counter == 5) {
+        if (current_room == R_DECK_NINE) {
+            jigs_up("\nAn enormous explosion tears the walls of the ship apart. If only you\n"
+                   "had made it to an escape pod...");
+        } else {
+            // Success - we are away.
+            tellf("\nThrough the viewport of the pod you see the Feinstein dwindle as you head\n"
+                   "away. Bursts of light dot its hull. Suddenly, a huge explosion blows the\n"
+                   "Feinstein into tiny pieces, sending the escape pod tumbling away!\n");
+            
+            // Start trip if not started? (Should have started at 3)
+            if (!is_event_enabled(EVT_POD_TRIP)) {
+                 queue_event(EVT_POD_TRIP, -1);
+            }
+            dequeue_event(EVT_BLOWUP_FEINSTEIN);
         }
     }
 }
 
-int brigs_up = 0;
-
 void routine_blather() {
     // Simplified Blather
-    if (current_room == R_DECK_NINE && blather_leave_counter == 0) {
+    if (current_room == R_DECK_NINE && game_state.blather_leave_counter == 0) {
         // 20% prob he appears if not already here
         if (!obj_in(O_BLATHER, current_room) && (rand() % 100) < 20) {
             obj_move(O_BLATHER, current_room);
-            printf("\nEnsign Blather swaggers in. 'You call this polishing? 30 demerits!'\n");
+            tellf("\nEnsign Blather swaggers in. 'You call this polishing? 30 demerits!'\n");
         }
     }
     
-    // If you are thrown in Brig logic
-    // Usually triggered by specific actions (leaving post repeatedly)
-    // Here we simulate it by accumulation of 'brigs_up' via main loop or direct interaction
-    if (brigs_up > 3) {
-        printf("\nBlather loses his patience. 'That's it, Ensign! To the Brig!'\n");
-        printf("He drags you to the brig and throws you in. The door clangs shut.\n");
+    if (game_state.brigs_up > 3) {
+        tellf("\nBlather loses his patience. 'That's it, Ensign! To the Brig!'\n");
+        tellf("He drags you to the brig and throws you in. The door clangs shut.\n");
         obj_move(player, R_BRIG);
         current_room = R_BRIG;
-        obj_rob(player, R_DECK_NINE); // Rob player, put items on Deck Nine (or Crag per ZIL oddity)
-        // Let's put them in Deck Nine so you lose them.
-        brigs_up = 0;
+        obj_rob(player, R_DECK_NINE); 
+        game_state.brigs_up = 0;
         perform_look();
     }
 }
 
 void routine_ambassador() {
-    if (current_room == R_DECK_NINE && ambassador_leave_counter == 0) {
+    if (current_room == R_DECK_NINE && game_state.ambassador_leave_counter == 0) {
         if (!obj_in(O_AMBASSADOR, current_room) && (rand() % 100) < 15) {
              obj_move(O_AMBASSADOR, current_room);
              obj_move(O_CELERY, O_AMBASSADOR);
              
-             printf("\nThe alien ambassador ambles toward you. He drops a brochure.\n");
+             tellf("\nThe alien ambassador ambles toward you. He drops a brochure.\n");
              obj_move(O_BROCHURE, current_room);
              
              // Leave slime
              obj_move(O_SLIME, current_room);
-             printf("He leaves a trail of green slime on the deck.\n");
+             tellf("He leaves a trail of green slime on the deck.\n");
         }
     }
 }
 
 void routine_pod_trip() {
-    trip_counter++;
+    game_state.trip_counter++;
     
     // Based on globals.zil I-POD-TRIP
-    if (trip_counter == 1) {
-        printf("\nAs the escape pod tumbles away from the former location of the Feinstein, its\n"
+    if (game_state.trip_counter == 1) {
+        tellf("\nAs the escape pod tumbles away from the former location of the Feinstein, its\n"
                "gyroscopes whine. The pod slowly stops tumbling. Lights on the control panel\n"
                "blink furiously as the autopilot searches for a reasonable destination.\n");
     }
-    else if (trip_counter == 2) {
-        printf("\nThe auxiliary rockets fire briefly, and a nearby planet swings into view\n"
+    else if (game_state.trip_counter == 2) {
+        tellf("\nThe auxiliary rockets fire briefly, and a nearby planet swings into view\n"
                "through the port. It appears to be almost entirely ocean, with just a few\n"
                "visible islands and an unusually small polar ice cap. A moment later, the\n"
                "system's sun swings into view, and the viewport polarizes into a featureless\n"
                "black rectangle.\n");
     }
-    else if (trip_counter == 3) {
-        printf("\nThe main thrusters fire a long, gentle burst. A monotonic voice issues\n"
+    else if (game_state.trip_counter == 3) {
+        tellf("\nThe main thrusters fire a long, gentle burst. A monotonic voice issues\n"
                "from the control panel. \"Approaching planet...human-habitable.\"\n");
     }
-    else if (trip_counter == 7) {
-        printf("\nThe pod is buffeted as it enters the planet's atmosphere.\n");
+    else if (game_state.trip_counter == 7) {
+        tellf("\nThe pod is buffeted as it enters the planet's atmosphere.\n");
     }
-    else if (trip_counter == 8) {
-        printf("\nYou feel the temperature begin to rise, and the pod's climate\n"
+    else if (game_state.trip_counter == 8) {
+        tellf("\nYou feel the temperature begin to rise, and the pod's climate\n"
                "control system roars as it labors to compensate.\n");
     }
-    else if (trip_counter == 9) {
-        printf("\nThe viewport suddenly becomes transparent again, giving you a view of\n"
+    else if (game_state.trip_counter == 9) {
+        tellf("\nThe viewport suddenly becomes transparent again, giving you a view of\n"
                "endless ocean below. The lights on the control panel flash madly as\n"
                "the pod's computer searches for a suitable landing site. The thrusters fire\n"
                "long and hard, slowing the pod's descent.\n");
     }
-    else if (trip_counter == 10) {
-        printf("\nThe pod is now approaching the closer of a pair of islands. It appears\n"
+    else if (game_state.trip_counter == 10) {
+        tellf("\nThe pod is now approaching the closer of a pair of islands. It appears\n"
                "to be surrounded by sheer cliffs rising from the water, and is topped by\n"
                "a wide plateau. The plateau seems to be covered by a sprawling complex\n"
                "of buildings.\n");
     }
-    else if (trip_counter == 11) {
+    else if (game_state.trip_counter == 11) {
         // Landing Logic
         if (obj_in(player, O_SAFETY_WEB)) {
-            printf("\nThe pod lands with a thud. Through the viewport you can see a rocky cleft\n"
+            tellf("\nThe pod lands with a thud. Through the viewport you can see a rocky cleft\n"
                    "and some water below. The pod rocks gently back and forth as if it was\n"
                    "precariously balanced. A previously unseen panel slides open, revealing\n"
                    "some emergency provisions, including a survival kit and a towel.\n");
@@ -363,30 +391,20 @@ void routine_pod_trip() {
             // Move the visible pod object to the Crag so it can be entered
             obj_move(O_GLOBAL_POD, R_CRAG);
             
-            // printf("DEBUG: Updated R_ESCAPE_POD (ID %d) exits. Out=%d, East=%d\n", R_ESCAPE_POD, objects[R_ESCAPE_POD].out, objects[R_ESCAPE_POD].east);
-            
             dequeue_event(EVT_POD_TRIP);
             
-            // Start Sinking Logic?
-            // "If you stand... shift... falling... water rising".
-            // This is triggered by standing up, not automatic unless you wait too long?
-            // ZIL: "As you stand... I-SINK-POD enabled".
-            // We need to hook V_STAND/DISEMBARK to enable I-SINK-POD.
         } else {
-            printf("\nThe pod, whose automated controls were unfortunately designed by computer\n"
+            jigs_up("\nThe pod, whose automated controls were unfortunately designed by computer\n"
                    "scientists, lands with a good deal of force. Your body sails across the pod\n"
-                   "until it is stopped by one of the sharper corners of the control panel.\n");
-            printf("**** You have died ****\n");
-            // exit(0);
+                   "until it is stopped by one of the sharper corners of the control panel.");
         }
     }
 }
 
 void routine_sink_pod() {
-    sink_counter++;
-    if (sink_counter > 5) {
-        printf("\nThe pod sinks. You drown.\n");
-        // exit(0);
+    game_state.sink_counter++;
+    if (game_state.sink_counter > 5) {
+        jigs_up("\nThe pod sinks. You drown.");
     }
 }
 
@@ -394,18 +412,15 @@ void routine_hunger() {
     game_state.hunger_level++;
     int h = game_state.hunger_level;
     
-    // Based on typical thresholds
     if (h == 200) {
-        printf("You are beginning to feel a bit hungry.\n");
+        tellf("You are beginning to feel a bit hungry.\n");
     } else if (h == 300) {
-        printf("You are getting pretty hungry.\n");
+        tellf("You are getting pretty hungry.\n");
     } else if (h == 400) {
-        printf("You are famished.\n");
+        tellf("You are famished.\n");
     } else if (h == 500) {
-        printf("You are starting to faint from lack of food.\n");
+        tellf("You are starting to faint from lack of food.\n");
     } else if (h == 600) {
-        printf("\nYou have starved to death.\n");
-        printf("**** You have died ****\n");
-        // exit(0);
+        jigs_up("\nYou have starved to death.");
     }
 }

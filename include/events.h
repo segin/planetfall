@@ -2,6 +2,7 @@
 #define EVENTS_H
 
 #include <stdbool.h>
+#include <stdio.h>
 
 // Event IDs (mapping to ZIL routines)
 typedef enum {
@@ -31,5 +32,8 @@ bool run_events();
 
 // Check if event is enabled
 bool is_event_enabled(EventID id);
+
+void save_events(FILE* f);
+void restore_events(FILE* f);
 
 #endif

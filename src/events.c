@@ -27,6 +27,14 @@ bool is_event_enabled(EventID id) {
     return events[id].enabled;
 }
 
+void save_events(FILE* f) {
+    fwrite(events, sizeof(events), 1, f);
+}
+
+void restore_events(FILE* f) {
+    fread(events, sizeof(events), 1, f);
+}
+
 // Forward declarations of logic handlers (to be implemented in logic files)
 void routine_blowup_feinstein();
 void routine_blather();
@@ -63,10 +71,6 @@ bool run_events() {
                 case EVT_HUNGER_WARNINGS: routine_hunger(); break;
                 default: break;
             }
-            
-            // Check for death after every event?
-            // In a real engine, JIGS-UP would set a flag.
-            // For now, we assume if JIGS-UP happens, it might exit or set a state.
         }
     }
     return true;

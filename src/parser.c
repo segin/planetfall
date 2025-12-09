@@ -1,259 +1,318 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include "planetfall.h"
+#include <stdlib.h>
 #include "parser.h"
+#include "syntax_gen.h"
 
-#define MAX_INPUT_LEN 256
-#define MAX_TOKENS 20
+#define MAX_TOKENS 32
+#define MAX_WORD_LEN 64
 
-// Vocabulary Mappings
 typedef struct {
-    const char* word;
-    int id; 
-} VocabEntry;
+    char word[MAX_WORD_LEN];
+    VocabEntry* vocab; 
+} Token;
 
-VocabEntry verbs[] = {
-    {"look", V_LOOK},
-    {"l", V_LOOK},
-    {"inventory", V_INVENTORY},
-    {"i", V_INVENTORY},
-    {"examine", V_EXAMINE},
-    {"x", V_EXAMINE},
-    {"take", V_TAKE},
-    {"get", V_TAKE},
-    {"drop", V_DROP},
-    {"quit", V_QUIT},
-    {"put", V_PUT},
-    {"insert", V_PUT},
-    {"wait", V_WAIT},
-    {"z", V_WAIT},
-    
-    // Movement
-    {"north", V_WALK_NORTH}, {"n", V_WALK_NORTH},
-    {"south", V_WALK_SOUTH}, {"s", V_WALK_SOUTH},
-    {"east", V_WALK_EAST},   {"e", V_WALK_EAST},
-    {"west", V_WALK_WEST},   {"w", V_WALK_WEST},
-    {"ne", V_WALK_NE},
-    {"nw", V_WALK_NW},
-    {"se", V_WALK_SE},
-    {"sw", V_WALK_SW},
-    {"up", V_WALK_UP},       {"u", V_WALK_UP},
-    {"down", V_WALK_DOWN},   {"d", V_WALK_DOWN},
-    {"in", V_WALK_IN},       {"enter", V_WALK_IN}, // 'Enter' can be V_WALK_IN or V_BOARD depending on context
-    {"out", V_WALK_OUT},
-    
-    // Vehicle/Structure Interaction
-    {"board", V_BOARD}, // "Board Pod", "Sit in Web"
-    {"sit", V_BOARD},
-    
-    {"disembark", V_DISEMBARK}, // "Get off web"
-    {"leave", V_DISEMBARK},     // "Leave Pod" (Object) or "Leave" (Room -> V_WALK_OUT)
-                                // Parser needs to distinguish Transitive vs Intransitive.
-                                // For now, we map string to ID. logic handled in main.
-    {"exit", V_DISEMBARK},      // "Exit Pod"
-    {"stand", V_DISEMBARK},     // "Stand up"
-    
-    {"open", V_OPEN},
-    {"close", V_CLOSE},
-    {"scrub", V_SCRUB},
-    {"clean", V_SCRUB},
-    {"attack", V_ATTACK},
-    {"kill", V_ATTACK},
-    {"kick", V_KICK},
-    {"talk", V_TALK},
-    {"eat", V_EAT},
-    {"smell", V_SMELL},
-    {"sniff", V_SMELL},
-    {"read", V_READ},
-    {"remove", V_REMOVE},
-    {"wear", V_WEAR},
-    {NULL, 0}
-};
-
-VocabEntry prepositions[] = {
-    {"in", 1},
-    {"inside", 1},
-    {"into", 1},
-    {"on", 2},
-    {"onto", 2},
-    {NULL, 0}
-};
-
-char* tokens[MAX_TOKENS];
+Token tokens[MAX_TOKENS];
 int num_tokens = 0;
+
+VocabEntry* lookup_vocab(const char* word) {
+    for (int i = 0; i < vocab_table_size; i++) {
+        if (strcasecmp(word, vocab_table[i].word) == 0) {
+            return &vocab_table[i];
+        }
+    }
+    return NULL;
+}
 
 void tokenize(char* input) {
     num_tokens = 0;
-    char* token = strtok(input, " \t\n\r");
-    while (token != NULL && num_tokens < MAX_TOKENS) {
-        // Lowercase the token
-        for(int i = 0; token[i]; i++){
-          token[i] = tolower(token[i]);
+    
+    char buffer[MAX_WORD_LEN];
+    int buf_idx = 0;
+    
+    for (int i = 0; input[i]; i++) {
+        char c = tolower(input[i]);
+        if (isspace(c) || c == ',' || c == '.') {
+            if (buf_idx > 0) {
+                buffer[buf_idx] = '\0';
+                if (num_tokens < MAX_TOKENS) {
+                    strncpy(tokens[num_tokens].word, buffer, MAX_WORD_LEN);
+                    tokens[num_tokens].vocab = lookup_vocab(buffer);
+                    num_tokens++;
+                }
+                buf_idx = 0;
+            }
+        } else {
+            if (buf_idx < MAX_WORD_LEN - 1) {
+                buffer[buf_idx++] = c;
+            }
         }
-        tokens[num_tokens++] = token;
-        token = strtok(NULL, " \t\n\r");
+    }
+    if (buf_idx > 0) {
+        buffer[buf_idx] = '\0';
+        if (num_tokens < MAX_TOKENS) {
+            strncpy(tokens[num_tokens].word, buffer, MAX_WORD_LEN);
+            tokens[num_tokens].vocab = lookup_vocab(buffer);
+            num_tokens++;
+        }
     }
 }
 
-int match_vocab(const char* word, VocabEntry* table) {
-    for (int i = 0; table[i].word != NULL; i++) {
-        if (strcmp(word, table[i].word) == 0) {
-            return table[i].id;
-        }
+bool word_matches_object(ZObject* obj, const char* word) {
+    for (int i = 0; i < 5; i++) {
+        if (obj->synonyms[i] && strcasecmp(word, obj->synonyms[i]) == 0) return true;
     }
-    return 0;
-}
-
-// Helper to match a specific object ID against a word
-bool match_id(ZObjectID id, const char* word) {
-    if (id == NOTHING) return false;
-    ZObject* obj = &objects[id];
-    if (obj->synonyms[0] && strcmp(word, obj->synonyms[0]) == 0) return true;
-    if (obj->synonyms[1] && strcmp(word, obj->synonyms[1]) == 0) return true;
+    for (int i = 0; i < 5; i++) {
+        if (obj->adjectives[i] && strcasecmp(word, obj->adjectives[i]) == 0) return true;
+    }
     return false;
 }
 
-// Helper to search a list (siblings)
-ZObjectID match_in_list(ZObjectID start_node, const char* word) {
-    ZObjectID curr = start_node;
-    while (curr != NOTHING) {
-        if (match_id(curr, word)) return curr;
-        // Simple recursion for open containers
-        if (obj_has_flag(curr, F_CONTBIT) && obj_has_flag(curr, F_OPENBIT)) {
-            ZObjectID inner = match_in_list(objects[curr].child, word);
-            if (inner != NOTHING) return inner;
+bool phrase_matches_object(ZObject* obj, int start, int end) {
+    for (int i = start; i < end; i++) {
+        if (!word_matches_object(obj, tokens[i].word)) {
+             if (strcmp(tokens[i].word, "the") == 0) continue;
+             if (strcmp(tokens[i].word, "a") == 0) continue;
+             if (strcmp(tokens[i].word, "an") == 0) continue;
+             return false;
         }
-        curr = objects[curr].sibling;
     }
-    return NOTHING;
+    return true;
 }
 
-ZObjectID match_object(const char* word) {
-    if (!word) return NOTHING;
-    ZObjectID found = NOTHING;
+// Returns count found
+int snarf_objects(int start, int end, unsigned int search_flags, unsigned int find_flags, ZObjectID* out_list, int max_count) {
+    if (start >= end) return 0;
+    
+    int count = 0;
+    bool is_all = (strcasecmp(tokens[start].word, "all") == 0 && (end - start == 1));
+    bool is_it = (strcasecmp(tokens[start].word, "it") == 0 && (end - start == 1));
 
-    // 1. Check Inventory (ADVENTURER)
-    found = match_in_list(objects[player].child, word);
-    if (found != NOTHING) return found;
+    // Special case: "IT"
+    if (is_it) {
+        // Return P-IT-OBJECT (global, but we need to track it)
+        // For now, fail
+        return 0;
+    }
 
-    // 2. Check Room Contents (HERE)
-    found = match_in_list(objects[current_room].child, word);
-    if (found != NOTHING) return found;
-
-    // 3. Check Room Globals (HERE.globals)
-    for (int i = 0; i < 10; i++) {
-        ZObjectID gid = objects[current_room].globals[i];
-        if (gid != NOTHING) {
-            if (match_id(gid, word)) return gid;
+    void check_list(ZObjectID parent) {
+        ZObjectID curr = objects[parent].child;
+        while (curr != NOTHING) {
+            if (!obj_has_flag(curr, F_INVISIBLE)) {
+                
+                bool flags_match = true;
+                if (find_flags != 0) {
+                     if ((objects[curr].flags & find_flags) == 0) {
+                         flags_match = false;
+                     }
+                }
+                
+                if (flags_match) {
+                    bool match = false;
+                    if (is_all) {
+                        match = true; // "ALL" matches everything that passes flag check
+                    } else {
+                        if (phrase_matches_object(&objects[curr], start, end)) {
+                            match = true;
+                        }
+                    }
+                    
+                    if (match) {
+                        // Check if already in list (dedup if searching multiple scopes)
+                        bool exists = false;
+                        for(int k=0; k<count; k++) if(out_list[k] == curr) exists = true;
+                        
+                        if (!exists && count < max_count) {
+                            out_list[count++] = curr;
+                        }
+                    }
+                }
+            }
+            
+            // Recurse for containers
+            if (obj_has_flag(curr, F_CONTBIT) && obj_has_flag(curr, F_OPENBIT)) {
+                ZObjectID inner = objects[curr].child;
+                 while (inner != NOTHING) {
+                      if (!obj_has_flag(inner, F_INVISIBLE)) {
+                        bool inner_flags_match = true;
+                        if (find_flags != 0) {
+                             if ((objects[inner].flags & find_flags) == 0) inner_flags_match = false;
+                        }
+                        
+                        bool match = false;
+                        if (is_all) match = true;
+                        else if (phrase_matches_object(&objects[inner], start, end)) match = true;
+                        
+                        if (inner_flags_match && match) {
+                             bool exists = false;
+                             for(int k=0; k<count; k++) if(out_list[k] == inner) exists = true;
+                             if (!exists && count < max_count) out_list[count++] = inner;
+                        }
+                      }
+                      inner = objects[inner].sibling;
+                 }
+            }
+            curr = objects[curr].sibling;
         }
     }
 
-    // 4. Check Universal Globals (GLOBAL-OBJECTS)
-    found = match_in_list(objects[OBJ_GLOBAL_OBJECTS].child, word);
-    if (found != NOTHING) return found;
+    if (search_flags == 0) {
+        check_list(player);
+        check_list(current_room);
+    } else {
+        if (search_flags & SEARCH_HELD) check_list(player);
+        if (search_flags & SEARCH_ROOM) check_list(current_room); 
+        if (search_flags & SEARCH_GROUND) check_list(current_room);
+    }
 
-    return NOTHING;
+    check_list(OBJ_GLOBAL_OBJECTS);
+    check_list(OBJ_LOCAL_GLOBALS);
+    
+    // Disambiguation Logic (If not ALL)
+    if (!is_all && count > 1) {
+        printf("[Ambiguous: found %d matches, picking one]\n", count);
+        // Just keep the first one
+        return 1;
+    }
+    
+    return count;
 }
 
 bool parse_command(char* input, Command* cmd) {
     tokenize(input);
     if (num_tokens == 0) return false;
-    
-    int start_index = 0;
-    // Handle "Go North", "Walk In", etc.
-    if (strcmp(tokens[0], "go") == 0 || strcmp(tokens[0], "walk") == 0) {
-        if (num_tokens > 1) {
-            start_index = 1;
-        } else {
-            printf("Go where?\n");
-            return false;
-        }
-    }
 
-    cmd->verb = 0;
-    cmd->direct_object = NOTHING;
-    cmd->indirect_object = NOTHING;
-    cmd->preposition = 0;
-    
-    // 1. Identify Verb
-    cmd->verb = match_vocab(tokens[start_index], verbs);
-    if (cmd->verb == 0) {
-        printf("I don't know the word \"%s\".\n", tokens[start_index]);
-        return false;
+    cmd->prso_count = 0;
+    cmd->prsi = NOTHING;
+
+    // Implicit Verb: Direction
+    for (int dir = O_NORTH; dir <= O_OUT; dir++) {
+         if (word_matches_object(&objects[dir], tokens[0].word)) {
+             if (num_tokens == 1) {
+                 cmd->verb = V_WALK;
+                 cmd->prso_list[0] = dir;
+                 cmd->prso_count = 1;
+                 cmd->prsi = NOTHING;
+                 return true;
+             }
+         }
     }
     
-    if (num_tokens == start_index + 1) return true; // Just Verb
-    
-    // 2. Scan for Prepositions
-    int prep_index = -1;
-    for (int i = start_index + 1; i < num_tokens; i++) {
-        int prep_id = match_vocab(tokens[i], prepositions);
-        if (prep_id != 0) {
-            prep_index = i;
-            cmd->preposition = prep_id;
-            break;
-        }
-    }
-    
-    // 3. Resolve Objects
-    if (prep_index == -1) {
-        // VERB DIRECT
-        // Using tokens[start_index + 1]
-        cmd->direct_object = match_object(tokens[start_index + 1]);
+    for (int i = 0; i < syntax_table_size; i++) {
+        SyntaxEntry* se = &syntax_table[i];
         
-        if (tokens[start_index + 1] && cmd->direct_object == NOTHING) {
-             printf("You can't see any %s here.\n", tokens[start_index + 1]);
-             return false;
+        if (strcasecmp(tokens[0].word, se->verb_word) != 0) {
+            if (tokens[0].vocab && tokens[0].vocab->type == VOCAB_SYNONYM) {
+                 if (strcasecmp(tokens[0].vocab->target, se->verb_word) != 0) continue;
+            } else {
+                 continue;
+            }
         }
-    } else {
-        // Preposition present.
         
-        // Case 1: VERB PREP OBJECT (e.g. "Sit on Chair", "Go In Pod")
-        // If prep immediately follows verb
-        if (prep_index == start_index + 1) {
-            // Check if there is an object after the preposition
-            if (prep_index + 1 < num_tokens) {
-                cmd->direct_object = match_object(tokens[prep_index + 1]);
-                if (cmd->direct_object == NOTHING) {
-                    printf("You can't see any %s here.\n", tokens[prep_index + 1]);
-                    return false;
-                }
-                
-                // Handle "Get In Object" -> Board
-                if (cmd->verb == V_TAKE && cmd->preposition == 1) { // 1 = "in"
-                    cmd->verb = V_BOARD;
-                    cmd->preposition = 0;
-                }
-            } else {
-                 printf("Missing object.\n");
+        int input_prep1_idx = -1;
+        int input_prep2_idx = -1;
+        
+        for (int k = 1; k < num_tokens; k++) {
+             if (tokens[k].vocab && tokens[k].vocab->type == VOCAB_PREP) {
+                 if (input_prep1_idx == -1) input_prep1_idx = k;
+                 else if (input_prep2_idx == -1) input_prep2_idx = k;
+             }
+        }
+        
+        bool p1_match = false;
+        if (se->prep1 == NULL) {
+             if (input_prep1_idx == -1) p1_match = true;
+        } else {
+             if (input_prep1_idx != -1 && strcasecmp(tokens[input_prep1_idx].word, se->prep1) == 0) {
+                 p1_match = true;
+             }
+        }
+        
+        bool p2_match = false;
+        if (se->prep2 == NULL) {
+             if (input_prep2_idx == -1) p2_match = true;
+        } else {
+             if (input_prep2_idx != -1 && strcasecmp(tokens[input_prep2_idx].word, se->prep2) == 0) {
+                 p2_match = true;
+             }
+        }
+        
+        if (!p1_match || !p2_match) continue;
+
+        int nc1_start = -1, nc1_end = -1;
+        int nc2_start = -1, nc2_end = -1;
+        int ptr = 1;
+        
+        if (se->obj1_present) {
+             if (se->prep1_loc == PREP_LOC_BEFORE_OBJ1) {
+                  if (input_prep1_idx != ptr) goto next_syntax;
+                  ptr++; 
+                  nc1_start = ptr;
+                  if (se->prep2 != NULL) {
+                       if (input_prep2_idx == -1 || input_prep2_idx <= ptr) goto next_syntax;
+                       nc1_end = input_prep2_idx;
+                       ptr = input_prep2_idx + 1; 
+                  } else {
+                       nc1_end = num_tokens;
+                       ptr = num_tokens;
+                  }
+             } else if (se->prep1_loc == PREP_LOC_AFTER_OBJ1) {
+                  nc1_start = ptr;
+                  if (input_prep1_idx == -1 || input_prep1_idx <= ptr) goto next_syntax;
+                  nc1_end = input_prep1_idx;
+                  ptr = input_prep1_idx + 1;
+             } else {
+                  nc1_start = ptr;
+                  if (se->prep2 != NULL) {
+                       if (input_prep1_idx != -1) {
+                           nc1_end = input_prep1_idx;
+                           ptr = input_prep1_idx; 
+                       }
+                  } else {
+                       nc1_end = num_tokens;
+                       ptr = num_tokens;
+                  }
+             }
+             
+             if (nc1_start >= nc1_end) goto next_syntax;
+        }
+        
+        if (se->obj2_present) {
+             nc2_start = ptr;
+             nc2_end = num_tokens;
+             if (nc2_start >= nc2_end) goto next_syntax;
+        }
+        
+        // Snarf Objects
+        int count1 = 0;
+        
+        if (se->obj1_present) {
+            count1 = snarf_objects(nc1_start, nc1_end, se->obj1_search, se->obj1_find, cmd->prso_list, MAX_OBJECTS_PER_CMD);
+            if (count1 == 0) {
+                 printf("You can't see any %s here.\n", tokens[nc1_start].word);
                  return false;
             }
+            cmd->prso_count = count1;
         }
-        // Case 2: VERB DIRECT PREP INDIRECT (e.g. "Put Box in Bag")
-        else if (prep_index == start_index + 2) {
-            cmd->direct_object = match_object(tokens[start_index + 1]);
-            if (cmd->direct_object == NOTHING) {
-                 printf("You can't see any %s here.\n", tokens[start_index + 1]);
+        
+        if (se->obj2_present) {
+            // Prsi
+            ZObjectID prsi_list[2];
+            int count2 = snarf_objects(nc2_start, nc2_end, se->obj2_search, se->obj2_find, prsi_list, 2);
+            if (count2 == 0) {
+                 printf("You can't see any %s here.\n", tokens[nc2_start].word);
                  return false;
             }
-            
-            if (prep_index + 1 < num_tokens) {
-                cmd->indirect_object = match_object(tokens[prep_index + 1]);
-                if (cmd->indirect_object == NOTHING) {
-                    printf("You can't see any %s here.\n", tokens[prep_index + 1]);
-                    return false;
-                }
-            } else {
-                 printf("Missing indirect object.\n");
-                 return false;
-            }
+            cmd->prsi = prsi_list[0];
         }
-        else {
-             printf("I didn't understand that sentence structure.\n");
-             return false;
-        }
+        
+        cmd->verb = se->action_id;
+        return true;
+
+        next_syntax: continue;
     }
     
-    return true;
+    printf("I don't understand that sentence.\n");
+    return false;
 }

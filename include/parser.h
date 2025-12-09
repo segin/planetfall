@@ -2,50 +2,27 @@
 #define PARSER_H
 
 #include "planetfall.h"
+#include "syntax_gen.h"
+
+#define MAX_OBJECTS_PER_CMD 64
 
 typedef struct {
-    int verb;
-    ZObjectID direct_object;
-    ZObjectID indirect_object;
-    int preposition;
+    int verb; // ActionID from syntax_gen.h
+    
+    // Direct Object(s)
+    ZObjectID prso_list[MAX_OBJECTS_PER_CMD];
+    int prso_count;
+    
+    // Indirect Object (usually one)
+    ZObjectID prsi;
+    
+    // Legacy support (to be removed or mapped to prso_list[0])
+    // ZObjectID direct_object; 
+    // ZObjectID indirect_object;
 } Command;
 
-// Verb IDs (Shared with main)
-enum {
-    V_LOOK = 1,
-    V_INVENTORY,
-    V_EXAMINE,
-    V_TAKE,
-    V_DROP,
-    V_QUIT,
-    V_PUT,
-    V_WAIT,
-    V_BOARD,
-    V_DISEMBARK,
-    V_OPEN,
-    V_CLOSE,
-    V_SCRUB,
-    V_ATTACK,
-    V_KICK,
-    V_TALK,
-    V_EAT,
-    V_SMELL,
-    V_READ,
-    V_REMOVE,
-    V_WEAR,
-    V_WALK_NORTH,
-    V_WALK_SOUTH,
-    V_WALK_EAST,
-    V_WALK_WEST,
-    V_WALK_NE,
-    V_WALK_NW,
-    V_WALK_SE,
-    V_WALK_SW,
-    V_WALK_UP,
-    V_WALK_DOWN,
-    V_WALK_IN,
-    V_WALK_OUT
-};
+// Global Command Context
+extern Command current_cmd;
 
 bool parse_command(char* input, Command* cmd);
 
