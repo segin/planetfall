@@ -1,0 +1,32 @@
+open door
+enter pod
+enter web
+close door
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+wait
+stand
+look
+take towel
+take kit
+inventory
+out
+look
+up
+look
+down
+look
+enter pod
+look

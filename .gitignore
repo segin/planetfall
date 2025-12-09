@@ -1,0 +1,7 @@
+*.o
+planetfall
+tests/run_tests
+zil/*.zap
+zil/*.zip
+zil/*.zabstr
+zil/COMPILED
