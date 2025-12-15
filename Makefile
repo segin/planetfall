@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Iinclude -g
 
-SRC = src/engine_core.c src/parser.c src/main.c src/events.c src/feinstein.c src/complexone.c src/syntax_gen.c src/actions.c src/output.c src/savegame.c
+SRC = src/engine_core.c src/parser.c src/main.c src/events.c src/feinstein.c src/complexone.c src/complextwo.c src/feinstein_actions.c src/complexone_actions.c src/complextwo_actions.c src/global_objects.c src/syntax_gen.c src/actions.c src/output.c src/savegame.c
 OBJ = $(SRC:.c=.o)
 TEST_ENGINE_SRC = tests/test_engine.c
 TEST_PARSER_SRC = tests/test_parser.c

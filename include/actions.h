@@ -18,7 +18,20 @@ void perform_restore();
 void perform_restart();
 void perform_script();
 void perform_unscript();
+bool ambassador_f(int arg);
+void perform_teleport(ZObjectID dest);
 
-void jigs_up(const char* msg);
+// Action Context Types (RARG)
+typedef enum {
+  M_NONE = 0,
+  M_ENTER,
+  M_LOOK,
+  M_BEG,     // Beginning of action (pre-action)
+  M_END,     // End of action (post-action)
+  M_OBJDESC, // Object description
+  M_CONT     // Container?
+} ActionType;
+
+void jigs_up(const char *msg);
 
 #endif

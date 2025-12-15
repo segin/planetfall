@@ -114,6 +114,22 @@
 #define O_GROUND 405
 #define O_SLIME 406
 
+// Global/Common Objects (450-499)
+#define O_HANDS 450
+#define O_CONTROLS 451
+#define O_LIGHTS 452
+#define O_TABLES 453
+#define O_SHELVES 454
+#define O_BUTTON_1 455
+#define O_INTNUM 456
+#define O_NOT_HERE_OBJECT 457
+#define O_PSEUDO_OBJECT 458
+#define O_IT 459
+
+// O_SLOT, O_BUTTON_2, O_BUTTON_3 are in 500 range, can move them or alias.
+// Leaving them as is to avoid breaking existing code in complexone.c (until I
+// refactor).
+
 // ComplexOne Objects (500-585)
 #define O_CLIFF 500
 #define O_OCEAN 501
@@ -201,5 +217,97 @@
 #define O_FUNNEL_HOLE 583
 #define O_CHEMICAL_FLUID 584
 #define O_GLOBAL_SHUTTLE 585
+
+// Complex Two Rooms (200-250)
+#define R_LAWANDA_PLATFORM 200
+#define R_ESCALATOR 201
+#define R_FORK 202
+#define R_INFIRMARY 203
+#define R_REPAIR_ROOM 204
+#define R_SYSTEMS_CORRIDOR_WEST 205
+#define R_SYSTEMS_CORRIDOR 206
+#define R_SYSTEMS_CORRIDOR_EAST 207
+#define R_PHYSICAL_PLANT_TWO 208
+#define R_PLANETARY_DEFENSE 209
+#define R_PLANETARY_COURSE_CONTROL 210
+#define R_LIBRARY_LOBBY 211
+#define R_BOOTH_3 212
+#define R_LIBRARY 213
+
+// Complex Two Objects (600-700)
+#define O_LAZARUS_PART 600
+#define O_RED_SPOOL 601
+#define O_MEDICINE_BOTTLE 602
+#define O_MEDICINE 603
+#define O_ACHILLES 604
+#define O_ROBOT_HOLE 605
+#define O_GOOD_BOARD 606
+#define O_ACCESS_PANEL 607
+#define O_FIRST_BOARD 608
+#define O_SECOND_BOARD 609
+#define O_THIRD_BOARD 610
+#define O_FOURTH_BOARD 611
+#define O_FRIED_BOARD 612
+#define O_CUBE 613
+#define O_BAD_BEDISTOR 614
+#define O_GREEN_SPOOL 615
+#define O_TERMINAL 616
+#define O_CARPET_PSEUDO 617
+#define O_DESK_PSEUDO 618
+#define O_CABINETS_PSEUDO 619
+#define O_ESCALATOR_PSEUDO 620
+#define O_WALL_SCREEN 621
+
+#define O_CHEM_SPOUT_PSEUDO 622
+#define O_DEVICES_PSEUDO 623
+
+// Complex Two Rooms (continued)
+#define R_PROJECT_CORRIDOR_WEST 214
+#define R_SANFAC_F 215
+#define R_PROJECT_CORRIDOR 216
+#define R_PROJCON_OFFICE 217
+#define R_CRYO_ELEVATOR 218
+#define R_CRYO_ANTEROOM 219
+#define R_PROJECT_CORRIDOR_EAST 220
+#define R_COMPUTER_ROOM 221
+#define R_MINI_BOOTH 222
+#define R_MAIN_LAB 223
+#define R_BIO_LOCK_WEST 224
+#define R_LAB_STORAGE 225
+#define R_BIO_LOCK_EAST 226
+#define R_RADIATION_LOCK_WEST 227
+#define R_RADIATION_LOCK_EAST 228
+#define R_BIO_LAB 229
+#define R_RADIATION_LAB 230
+#define R_LAB_OFFICE 231
+#define R_AUXILIARY_BOOTH 232
+#define R_STATION_384 233
+
+// Complex Two Objects (continued)
+#define O_CRYO_ELEVATOR_DOOR 624
+#define O_PRINT_OUT 625
+#define O_MINI_CARD 626
+#define O_BIO_DOOR_EAST 627
+#define O_BIO_DOOR_WEST 628
+#define O_RAD_DOOR_EAST 629
+#define O_RAD_DOOR_WEST 630
+#define O_LAB_UNIFORM 631
+#define O_TELEPORTATION_CARD 632
+#define O_COMBINATION_PAPER 633
+#define O_LAB_DESK 634
+#define O_GAS_MASK 635
+#define O_MEMO 636
+#define O_LIGHT_BUTTON 637
+#define O_DARK_BUTTON 638
+#define O_FUNGICIDE_BUTTON 639
+#define O_BROWN_SPOOL 640
+#define O_LAMP 641
+#define O_SUPPLIES_PSEUDO 642
+#define O_OFFICE_DOOR 643
+#define O_WINDOW_PSEUDO 644
+#define O_CRACK_PSEUDO 645
+#define O_LOGO_PSEUDO 646
+#define O_MURAL_PSEUDO 647
+#define O_KEYBOARD_PSEUDO 648
 
 #endif

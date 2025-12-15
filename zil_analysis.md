@@ -1,0 +1,1188 @@
+# Planetfall Implementation Checklist
+
+
+## Objects
+|---|---|---|---|---|---|
+- [ ] **ACCESS-PANEL** (comptwo.zil): "access panel" [Loc: PLANETARY-DEFENSE, Flags: VOWELBIT NDESCBIT CONTBIT SEARCHBIT, Action: ACCESS-PANEL-F]
+- [ ] **ACHILLES** (comptwo.zil): "broken robot" [Loc: REPAIR-ROOM, Flags: -, Action: -]
+- [ ] **ADVENTURER** (globals.zil): "player" [Loc: DECK-NINE, Flags: NDESCBIT INVISIBLE, Action: -]
+- [ ] **AMBASSADOR** (globals.zil): "alien ambassador" [Loc: -, Flags: VOWELBIT ACTORBIT, Action: AMBASSADOR-F]
+- [ ] **BAD-BEDISTOR** (comptwo.zil): "fused ninety-ohm bedistor" [Loc: CUBE, Flags: ACIDBIT TRYTAKEBIT TAKEBIT, Action: BAD-BEDISTOR-F]
+- [ ] **BED** (globals.zil): "bed" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT CLIMBBIT VEHBIT, Action: BED-F]
+- [ ] **BIO-DOOR-EAST** (comptwo.zil): "lab door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: BIO-DOOR-EAST-F]
+- [ ] **BIO-DOOR-WEST** (comptwo.zil): "bio-lock door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: BIO-DOOR-WEST-F]
+- [x] **BLACK-BUTTON** (compone.zil): "black button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [ ] **BLATHER** (globals.zil): "Ensign First Class" [Loc: -, Flags: VOWELBIT ACTORBIT, Action: BLATHER-F]
+- [x] **BLUE-BUTTON** (compone.zil): "blue button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [x] **BLUE-ELEVATOR-BUTTON** (compone.zil): "blue button" [Loc: ELEVATOR-LOBBY, Flags: NDESCBIT, Action: BLUE-ELEVATOR-BUTTON-F]
+- [ ] **BROCHURE** (globals.zil): "brochure" [Loc: -, Flags: ACIDBIT TAKEBIT READBIT, Action: -]
+- [x] **BROWN-BUTTON** (compone.zil): "brown button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [ ] **BROWN-GOO** (globals.zil): "blob of brown goo" [Loc: FOOD-KIT, Flags: ACIDBIT FOODBIT, Action: GOO-F]
+- [ ] **BROWN-SPOOL** (comptwo.zil): "brown spool" [Loc: RADIATION-LAB, Flags: ACIDBIT TAKEBIT READBIT, Action: -]
+- [x] **CAN** (compone.zil): "tin can" [Loc: STORAGE-WEST, Flags: TAKEBIT, Action: CAN-F]
+- [x] **CANTEEN** (compone.zil): "canteen" [Loc: MESS-HALL, Flags: TAKEBIT CONTBIT SEARCHBIT, Action: -]
+- [ ] **CARTON** (compone.zil): "cardboard box" [Loc: STORAGE-EAST, Flags: TAKEBIT CONTBIT SEARCHBIT OPENBIT, Action: CARTON-F]
+- [ ] **CELERY** (globals.zil): "piece of celery" [Loc: -, Flags: NDESCBIT FOODBIT, Action: CELERY-F]
+- [x] **CHEMICAL-DISPENSER** (compone.zil): "chemical dispenser" [Loc: MACHINE-SHOP, Flags: MUNGBIT NDESCBIT, Action: CHEMICAL-DISPENSER-F]
+- [x] **CHEMICAL-FLUID** (compone.zil): "quantity of chemical fluid" [Loc: -, Flags: -, Action: CHEMICAL-FLUID-F]
+- [ ] **CHRONOMETER** (globals.zil): "chronometer" [Loc: ADVENTURER, Flags: MUNGBIT TAKEBIT WEARBIT WORNBIT, Action: CHRONOMETER-F]
+- [ ] **CLIFF** (globals.zil): "cliff" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: CLIFF-F]
+- [x] **COMBINATION-DIAL** (compone.zil): "combination dial" [Loc: REC-AREA, Flags: MUNGBIT NDESCBIT, Action: COMBINATION-DIAL-F]
+- [ ] **COMBINATION-PAPER** (comptwo.zil): "piece of paper" [Loc: LAB-UNIFORM, Flags: ACIDBIT TAKEBIT READBIT, Action: COMBINATION-PAPER-F]
+- [x] **COMM-SCREEN** (compone.zil): "screen" [Loc: COMM-ROOM, Flags: NDESCBIT READBIT, Action: -]
+- [x] **CONFERENCE-DOOR** (compone.zil): "door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: CONFERENCE-DOOR-F]
+- [ ] **CONTROLS** (globals.zil): "set of controls" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: CONTROLS-F]
+- [ ] **CORRIDOR-DOOR** (globals.zil): "wide bulkhead" [Loc: LOCAL-GLOBALS, Flags: INVISIBLE DOORBIT OPENBIT NDESCBIT, Action: GANGWAY-DOOR-F]
+- [ ] **CRACKED-BOARD** (compone.zil): "cracked seventeen-centimeter fromitz board" [Loc: CARTON, Flags: ACIDBIT TAKEBIT, Action: CRACKED-BOARD-F]
+- [x] **CREVICE** (compone.zil): "crevice" [Loc: ADMIN-CORRIDOR-S, Flags: NDESCBIT, Action: CREVICE-F]
+- [ ] **CRYO-ELEVATOR-DOOR** (comptwo.zil): "cryo-elevator door" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT INVISIBLE, Action: -]
+- [ ] **CUBE** (comptwo.zil): "large metal cube" [Loc: PLANETARY-COURSE-CONTROL, Flags: MUNGBIT NDESCBIT CONTBIT SEARCHBIT, Action: CUBE-F]
+- [ ] **DARK-BUTTON** (comptwo.zil): "black button" [Loc: LAB-OFFICE, Flags: NDESCBIT, Action: DARK-BUTTON-F]
+- [ ] **DEAD-FLOYD** (compone.zil): "mangled robot" [Loc: -, Flags: -, Action: DEAD-FLOYD-F]
+- [x] **DISPENSER** (compone.zil): "dispenser unit" [Loc: KITCHEN, Flags: MUNGBIT CONTBIT SEARCHBIT OPENBIT TRANSBIT NDES..., Action: DISPENSER-F]
+- [x] **ELEVATOR-BUTTON** (compone.zil): "button" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: ELEVATOR-BUTTON-F]
+- [ ] **FIRST-BOARD** (comptwo.zil): "first seventeen-centimeter fromitz board" [Loc: ACCESS-PANEL, Flags: -, Action: BOARD-F]
+- [ ] **FLASK** (compone.zil): "glass flask" [Loc: TOOL-ROOM, Flags: CONTBIT SEARCHBIT OPENBIT TAKEBIT, Action: FLASK-F]
+- [x] **FLOYD** (compone.zil): "multiple purpose robot" [Loc: ROBOT-SHOP, Flags: CONTBIT SEARCHBIT TRANSBIT OPENBIT LIGHTBIT, Action: FLOYD-F]
+- [ ] **FOOD-KIT** (globals.zil): "survival kit" [Loc: -, Flags: TAKEBIT CONTBIT SEARCHBIT, Action: FOOD-KIT-F]
+- [ ] **FOURTH-BOARD** (comptwo.zil): "fourth seventeen-centimeter fromitz board" [Loc: ACCESS-PANEL, Flags: -, Action: BOARD-F]
+- [ ] **FRIED-BOARD** (comptwo.zil): "fried seventeen-centimeter fromitz board" [Loc: -, Flags: ACIDBIT TAKEBIT, Action: FRIED-BOARD-F]
+- [ ] **FUNGICIDE-BUTTON** (comptwo.zil): "red button" [Loc: LAB-OFFICE, Flags: NDESCBIT, Action: FUNGICIDE-BUTTON-F]
+- [x] **FUNNEL-HOLE** (compone.zil): "funnel-shaped hole" [Loc: COMM-ROOM, Flags: NDESCBIT, Action: -]
+- [ ] **GANGWAY-DOOR** (globals.zil): "narrow bulkhead" [Loc: LOCAL-GLOBALS, Flags: INVISIBLE DOORBIT OPENBIT NDESCBIT, Action: GANGWAY-DOOR-F]
+- [ ] **GAS-MASK** (comptwo.zil): "gas mask" [Loc: LAB-DESK, Flags: ACIDBIT TAKEBIT WEARBIT, Action: -]
+- [ ] **GLOBAL-DOORWAY** (globals.zil): "doorway" [Loc: GLOBAL-OBJECTS, Flags: NDESCBIT, Action: GLOBAL-DOORWAY-F]
+- [ ] **GLOBAL-GAMES** (globals.zil): "game" [Loc: GLOBAL-OBJECTS, Flags: NDESCBIT, Action: GLOBAL-GAMES-F]
+- [ ] **GLOBAL-OBJECTS** (globals.zil): - [Loc: -, Flags: INVISIBLE TOUCHBIT SURFACEBIT TRYTAKEBIT MUNGBI..., Action: -]
+- [ ] **GLOBAL-POD** (globals.zil): "escape pod" [Loc: LOCAL-GLOBALS, Flags: VOWELBIT VEHBIT NDESCBIT, Action: GLOBAL-POD-F]
+- [ ] **GLOBAL-SHUTTLE** (globals.zil): "shuttle car" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: GLOBAL-SHUTTLE-F]
+- [ ] **GOOD-BEDISTOR** (compone.zil): "good ninety-ohm bedistor" [Loc: CARTON, Flags: ACIDBIT TAKEBIT, Action: GOOD-BEDISTOR-F]
+- [ ] **GOOD-BOARD** (comptwo.zil): "shiny seventeen-centimeter fromitz board" [Loc: ROBOT-HOLE, Flags: ACIDBIT INVISIBLE NDESCBIT, Action: GOOD-BOARD-F]
+- [x] **GRAY-BUTTON** (compone.zil): "gray button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [x] **GREEN-BUTTON** (compone.zil): "green button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [ ] **GREEN-GOO** (globals.zil): "blob of green goo" [Loc: FOOD-KIT, Flags: ACIDBIT FOODBIT, Action: GOO-F]
+- [ ] **GREEN-SPOOL** (comptwo.zil): "green spool" [Loc: LIBRARY-LOBBY, Flags: ACIDBIT TAKEBIT READBIT, Action: GREEN-SPOOL-F]
+- [ ] **GROUND** (globals.zil): "floor" [Loc: GLOBAL-OBJECTS, Flags: NDESCBIT, Action: GROUND-F]
+- [ ] **GRUE** (comptwo.zil): "lurking fanged creature" [Loc: BIO-LAB, Flags: ACTORBIT, Action: GRUE-F]
+- [ ] **HANDS** (globals.zil): "pair of hands" [Loc: GLOBAL-OBJECTS, Flags: NDESCBIT, Action: HANDS-F]
+- [x] **HELICOPTER-OBJECT** (compone.zil): "large vehicle" [Loc: LOCAL-GLOBALS, Flags: VEHBIT NDESCBIT, Action: HELICOPTER-OBJECT-F]
+- [x] **HIGH-PROTEIN** (compone.zil): "quantity of protein-rich liquid" [Loc: -, Flags: FOODBIT, Action: HIGH-PROTEIN-F]
+- [ ] **ID-CARD** (globals.zil): "ID card" [Loc: PATROL-UNIFORM, Flags: VOWELBIT TAKEBIT READBIT, Action: -]
+- [ ] **INTNUM** (globals.zil): "number" [Loc: GLOBAL-OBJECTS, Flags: -, Action: -]
+- [ ] **IT** (globals.zil): "random object" [Loc: GLOBAL-OBJECTS, Flags: NDESCBIT, Action: -]
+- [x] **KEY** (compone.zil): "key" [Loc: ADMIN-CORRIDOR-S, Flags: ACIDBIT TAKEBIT TOOLBIT INVISIBLE TRYTAKEBIT, Action: KEY-F]
+- [ ] **KITCHEN-CARD** (compone.zil): "kitchen access card" [Loc: SMALL-DESK, Flags: TAKEBIT READBIT, Action: -]
+- [x] **KITCHEN-DOOR** (compone.zil): "door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: KITCHEN-DOOR-F]
+- [ ] **LAB-DESK** (comptwo.zil): "desk" [Loc: LAB-OFFICE, Flags: CONTBIT SEARCHBIT NDESCBIT, Action: LAB-DESK-F]
+- [ ] **LAB-UNIFORM** (comptwo.zil): "lab uniform" [Loc: LAB-STORAGE, Flags: TAKEBIT CONTBIT SEARCHBIT WEARBIT, Action: LAB-UNIFORM-F]
+- [x] **LADDER** (compone.zil): "ladder" [Loc: STORAGE-WEST, Flags: TAKEBIT, Action: LADDER-F]
+- [ ] **LAMP** (comptwo.zil): "portable lamp" [Loc: RADIATION-LAB, Flags: TAKEBIT, Action: LAMP-F]
+- [ ] **LARGE-DESK** (compone.zil): "large desk" [Loc: LARGE-OFFICE, Flags: CONTBIT SEARCHBIT NDESCBIT, Action: DESK-F]
+- [ ] **LASER** (comptwo.zil): "laser" [Loc: TOOL-ROOM, Flags: MUNGBIT TAKEBIT OPENBIT TRANSBIT CONTBIT, Action: LASER-F]
+- [ ] **LASER-DIAL** (comptwo.zil): "laser setting dial" [Loc: LASER, Flags: MUNGBIT NDESCBIT, Action: LASER-DIAL-F]
+- [ ] **LAZARUS-PART** (comptwo.zil): "medical robot breastplate" [Loc: -, Flags: TAKEBIT, Action: -]
+- [ ] **LEVER** (globals.zil): "lever" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: LEVER-F]
+- [ ] **LIGHT-BUTTON** (comptwo.zil): "white button" [Loc: LAB-OFFICE, Flags: NDESCBIT, Action: LIGHT-BUTTON-F]
+- [ ] **LIGHTS** (globals.zil): "light" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: LIGHTS-F]
+- [ ] **LOCAL-GLOBALS** (globals.zil): - [Loc: GLOBAL-OBJECTS, Flags: -, Action: -]
+- [ ] **LOWER-ELEVATOR-CARD** (compone.zil): "lower elevator access card" [Loc: -, Flags: TAKEBIT READBIT, Action: -]
+- [x] **LOWER-ELEVATOR-DOOR** (compone.zil): "red door" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT DOORBIT, Action: LOWER-ELEVATOR-DOOR-F]
+- [ ] **MAGNET** (compone.zil): "curved metal bar" [Loc: TOOL-ROOM, Flags: TRYTAKEBIT TAKEBIT, Action: MAGNET-F]
+- [ ] **ME** (globals.zil): "you" [Loc: GLOBAL-OBJECTS, Flags: ACTORBIT, Action: CRETIN-F]
+- [ ] **MEDICINE** (comptwo.zil): "quantity of medicine" [Loc: MEDICINE-BOTTLE, Flags: FOODBIT, Action: MEDICINE-F]
+- [ ] **MEDICINE-BOTTLE** (comptwo.zil): "medicine bottle" [Loc: INFIRMARY, Flags: CONTBIT SEARCHBIT TAKEBIT TRANSBIT READBIT, Action: -]
+- [ ] **MEGAFUSE-B** (compone.zil): "B-series megafuse" [Loc: CARTON, Flags: ACIDBIT TAKEBIT, Action: -]
+- [ ] **MEGAFUSE-K** (compone.zil): "K-series megafuse" [Loc: CARTON, Flags: ACIDBIT TAKEBIT, Action: -]
+- [ ] **MEMO** (comptwo.zil): "memo" [Loc: -, Flags: READBIT ACIDBIT TAKEBIT, Action: -]
+- [ ] **MICROBE** (comptwo.zil): "microbe" [Loc: -, Flags: ACTORBIT, Action: MICROBE-F]
+- [ ] **MINI-CARD** (comptwo.zil): "miniaturization access card" [Loc: BIO-LOCK-EAST, Flags: TAKEBIT NDESCBIT INVISIBLE READBIT, Action: MINI-CARD-F]
+- [ ] **NEW-BATTERY** (comptwo.zil): "new battery" [Loc: LAB-STORAGE, Flags: ACIDBIT TAKEBIT, Action: -]
+- [ ] **NOT-HERE-OBJECT** (globals.zil): "such thing" ;"[not here]" [Loc: -, Flags: -, Action: NOT-HERE-OBJECT-F]
+- [ ] **OCEAN** (globals.zil): "ocean" [Loc: LOCAL-GLOBALS, Flags: VOWELBIT NDESCBIT, Action: OCEAN-F]
+- [ ] **OFFICE-DOOR** (comptwo.zil): "office door" [Loc: LOCAL-GLOBALS, Flags: VOWELBIT DOORBIT NDESCBIT, Action: -]
+- [ ] **OIL-CAN** (compone.zil): "oil can" [Loc: STORAGE-EAST, Flags: VOWELBIT TAKEBIT, Action: OIL-CAN-F]
+- [ ] **OLD-BATTERY** (comptwo.zil): "old battery" [Loc: LASER, Flags: VOWELBIT ACIDBIT TAKEBIT, Action: -]
+- [x] **PADLOCK** (compone.zil): "padlock" [Loc: MESS-CORRIDOR, Flags: MUNGBIT NDESCBIT TAKEBIT TRYTAKEBIT, Action: PADLOCK-F]
+- [ ] **PATROL-UNIFORM** (globals.zil): "Patrol uniform" [Loc: ADVENTURER, Flags: TAKEBIT WORNBIT WEARBIT CONTBIT SEARCHBIT OPENBIT, Action: PATROL-UNIFORM-F]
+- [x] **PLAYBACK-BUTTON** (compone.zil): "glowing button" [Loc: COMM-ROOM, Flags: NDESCBIT, Action: PLAYBACK-BUTTON-F]
+- [ ] **PLIERS** (compone.zil): "pair of wide-nosed pliers" [Loc: TOOL-ROOM, Flags: TAKEBIT, Action: -]
+- [ ] **POD-DOOR** (globals.zil): "escape pod bulkhead" [Loc: LOCAL-GLOBALS, Flags: VOWELBIT DOORBIT NDESCBIT, Action: POD-DOOR-F]
+- [ ] **PRINT-OUT** (comptwo.zil): "pile of computer output" [Loc: COMPUTER-ROOM, Flags: ACIDBIT TAKEBIT READBIT, Action: PRINT-OUT-F]
+- [ ] **PSEUDO-OBJECT** (globals.zil): "pseudo" [Loc: -, Flags: -, Action: GO]
+- [ ] **RAD-DOOR-EAST** (comptwo.zil): "lab door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: RAD-DOOR-EAST-F]
+- [ ] **RAD-DOOR-WEST** (comptwo.zil): "radiation-lock door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: RAD-DOOR-WEST-F]
+- [ ] **RAT-ANT** (comptwo.zil): "rat-like, ant-like man-sized monster" [Loc: BIO-LAB, Flags: ACTORBIT, Action: -]
+- [ ] **REACTOR-ELEVATOR-DOOR** (compone.zil): "reactor elevator door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT, Action: REACTOR-ELEVATOR-DOOR-F]
+- [x] **RECEIVE-CONSOLE** (compone.zil): "communications receive console" [Loc: COMM-ROOM, Flags: NDESCBIT, Action: -]
+- [x] **RED-BUTTON** (compone.zil): "red button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [x] **RED-ELEVATOR-BUTTON** (compone.zil): "red button" [Loc: ELEVATOR-LOBBY, Flags: NDESCBIT, Action: RED-ELEVATOR-BUTTON-F]
+- [ ] **RED-GOO** (globals.zil): "blob of red goo" [Loc: FOOD-KIT, Flags: ACIDBIT FOODBIT, Action: GOO-F]
+- [ ] **RED-SPOOL** (comptwo.zil): "red spool" [Loc: INFIRMARY, Flags: TAKEBIT ACIDBIT READBIT, Action: RED-SPOOL-F]
+- [ ] **RELAY** (comptwo.zil): "micro-relay" [Loc: STRIP-NEAR-RELAY, Flags: NDESCBIT TRANSBIT, Action: RELAY-F]
+- [ ] **RIFT** (compone.zil): "rift" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: RIFT-F]
+- [ ] **ROBOT-HOLE** (comptwo.zil): "small doorway" [Loc: REPAIR-ROOM, Flags: NDESCBIT TRANSBIT CONTBIT, Action: ROBOT-HOLE-F]
+- [ ] **ROOMS** (globals.zil): - [Loc: -, Flags: -, Action: -]
+- [x] **ROUND-WHITE-BUTTON** (compone.zil): "round white button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [ ] **SAFETY-WEB** (globals.zil): "safety web" [Loc: ESCAPE-POD, Flags: CLIMBBIT VEHBIT NDESCBIT, Action: SAFETY-WEB-F]
+- [ ] **SCRUB-BRUSH** (globals.zil): "Patrol-issue self-contained multi-purpose scru... [Loc: ADVENTURER, Flags: TAKEBIT, Action: -]
+- [ ] **SECOND-BOARD** (comptwo.zil): "second seventeen-centimeter fromitz board" [Loc: ACCESS-PANEL, Flags: TRYTAKEBIT TAKEBIT, Action: BOARD-F]
+- [x] **SEND-CONSOLE** (compone.zil): "communication send console" [Loc: COMM-ROOM, Flags: NDESCBIT, Action: -]
+- [ ] **SHELVES** (globals.zil): "shelf" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: SHELVES-F]
+- [ ] **SHUTTLE-CARD** (compone.zil): "shuttle access card" [Loc: LARGE-DESK, Flags: TAKEBIT READBIT, Action: -]
+- [ ] **SHUTTLE-DOOR** (globals.zil): "door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT OPENBIT INVISIBLE, Action: SHUTTLE-DOOR-F]
+- [ ] **SLEEP** (globals.zil): "sacred act of sleeping" [Loc: GLOBAL-OBJECTS, Flags: NDESCBIT, Action: SLEEP-F]
+- [ ] **SLOT** (globals.zil): "slot" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: SLOT-F]
+- [ ] **SMALL-DESK** (compone.zil): "small desk" [Loc: SMALL-OFFICE, Flags: NDESCBIT CONTBIT SEARCHBIT, Action: DESK-F]
+- [ ] **SPECK** (comptwo.zil): "speck" [Loc: RELAY, Flags: NDESCBIT, Action: -]
+- [ ] **SPOOL-READER** (comptwo.zil): "microfilm reader" [Loc: LIBRARY, Flags: LIGHTBIT CONTBIT SEARCHBIT OPENBIT, Action: SPOOL-READER-F]
+- [x] **SQUARE-WHITE-BUTTON** (compone.zil): "square white button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+- [ ] **STAIRS** (globals.zil): "stairway" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT CLIMBBIT, Action: -]
+- [x] **STORAGE-WEST-DOOR** (compone.zil): "door" [Loc: LOCAL-GLOBALS, Flags: DOORBIT NDESCBIT, Action: STORAGE-WEST-DOOR-F]
+- [ ] **STRIP** (comptwo.zil): "silicon strip" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: STRIP-F]
+- [ ] **TABLES** (globals.zil): "table" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: TABLES-F]
+- [ ] **TELEPORTATION-BUTTON-1** (globals.zil): "brown button" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: TELEPORTATION-BUTTON-1-F]
+- [ ] **TELEPORTATION-BUTTON-2** (globals.zil): "beige button" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: TELEPORTATION-BUTTON-2-F]
+- [ ] **TELEPORTATION-BUTTON-3** (globals.zil): "tan button" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: TELEPORTATION-BUTTON-3-F]
+- [ ] **TELEPORTATION-CARD** (comptwo.zil): "teleportation access card" [Loc: LAB-UNIFORM, Flags: TAKEBIT READBIT, Action: -]
+- [ ] **TERMINAL** (comptwo.zil): "terminal" [Loc: LIBRARY-LOBBY, Flags: LIGHTBIT, Action: TERMINAL-F]
+- [ ] **THIRD-BOARD** (comptwo.zil): "third seventeen-centimeter fromitz board" [Loc: ACCESS-PANEL, Flags: -, Action: BOARD-F]
+- [ ] **TOWEL** (globals.zil): "towel" [Loc: -, Flags: READBIT TAKEBIT, Action: TOWEL-F]
+- [ ] **TRIFFID** (comptwo.zil): "mobile man-eating plant" [Loc: BIO-LAB, Flags: -, Action: -]
+- [ ] **TROLL** (comptwo.zil): "hairy growling biped" [Loc: BIO-LAB, Flags: ACTORBIT, Action: -]
+- [ ] **UPPER-ELEVATOR-CARD** (compone.zil): "upper elevator access card" [Loc: SMALL-DESK, Flags: VOWELBIT TAKEBIT READBIT, Action: -]
+- [x] **UPPER-ELEVATOR-DOOR** (compone.zil): "blue door" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT DOORBIT, Action: UPPER-ELEVATOR-DOOR-F]
+- [ ] **WINDOW** (globals.zil): "window" [Loc: LOCAL-GLOBALS, Flags: NDESCBIT, Action: WINDOW-F]
+- [x] **YELLOW-BUTTON** (compone.zil): "yellow button" [Loc: MACHINE-SHOP, Flags: NDESCBIT, Action: CHEM-BUTTON-F]
+
+## Rooms
+|---|---|---|---|---|
+- [ ] **ADMIN-CORRIDOR** (compone.zil): "Admin Corridor" [Flags: RLANDBIT ONBIT, Action: ADMIN-CORRIDOR-F]
+- [ ] **ADMIN-CORRIDOR-N** (compone.zil): "Admin Corridor North" [Flags: RLANDBIT ONBIT, Action: ADMIN-CORRIDOR-N-F]
+- [x] **ADMIN-CORRIDOR-S** (compone.zil): "Admin Corridor South" [Flags: RLANDBIT ONBIT, Action: ADMIN-CORRIDOR-S-F]
+- [ ] **ALFIE-CONTROL-EAST** (globals.zil): "Alfie Control East" [Flags: RLANDBIT ONBIT, Action: CONTROL-CABIN-F]
+- [ ] **ALFIE-CONTROL-WEST** (globals.zil): "Alfie Control West" [Flags: RLANDBIT ONBIT, Action: CONTROL-CABIN-F]
+- [ ] **AUXILIARY-BOOTH** (comptwo.zil): "Auxiliary Booth" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **BALCONY** (compone.zil): "Balcony" [Flags: ONBIT RLANDBIT, Action: BALCONY-F]
+- [ ] **BETTY-CONTROL-EAST** (globals.zil): "Betty Control East" [Flags: RLANDBIT ONBIT, Action: CONTROL-CABIN-F]
+- [ ] **BETTY-CONTROL-WEST** (globals.zil): "Betty Control West" [Flags: RLANDBIT ONBIT, Action: CONTROL-CABIN-F]
+- [ ] **BIO-LAB** (comptwo.zil): "Bio Lab" [Flags: RLANDBIT ONBIT, Action: BIO-LAB-F]
+- [ ] **BIO-LOCK-EAST** (comptwo.zil): "Bio Lock East" [Flags: RLANDBIT ONBIT, Action: BIO-LOCK-EAST-F]
+- [ ] **BIO-LOCK-WEST** (comptwo.zil): "Bio Lock West" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **BOOTH-1** (compone.zil): "Booth 1" [Flags: ONBIT RLANDBIT, Action: -]
+- [x] **BOOTH-2** (compone.zil): "Booth 2" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **BOOTH-3** (comptwo.zil): "Booth 3" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **BRIG** (globals.zil): "Brig" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **COMM-ROOM** (compone.zil): "Comm Room" [Flags: RLANDBIT ONBIT, Action: COMM-ROOM-F]
+- [ ] **COMPUTER-ROOM** (comptwo.zil): "Computer Room" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [x] **CONFERENCE-ROOM** (compone.zil): "Conference Room" [Flags: RLANDBIT ONBIT, Action: CONFERENCE-ROOM-F]
+- [x] **CORRIDOR-JUNCTION** (compone.zil): "Corridor Junction" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [x] **COURTYARD** (compone.zil): "Courtyard" [Flags: ONBIT RLANDBIT FLOYDBIT, Action: COURTYARD-F]
+- [x] **CRAG** (compone.zil): "Crag" [Flags: ONBIT RLANDBIT, Action: CRAG-F]
+- [ ] **CRYO-ANTEROOM** (comptwo.zil): "Cryo-Anteroom" [Flags: RLANDBIT ONBIT, Action: CRYO-ANTEROOM-F]
+- [ ] **CRYO-ELEVATOR** (comptwo.zil): "Cryo-Elevator" [Flags: RLANDBIT ONBIT, Action: CRYO-ELEVATOR-F]
+- [ ] **DECK-EIGHT** (globals.zil): "Deck Eight" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **DECK-NINE** (globals.zil): "Deck Nine" [Flags: RLANDBIT ONBIT, Action: DECK-NINE-F]
+- [x] **DORM-A** (compone.zil): "Dorm A" [Flags: FLOYDBIT ONBIT RLANDBIT, Action: -]
+- [x] **DORM-B** (compone.zil): "Dorm B" [Flags: FLOYDBIT ONBIT RLANDBIT, Action: -]
+- [x] **DORM-C** (compone.zil): "Dorm C" [Flags: ONBIT FLOYDBIT RLANDBIT, Action: -]
+- [x] **DORM-CORRIDOR** (compone.zil): "Dorm Corridor" [Flags: ONBIT RLANDBIT, Action: -]
+- [x] **DORM-D** (compone.zil): "Dorm D" [Flags: FLOYDBIT ONBIT RLANDBIT, Action: -]
+- [x] **ELEVATOR-LOBBY** (compone.zil): "Elevator Lobby" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: ELEVATOR-LOBBY-F]
+- [ ] **ESCALATOR** (comptwo.zil): "Escalator" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [ ] **ESCAPE-POD** (globals.zil): "Escape Pod" [Flags: RLANDBIT ONBIT, Action: ESCAPE-POD-F]
+- [ ] **FORK** (comptwo.zil): "Fork" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [ ] **GANGWAY** (globals.zil): "Gangway" [Flags: RLANDBIT ONBIT, Action: GANGWAY-F]
+- [x] **HELICOPTER** (compone.zil): "Helicopter" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **HELIPAD** (compone.zil): "Helipad" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **INFIRMARY** (comptwo.zil): "Infirmary" [Flags: RLANDBIT ONBIT, Action: INFIRMARY-F]
+- [x] **KALAMONTEE-PLATFORM** (compone.zil): "Kalamontee Platform" [Flags: RLANDBIT ONBIT, Action: KALAMONTEE-PLATFORM-F]
+- [x] **KITCHEN** (compone.zil): "Kitchen" [Flags: ONBIT RLANDBIT, Action: -]
+- [ ] **LAB-OFFICE** (comptwo.zil): "Lab Office" [Flags: RLANDBIT ONBIT, Action: LAB-OFFICE-F]
+- [ ] **LAB-STORAGE** (comptwo.zil): "Lab Storage" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [ ] **LARGE-OFFICE** (compone.zil): "Large Office" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [ ] **LAWANDA-PLATFORM** (comptwo.zil): "Lawanda Platform" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: LAWANDA-PLATFORM-F]
+- [ ] **LIBRARY** (comptwo.zil): "Library" [Flags: RLANDBIT ONBIT FLOYDBIT, Action: -]
+- [ ] **LIBRARY-LOBBY** (comptwo.zil): "Library Lobby" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [x] **LOWER-ELEVATOR** (compone.zil): "Lower Elevator" [Flags: RLANDBIT ONBIT, Action: LOWER-ELEVATOR-F]
+- [x] **MACHINE-SHOP** (compone.zil): "Machine Shop" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: MACHINE-SHOP-F]
+- [ ] **MAIN-LAB** (comptwo.zil): "Main Lab" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [ ] **MECH-CORRIDOR** (compone.zil): "Mech Corridor" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **MECH-CORRIDOR-N** (compone.zil): "Mech Corridor North" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **MECH-CORRIDOR-S** (compone.zil): "Mech Corridor South" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **MESS-CORRIDOR** (compone.zil): "Mess Corridor" [Flags: ONBIT RLANDBIT, Action: MESS-CORRIDOR-F]
+- [x] **MESS-HALL** (compone.zil): "Mess Hall" [Flags: ONBIT FLOYDBIT RLANDBIT, Action: MESS-HALL-F]
+- [ ] **MIDDLE-OF-STRIP** (comptwo.zil): "Middle of Strip" [Flags: RLANDBIT ONBIT, Action: MIDDLE-OF-STRIP-F]
+- [ ] **MINI-BOOTH** (comptwo.zil): "Miniaturization Booth" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **OBSERVATION-DECK** (compone.zil): "Observation Deck" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **PHYSICAL-PLANT** (compone.zil): "Physical Plant" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [ ] **PHYSICAL-PLANT-TWO** (comptwo.zil): "Physical Plant" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [x] **PLAIN-HALL** (compone.zil): "Plain Hall" [Flags: ONBIT RLANDBIT, Action: -]
+- [ ] **PLAN-ROOM** (compone.zil): "Plan Room" [Flags: RLANDBIT ONBIT FLOYDBIT, Action: -]
+- [ ] **PLANETARY-COURSE-CONTROL** (comptwo.zil): "Course Control" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: PLANETARY-COURSE-CONTROL-F]
+- [ ] **PLANETARY-DEFENSE** (comptwo.zil): "Planetary Defense" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: PLANETARY-DEFENSE-F]
+- [ ] **PROJCON-OFFICE** (comptwo.zil): "ProjCon Office" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: PROJCON-OFFICE-F]
+- [ ] **PROJECT-CORRIDOR** (comptwo.zil): "Project Corridor" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **PROJECT-CORRIDOR-EAST** (comptwo.zil): "Project Corridor East" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **PROJECT-CORRIDOR-WEST** (comptwo.zil): "Project Corridor West" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **RADIATION-LAB** (comptwo.zil): "Radiation Lab" [Flags: RLANDBIT ONBIT, Action: RADIATION-LAB-F]
+- [ ] **RADIATION-LOCK-EAST** (comptwo.zil): "Radiation Lock East" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **RADIATION-LOCK-WEST** (comptwo.zil): "Radiation Lock West" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **REACTOR-ACCESS-STAIRS** (compone.zil): "Reactor Access Stairs" [Flags: RLANDBIT, Action: -]
+- [ ] **REACTOR-CONTROL** (compone.zil): "Reactor Control" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [ ] **REACTOR-ELEVATOR** (compone.zil): "Reactor Elevator" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **REACTOR-LOBBY** (globals.zil): "Reactor Lobby" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **REC-AREA** (compone.zil): "Rec Area" [Flags: ONBIT RLANDBIT FLOYDBIT, Action: REC-AREA-F]
+- [x] **REC-CORRIDOR** (compone.zil): "Rec Corridor" [Flags: ONBIT RLANDBIT, Action: -]
+- [ ] **REPAIR-ROOM** (comptwo.zil): "Repair Room" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [x] **ROBOT-SHOP** (compone.zil): "Robot Shop" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [x] **SANFAC-A** (compone.zil): "SanFac A" [Flags: ONBIT RLANDBIT FLOYDBIT, Action: -]
+- [x] **SANFAC-B** (compone.zil): "SanFac B" [Flags: FLOYDBIT ONBIT RLANDBIT, Action: -]
+- [x] **SANFAC-C** (compone.zil): "SanFac C" [Flags: FLOYDBIT ONBIT RLANDBIT, Action: -]
+- [x] **SANFAC-D** (compone.zil): "SanFac D" [Flags: ONBIT FLOYDBIT RLANDBIT, Action: -]
+- [ ] **SANFAC-E** (compone.zil): "SanFac E" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [ ] **SANFAC-F** (comptwo.zil): "SanFac F" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: -]
+- [ ] **SHUTTLE-CAR-ALFIE** (globals.zil): "Shuttle Car Alfie" [Flags: RLANDBIT ONBIT, Action: SHUTTLE-CAR-F]
+- [ ] **SHUTTLE-CAR-BETTY** (globals.zil): "Shuttle Car Betty" [Flags: RLANDBIT ONBIT, Action: SHUTTLE-CAR-F]
+- [ ] **SMALL-OFFICE** (compone.zil): "Small Office" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [ ] **STATION-384** (comptwo.zil): "Station 384" [Flags: RLANDBIT ONBIT, Action: STATION-384-F]
+- [ ] **STORAGE-EAST** (compone.zil): "Storage East" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [x] **STORAGE-WEST** (compone.zil): "Storage West" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **STRIP-NEAR-RELAY** (comptwo.zil): "Strip Near Relay" [Flags: RLANDBIT ONBIT, Action: STRIP-NEAR-RELAY-F]
+- [ ] **STRIP-NEAR-STATION** (comptwo.zil): "Strip Near Station" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **SYSTEMS-CORRIDOR** (comptwo.zil): "Systems Corridor" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **SYSTEMS-CORRIDOR-EAST** (comptwo.zil): "Systems Corridor East" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **SYSTEMS-CORRIDOR-WEST** (comptwo.zil): "Systems Corridor West" [Flags: ONBIT RLANDBIT, Action: -]
+- [ ] **SYSTEMS-MONITORS** (compone.zil): "Systems Monitors" [Flags: FLOYDBIT RLANDBIT ONBIT, Action: SYSTEMS-MONITORS-F]
+- [ ] **TOOL-ROOM** (compone.zil): "Tool Room" [Flags: RLANDBIT FLOYDBIT ONBIT, Action: -]
+- [x] **TOWER-CORE** (compone.zil): "Tower Core" [Flags: RLANDBIT ONBIT, Action: -]
+- [ ] **TRANSPORTATION-SUPPLY** (compone.zil): "Transportation Supply" [Flags: RLANDBIT, Action: -]
+- [x] **UNDERWATER** (compone.zil): "Underwater" [Flags: ONBIT RWATERBIT, Action: UNDERWATER-F]
+- [x] **UPPER-ELEVATOR** (compone.zil): "Upper Elevator" [Flags: RLANDBIT ONBIT, Action: UPPER-ELEVATOR-F]
+- [x] **WAITING-AREA** (compone.zil): "Waiting Area" [Flags: RLANDBIT ONBIT, Action: -]
+- [x] **WEST-WING** (compone.zil): "West Wing" [Flags: ONBIT RLANDBIT FLOYDBIT, Action: -]
+- [x] **WINDING-STAIR** (compone.zil): "Winding Stair" [Flags: ONBIT RLANDBIT, Action: WINDING-STAIR-F]
+
+## Action Routines
+|---|---|---|
+- [ ] **ACCESS-PANEL-F** (Object Action) [Obj: ACCESS-PANEL]
+- [ ] **ADMIN-CORRIDOR-F** (Room Action) [Obj: ADMIN-CORRIDOR]
+- [ ] **ADMIN-CORRIDOR-N-F** (Room Action) [Obj: ADMIN-CORRIDOR-N]
+- [ ] **ADMIN-CORRIDOR-S-F** (Room Action) [Obj: ADMIN-CORRIDOR-S]
+- [ ] **AMBASSADOR-F** (Object Action) [Obj: AMBASSADOR]
+- [ ] **BAD-BEDISTOR-F** (Object Action) [Obj: BAD-BEDISTOR]
+- [ ] **BALCONY-F** (Room Action) [Obj: BALCONY]
+- [ ] **BED-F** (Object Action) [Obj: BED]
+- [ ] **BIO-DOOR-EAST-F** (Object Action) [Obj: BIO-DOOR-EAST]
+- [ ] **BIO-DOOR-WEST-F** (Object Action) [Obj: BIO-DOOR-WEST]
+- [ ] **BIO-LAB-F** (Room Action) [Obj: BIO-LAB]
+- [ ] **BIO-LOCK-EAST-F** (Room Action) [Obj: BIO-LOCK-EAST]
+- [ ] **BLATHER-F** (Object Action) [Obj: BLATHER]
+- [ ] **BLUE-ELEVATOR-BUTTON-F** (Object Action) [Obj: BLUE-ELEVATOR-BUTTON]
+- [ ] **BOARD-F** (Object Action) [Obj: SECOND-BOARD]
+- [ ] **CAN-F** (Object Action) [Obj: CAN]
+- [ ] **CARTON-F** (Object Action) [Obj: CARTON]
+- [ ] **CELERY-F** (Object Action) [Obj: CELERY]
+- [ ] **CHEM-BUTTON-F** (Object Action) [Obj: SQUARE-WHITE-BUTTON]
+- [ ] **CHEMICAL-DISPENSER-F** (Object Action) [Obj: CHEMICAL-DISPENSER]
+- [ ] **CHEMICAL-FLUID-F** (Object Action) [Obj: CHEMICAL-FLUID]
+- [ ] **CHRONOMETER-F** (Object Action) [Obj: CHRONOMETER]
+- [ ] **CLIFF-F** (Object Action) [Obj: CLIFF]
+- [ ] **COMBINATION-DIAL-F** (Object Action) [Obj: COMBINATION-DIAL]
+- [ ] **COMBINATION-PAPER-F** (Object Action) [Obj: COMBINATION-PAPER]
+- [ ] **COMM-ROOM-F** (Room Action) [Obj: COMM-ROOM]
+- [ ] **CONFERENCE-DOOR-F** (Object Action) [Obj: CONFERENCE-DOOR]
+- [ ] **CONFERENCE-ROOM-F** (Room Action) [Obj: CONFERENCE-ROOM]
+- [ ] **CONTROL-CABIN-F** (Room Action) [Obj: BETTY-CONTROL-WEST]
+- [ ] **CONTROLS-F** (Object Action) [Obj: CONTROLS]
+- [ ] **COURTYARD-F** (Room Action) [Obj: COURTYARD]
+- [ ] **CRACKED-BOARD-F** (Object Action) [Obj: CRACKED-BOARD]
+- [ ] **CRAG-F** (Room Action) [Obj: CRAG]
+- [ ] **CRETIN-F** (Object Action) [Obj: ME]
+- [ ] **CREVICE-F** (Object Action) [Obj: CREVICE]
+- [ ] **CRYO-ANTEROOM-F** (Room Action) [Obj: CRYO-ANTEROOM]
+- [ ] **CRYO-ELEVATOR-F** (Room Action) [Obj: CRYO-ELEVATOR]
+- [ ] **CUBE-F** (Object Action) [Obj: CUBE]
+- [ ] **DARK-BUTTON-F** (Object Action) [Obj: DARK-BUTTON]
+- [ ] **DEAD-FLOYD-F** (Object Action) [Obj: DEAD-FLOYD]
+- [ ] **DECK-NINE-F** (Room Action) [Obj: DECK-NINE]
+- [ ] **DESK-F** (Object Action) [Obj: LARGE-DESK]
+- [ ] **DISPENSER-F** (Object Action) [Obj: DISPENSER]
+- [ ] **ELEVATOR-BUTTON-F** (Object Action) [Obj: ELEVATOR-BUTTON]
+- [ ] **ELEVATOR-LOBBY-F** (Room Action) [Obj: ELEVATOR-LOBBY]
+- [ ] **ESCAPE-POD-F** (Room Action) [Obj: ESCAPE-POD]
+- [ ] **FLASK-F** (Object Action) [Obj: FLASK]
+- [ ] **FLOYD-F** (Object Action) [Obj: FLOYD]
+- [ ] **FOOD-KIT-F** (Object Action) [Obj: FOOD-KIT]
+- [ ] **FRIED-BOARD-F** (Object Action) [Obj: FRIED-BOARD]
+- [ ] **FUNGICIDE-BUTTON-F** (Object Action) [Obj: FUNGICIDE-BUTTON]
+- [ ] **GANGWAY-DOOR-F** (Object Action) [Obj: GANGWAY-DOOR]
+- [ ] **GANGWAY-F** (Room Action) [Obj: GANGWAY]
+- [ ] **GLOBAL-DOORWAY-F** (Object Action) [Obj: GLOBAL-DOORWAY]
+- [ ] **GLOBAL-GAMES-F** (Object Action) [Obj: GLOBAL-GAMES]
+- [ ] **GLOBAL-POD-F** (Object Action) [Obj: GLOBAL-POD]
+- [ ] **GLOBAL-SHUTTLE-F** (Object Action) [Obj: GLOBAL-SHUTTLE]
+- [ ] **GO** (Object Action) [Obj: PSEUDO-OBJECT]
+- [ ] **GOO-F** (Object Action) [Obj: GREEN-GOO]
+- [ ] **GOOD-BEDISTOR-F** (Object Action) [Obj: GOOD-BEDISTOR]
+- [ ] **GOOD-BOARD-F** (Object Action) [Obj: GOOD-BOARD]
+- [ ] **GREEN-SPOOL-F** (Object Action) [Obj: GREEN-SPOOL]
+- [ ] **GROUND-F** (Object Action) [Obj: GROUND]
+- [ ] **GRUE-F** (Object Action) [Obj: GRUE]
+- [ ] **HANDS-F** (Object Action) [Obj: HANDS]
+- [ ] **HELICOPTER-OBJECT-F** (Object Action) [Obj: HELICOPTER-OBJECT]
+- [ ] **HIGH-PROTEIN-F** (Object Action) [Obj: HIGH-PROTEIN]
+- [ ] **INFIRMARY-F** (Room Action) [Obj: INFIRMARY]
+- [ ] **KALAMONTEE-PLATFORM-F** (Room Action) [Obj: KALAMONTEE-PLATFORM]
+- [ ] **KEY-F** (Object Action) [Obj: KEY]
+- [ ] **KITCHEN-DOOR-F** (Object Action) [Obj: KITCHEN-DOOR]
+- [ ] **LAB-DESK-F** (Object Action) [Obj: LAB-DESK]
+- [ ] **LAB-OFFICE-F** (Room Action) [Obj: LAB-OFFICE]
+- [ ] **LAB-UNIFORM-F** (Object Action) [Obj: LAB-UNIFORM]
+- [ ] **LADDER-F** (Object Action) [Obj: LADDER]
+- [ ] **LAMP-F** (Object Action) [Obj: LAMP]
+- [ ] **LASER-DIAL-F** (Object Action) [Obj: LASER-DIAL]
+- [ ] **LASER-F** (Object Action) [Obj: LASER]
+- [ ] **LAWANDA-PLATFORM-F** (Room Action) [Obj: LAWANDA-PLATFORM]
+- [ ] **LEVER-F** (Object Action) [Obj: LEVER]
+- [ ] **LIGHT-BUTTON-F** (Object Action) [Obj: LIGHT-BUTTON]
+- [ ] **LIGHTS-F** (Object Action) [Obj: LIGHTS]
+- [ ] **LOWER-ELEVATOR-DOOR-F** (Object Action) [Obj: LOWER-ELEVATOR-DOOR]
+- [ ] **LOWER-ELEVATOR-F** (Room Action) [Obj: LOWER-ELEVATOR]
+- [ ] **MACHINE-SHOP-F** (Room Action) [Obj: MACHINE-SHOP]
+- [ ] **MAGNET-F** (Object Action) [Obj: MAGNET]
+- [ ] **MEDICINE-F** (Object Action) [Obj: MEDICINE]
+- [ ] **MESS-CORRIDOR-F** (Room Action) [Obj: MESS-CORRIDOR]
+- [ ] **MESS-HALL-F** (Room Action) [Obj: MESS-HALL]
+- [ ] **MICROBE-F** (Object Action) [Obj: MICROBE]
+- [ ] **MIDDLE-OF-STRIP-F** (Room Action) [Obj: MIDDLE-OF-STRIP]
+- [ ] **MINI-CARD-F** (Object Action) [Obj: MINI-CARD]
+- [ ] **NOT-HERE-OBJECT-F** (Object Action) [Obj: NOT-HERE-OBJECT]
+- [ ] **OCEAN-F** (Object Action) [Obj: OCEAN]
+- [ ] **OIL-CAN-F** (Object Action) [Obj: OIL-CAN]
+- [ ] **PADLOCK-F** (Object Action) [Obj: PADLOCK]
+- [ ] **PATROL-UNIFORM-F** (Object Action) [Obj: PATROL-UNIFORM]
+- [ ] **PLANETARY-COURSE-CONTROL-F** (Room Action) [Obj: PLANETARY-COURSE-CONTROL]
+- [ ] **PLANETARY-DEFENSE-F** (Room Action) [Obj: PLANETARY-DEFENSE]
+- [ ] **PLAYBACK-BUTTON-F** (Object Action) [Obj: PLAYBACK-BUTTON]
+- [ ] **POD-DOOR-F** (Object Action) [Obj: POD-DOOR]
+- [ ] **PRINT-OUT-F** (Object Action) [Obj: PRINT-OUT]
+- [ ] **PROJCON-OFFICE-F** (Room Action) [Obj: PROJCON-OFFICE]
+- [ ] **RAD-DOOR-EAST-F** (Object Action) [Obj: RAD-DOOR-EAST]
+- [ ] **RAD-DOOR-WEST-F** (Object Action) [Obj: RAD-DOOR-WEST]
+- [ ] **RADIATION-LAB-F** (Room Action) [Obj: RADIATION-LAB]
+- [ ] **REACTOR-ELEVATOR-DOOR-F** (Object Action) [Obj: REACTOR-ELEVATOR-DOOR]
+- [ ] **REC-AREA-F** (Room Action) [Obj: REC-AREA]
+- [ ] **RED-ELEVATOR-BUTTON-F** (Object Action) [Obj: RED-ELEVATOR-BUTTON]
+- [ ] **RED-SPOOL-F** (Object Action) [Obj: RED-SPOOL]
+- [ ] **RELAY-F** (Object Action) [Obj: RELAY]
+- [ ] **RIFT-F** (Object Action) [Obj: RIFT]
+- [ ] **ROBOT-HOLE-F** (Object Action) [Obj: ROBOT-HOLE]
+- [ ] **SAFETY-WEB-F** (Object Action) [Obj: SAFETY-WEB]
+- [ ] **SHELVES-F** (Object Action) [Obj: SHELVES]
+- [ ] **SHUTTLE-CAR-F** (Room Action) [Obj: SHUTTLE-CAR-BETTY]
+- [ ] **SHUTTLE-DOOR-F** (Object Action) [Obj: SHUTTLE-DOOR]
+- [ ] **SLEEP-F** (Object Action) [Obj: SLEEP]
+- [ ] **SLOT-F** (Object Action) [Obj: SLOT]
+- [ ] **SPOOL-READER-F** (Object Action) [Obj: SPOOL-READER]
+- [ ] **STATION-384-F** (Room Action) [Obj: STATION-384]
+- [ ] **STORAGE-WEST-DOOR-F** (Object Action) [Obj: STORAGE-WEST-DOOR]
+- [ ] **STRIP-F** (Object Action) [Obj: STRIP]
+- [ ] **STRIP-NEAR-RELAY-F** (Room Action) [Obj: STRIP-NEAR-RELAY]
+- [ ] **SYSTEMS-MONITORS-F** (Room Action) [Obj: SYSTEMS-MONITORS]
+- [ ] **TABLES-F** (Object Action) [Obj: TABLES]
+- [ ] **TELEPORTATION-BUTTON-1-F** (Object Action) [Obj: TELEPORTATION-BUTTON-1]
+- [ ] **TELEPORTATION-BUTTON-2-F** (Object Action) [Obj: TELEPORTATION-BUTTON-2]
+- [ ] **TELEPORTATION-BUTTON-3-F** (Object Action) [Obj: TELEPORTATION-BUTTON-3]
+- [ ] **TERMINAL-F** (Object Action) [Obj: TERMINAL]
+- [ ] **TOWEL-F** (Object Action) [Obj: TOWEL]
+- [ ] **UNDERWATER-F** (Room Action) [Obj: UNDERWATER]
+- [ ] **UPPER-ELEVATOR-DOOR-F** (Object Action) [Obj: UPPER-ELEVATOR-DOOR]
+- [ ] **UPPER-ELEVATOR-F** (Room Action) [Obj: UPPER-ELEVATOR]
+- [ ] **WINDING-STAIR-F** (Room Action) [Obj: WINDING-STAIR]
+- [ ] **WINDOW-F** (Object Action) [Obj: WINDOW]
+
+## Verbs and Syntax
+|---|---|---|---|---|
+- [ ] **$BOOTH**: $BOOTH -> V-BOOTH (Pre: -) [syntax.zil]
+- [ ] **$CARDS**: $CARDS -> V-CARDS (Pre: -) [syntax.zil]
+- [ ] **$CRAG**: $CRAG -> V-CRAG (Pre: -) [syntax.zil]
+- [ ] **$FIX**: $FIX -> V-FIX (Pre: -) [syntax.zil]
+- [ ] **$FORK**: $FORK -> V-FORK (Pre: -) [syntax.zil]
+- [ ] **$VERIFY**: $VERIFY -> V-$VERIFY (Pre: -) [syntax.zil]
+- [ ] **$VERIFY**: $VERIFY OBJECT -> V-$VERIFY (Pre: -) [syntax.zil]
+- [ ] **ACTIVATE**: ACTIVATE OBJECT (FIND LIGHTBIT) -> V-LAMP-ON (Pre: -) [syntax.zil]
+- [ ] **AGAIN**: AGAIN -> V-AGAIN (Pre: -) [syntax.zil]
+- [ ] **ANSWER**: ANSWER -> V-ANSWER (Pre: -) [syntax.zil]
+- [ ] **ANSWER**: ANSWER OBJECT -> V-REPLY (Pre: -) [syntax.zil]
+- [ ] **APPLY**: APPLY OBJECT TO OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **ATTACK**: ATTACK OBJECT (FIND ACTORBIT) (ON-GROUND IN-ROOM) -> V-ATTACK (Pre: -) [syntax.zil]
+- [ ] **ATTACK**: ATTACK OBJECT WITH OBJECT (HAVE) -> V-ATTACK (Pre: -) [syntax.zil]
+- [ ] **ATTRACT**: ATTRACT OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
+- [ ] **BOARD**: BOARD OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
+- [ ] **BRIEF**: BRIEF -> V-BRIEF (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB -> V-GO-UP (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB ON OBJECT (FIND CLIMBBIT) (ON-GROUND IN-R... -> V-CLIMB-ON (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB UP OBJECT (FIND RMUNGBIT) -> V-CLIMB-UP (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB TO OBJECT -> V-CLIMB-UP (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB WITH OBJECT -> V-THROUGH (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB DOWN OBJECT (FIND CLIMBBIT) (ON-GROUND IN... -> V-CLIMB-DOWN (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB OBJECT (FIND CLIMBBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-FOO (Pre: -) [syntax.zil]
+- [ ] **CLIMB**: CLIMB IN OBJECT (FIND CLIMBBIT)(ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
+- [ ] **CLOSE**: CLOSE OBJECT (HELD CARRIED ON-GROUND IN-ROOM) -> V-CLOSE (Pre: -) [syntax.zil]
+- [ ] **CURSE**: CURSE -> V-CURSE (Pre: -) [syntax.zil]
+- [ ] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED) -> V-MUNG (Pre: -) [syntax.zil]
+- [ ] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED)... -> V-MUNG (Pre: -) [syntax.zil]
+- [ ] **DESTROY**: DESTROY DOWN OBJECT (ON-GROUND IN-ROOM HELD CAR... -> V-MUNG (Pre: -) [syntax.zil]
+- [ ] **DIAGNOSE**: DIAGNOSE -> V-DIAGNOSE (Pre: -) [syntax.zil]
+- [ ] **DISEMBARK**: DISEMBARK OBJECT (FIND RMUNGBIT) (ON-GROUND IN-... -> V-DISEMBARK (Pre: -) [syntax.zil]
+- [ ] **DROP**: DROP OBJECT (HELD MANY HAVE) -> V-DROP (Pre: -) [syntax.zil]
+- [ ] **DROP**: DROP OBJECT (HELD MANY HAVE) DOWN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **DROP**: DROP OBJECT (HELD MANY HAVE) IN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **DROP**: DROP OBJECT (HELD MANY HAVE) ON OBJECT -> V-PUT-ON (Pre: PRE-PUT) [syntax.zil]
+- [ ] **EAT**: EAT OBJECT (FIND FOODBIT) (TAKE) -> V-EAT (Pre: -) [syntax.zil]
+- [ ] **EAT**: EAT FROM OBJECT (TAKE) -> V-EAT-FROM (Pre: -) [syntax.zil]
+- [ ] **EMPTY**: EMPTY OBJECT (HAVE) -> V-EMPTY (Pre: -) [syntax.zil]
+- [ ] **EMPTY**: EMPTY OBJECT (HAVE) IN OBJECT -> V-EMPTY (Pre: -) [syntax.zil]
+- [ ] **ENTER**: ENTER -> V-ENTER (Pre: -) [syntax.zil]
+- [ ] **ENTER**: ENTER OBJECT -> V-THROUGH (Pre: -) [syntax.zil]
+- [ ] **ESCAPE**: ESCAPE -> V-ZESCAPE (Pre: -) [syntax.zil]
+- [ ] **EXAMINE**: EXAMINE OBJECT (HELD CARRIED ON-GROUND IN-ROOM ... -> V-EXAMINE (Pre: PRE-EXAMINE) [syntax.zil]
+- [ ] **EXAMINE**: EXAMINE IN OBJECT (HELD CARRIED IN-ROOM ON-GROU... -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
+- [ ] **EXAMINE**: EXAMINE ON OBJECT (HELD CARRIED IN-ROOM ON-GROU... -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
+- [ ] **EXIT**: EXIT -> V-EXIT (Pre: -) [syntax.zil]
+- [ ] **EXIT**: EXIT OBJECT -> V-EXIT (Pre: -) [syntax.zil]
+- [ ] **FIND**: FIND OBJECT -> V-FIND (Pre: -) [syntax.zil]
+- [ ] **FIRE**: FIRE OBJECT WITH OBJECT (HELD) -> V-SZAP (Pre: PRE-SZAP) [syntax.zil]
+- [ ] **FIRE**: FIRE OBJECT -> V-ZAP (Pre: PRE-ZAP) [syntax.zil]
+- [ ] **FIRE**: FIRE AT OBJECT -> V-ZAP (Pre: PRE-ZAP) [syntax.zil]
+- [ ] **FIRE**: FIRE OBJECT (HELD) AT OBJECT -> V-ZAP (Pre: PRE-ZAP) [syntax.zil]
+- [ ] **FIX**: FIX OBJECT -> V-FIX-IT (Pre: -) [syntax.zil]
+- [ ] **FLUSH**: FLUSH OBJECT -> V-FLUSH (Pre: -) [syntax.zil]
+- [ ] **FLY**: FLY -> V-FLY (Pre: -) [syntax.zil]
+- [ ] **FLY**: FLY OBJECT -> V-FLY (Pre: -) [syntax.zil]
+- [ ] **FOLLOW**: FOLLOW OBJECT (FIND ACTORBIT) -> V-FOLLOW (Pre: -) [syntax.zil]
+- [ ] **GIVE**: GIVE OBJECT (MANY HELD HAVE) TO OBJECT (FIND AC... -> V-GIVE (Pre: PRE-GIVE) [syntax.zil]
+- [ ] **GIVE**: GIVE OBJECT (FIND ACTORBIT) (ON-GROUND) 	OBJECT... -> V-SGIVE (Pre: PRE-SGIVE) [syntax.zil]
+- [ ] **HELLO**: HELLO -> V-HELLO (Pre: -) [syntax.zil]
+- [ ] **HELLO**: HELLO OBJECT -> V-HELLO (Pre: -) [syntax.zil]
+- [ ] **HELP**: HELP -> V-HELP (Pre: -) [syntax.zil]
+- [ ] **INVENTORY**: INVENTORY -> V-INVENTORY (Pre: -) [syntax.zil]
+- [ ] **JUMP**: JUMP -> V-LEAP (Pre: -) [syntax.zil]
+- [ ] **JUMP**: JUMP OVER OBJECT -> V-LEAP (Pre: -) [syntax.zil]
+- [ ] **JUMP**: JUMP ACROSS OBJECT -> V-LEAP (Pre: -) [syntax.zil]
+- [ ] **JUMP**: JUMP IN OBJECT -> V-LEAP (Pre: -) [syntax.zil]
+- [ ] **JUMP**: JUMP FROM OBJECT -> V-LEAP (Pre: -) [syntax.zil]
+- [ ] **JUMP**: JUMP OFF OBJECT -> V-LEAP (Pre: -) [syntax.zil]
+- [ ] **KICK**: KICK OBJECT -> V-KICK (Pre: -) [syntax.zil]
+- [ ] **KISS**: KISS OBJECT (FIND ACTORBIT) (ON-GROUND IN-ROOM) -> V-KISS (Pre: -) [syntax.zil]
+- [ ] **KNOCK**: KNOCK AT OBJECT -> V-KNOCK (Pre: -) [syntax.zil]
+- [ ] **KNOCK**: KNOCK ON OBJECT -> V-KNOCK (Pre: -) [syntax.zil]
+- [ ] **KNOCK**: KNOCK DOWN OBJECT (FIND ACTORBIT) (ON-GROUND IN... -> V-ATTACK (Pre: -) [syntax.zil]
+- [ ] **LEAVE**: LEAVE -> V-LEAVE (Pre: -) [syntax.zil]
+- [ ] **LEAVE**: LEAVE OBJECT -> V-DROP (Pre: -) [syntax.zil]
+- [ ] **LISTEN**: LISTEN TO OBJECT -> V-LISTEN (Pre: -) [syntax.zil]
+- [ ] **LOCK**: LOCK OBJECT (ON-GROUND IN-ROOM) WITH OBJECT (HELD) -> V-LOCK (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK -> V-LOOK (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK OBJECT -> V-LOOK-CRETIN (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK AROUND OBJECT (FIND RMUNGBIT) -> V-LOOK (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK AT OBJECT (HELD CARRIED ON-GROUND IN-ROOM ... -> V-EXAMINE (Pre: PRE-EXAMINE) [syntax.zil]
+- [ ] **LOOK**: LOOK ON OBJECT (HELD CARRIED ON-GROUND IN-ROOM ... -> V-EXAMINE (Pre: PRE-EXAMINE) [syntax.zil]
+- [ ] **LOOK**: LOOK WITH OBJECT -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK UNDER OBJECT -> V-LOOK-UNDER (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK BEHIND OBJECT -> V-LOOK-BEHIND (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK IN OBJECT (HELD CARRIED ON-GROUND IN-ROOM ... -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK OUT OBJECT (HELD CARRIED ON-GROUND IN-ROOM... -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK FOR OBJECT -> V-FIND (Pre: -) [syntax.zil]
+- [ ] **LOOK**: LOOK DOWN OBJECT (FIND RMUNGBIT) -> V-LOOK-DOWN (Pre: -) [syntax.zil]
+- [ ] **MAYBE**: MAYBE -> V-MAYBE (Pre: -) [syntax.zil]
+- [ ] **MOVE**: MOVE OBJECT (ON-GROUND IN-ROOM) -> V-MOVE (Pre: PRE-MOVE) [syntax.zil]
+- [ ] **MOVE**: MOVE UP OBJECT -> V-PUSH-UP (Pre: -) [syntax.zil]
+- [ ] **MOVE**: MOVE DOWN OBJECT -> V-PUSH-DOWN (Pre: -) [syntax.zil]
+- [ ] **NO**: NO -> V-NO (Pre: -) [syntax.zil]
+- [ ] **OIL**: OIL OBJECT -> V-OIL (Pre: -) [syntax.zil]
+- [ ] **OIL**: OIL OBJECT WITH OBJECT (HAVE) -> V-OIL (Pre: -) [syntax.zil]
+- [ ] **OPEN**: OPEN OBJECT (HELD CARRIED ON-GROUND IN-ROOM) -> V-OPEN (Pre: -) [syntax.zil]
+- [ ] **OPEN**: OPEN UP OBJECT (FIND DOORBIT)(HELD CARRIED ON-G... -> V-OPEN (Pre: -) [syntax.zil]
+- [ ] **OPEN**: OPEN OBJECT WITH OBJECT (HAVE) -> V-OPEN-WITH (Pre: -) [syntax.zil]
+- [ ] **PICK**: PICK UP OBJECT (FIND TAKEBIT) (ON-GROUND MANY) -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
+- [ ] **PICK**: PICK UP OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
+- [ ] **PLAY**: PLAY OBJECT -> V-PLAY (Pre: -) [syntax.zil]
+- [ ] **PLAY**: PLAY WITH OBJECT (FIND ACTORBIT) -> V-PLAY-WITH (Pre: -) [syntax.zil]
+- [ ] **PLAY**: PLAY OBJECT WITH OBJECT (FIND ACTORBIT) -> V-PLAY (Pre: -) [syntax.zil]
+- [ ] **POINT**: POINT AT OBJECT (ON-GROUND IN-ROOM) -> V-POINT (Pre: -) [syntax.zil]
+- [ ] **POINT**: POINT TO OBJECT (ON-GROUND IN-ROOM) -> V-POINT (Pre: -) [syntax.zil]
+- [ ] **POINT**: POINT OBJECT (HELD CARRIED HAVE) AT OBJECT (ON-... -> V-POINT (Pre: -) [syntax.zil]
+- [ ] **POUR**: POUR OBJECT -> V-POUR (Pre: -) [syntax.zil]
+- [ ] **POUR**: POUR OBJECT OVER OBJECT -> V-POUR (Pre: -) [syntax.zil]
+- [ ] **POUR**: POUR OBJECT ON OBJECT -> V-POUR (Pre: -) [syntax.zil]
+- [ ] **POUR**: POUR OBJECT OUT OBJECT -> V-POUR (Pre: -) [syntax.zil]
+- [ ] **POUR**: POUR OBJECT IN OBJECT -> V-POUR (Pre: -) [syntax.zil]
+- [ ] **PULL**: PULL OBJECT -> V-PULL (Pre: -) [syntax.zil]
+- [ ] **PULL**: PULL DOWN OBJECT -> V-PUSH-DOWN (Pre: -) [syntax.zil]
+- [ ] **PULL**: PULL UP OBJECT -> V-PUSH-UP (Pre: -) [syntax.zil]
+- [ ] **PULL**: PULL ON OBJECT -> V-PULL (Pre: -) [syntax.zil]
+- [ ] **PULL**: PULL OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH ON OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH OFF OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH AGAINST OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH UP OBJECT -> V-PUSH-UP (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH DOWN OBJECT -> V-PUSH-DOWN (Pre: -) [syntax.zil]
+- [ ] **PUSH**: PUSH OBJECT UNDER OBJECT -> V-PUT-UNDER (Pre: PRE-PUT-UNDER) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT (HELD MANY HAVE TAKE) IN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT (HELD MANY) ON OBJECT -> V-PUT-ON (Pre: PRE-PUT) [syntax.zil]
+- [ ] **PUT**: PUT DOWN OBJECT (HELD MANY HAVE) -> V-DROP (Pre: -) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT (HELD MANY HAVE TAKE) UNDER OBJECT -> V-PUT-UNDER (Pre: PRE-PUT-UNDER) [syntax.zil]
+- [ ] **PUT**: PUT ON OBJECT (HAVE TAKE) -> V-WEAR (Pre: -) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT (TAKE) OVER OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT (TAKE) NEAR OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT ACROSS OBJECT -> V-SPAN (Pre: -) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT (HELD CARRIED HAVE) WITH OBJECT -> V-SLIDE (Pre: -) [syntax.zil]
+- [ ] **PUT**: PUT OBJECT -> V-INSERT (Pre: -) [syntax.zil]
+- [ ] **QUIT**: QUIT -> V-QUIT (Pre: -) [syntax.zil]
+- [ ] **RAPE**: RAPE OBJECT (FIND ACTORBIT) -> V-RAPE (Pre: -) [syntax.zil]
+- [ ] **REACH**: REACH IN OBJECT (FIND CONTBIT) -> V-REACH (Pre: -) [syntax.zil]
+- [ ] **REACH**: REACH FOR OBJECT -> V-REACH-FOR (Pre: -) [syntax.zil]
+- [ ] **READ**: READ OBJECT (FIND READBIT) (TAKE) -> V-READ (Pre: PRE-READ) [syntax.zil]
+- [ ] **REMOVE**: REMOVE OBJECT -> V-REMOVE (Pre: -) [syntax.zil]
+- [ ] **REMOVE**: REMOVE OBJECT FROM OBJECT -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
+- [ ] **REMOVE**: REMOVE OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
+- [ ] **RESTAR**: RESTAR -> V-RESTART (Pre: -) [syntax.zil]
+- [ ] **RESTOR**: RESTOR -> V-RESTORE (Pre: -) [syntax.zil]
+- [ ] **RUB**: RUB OBJECT -> V-RUB (Pre: -) [syntax.zil]
+- [ ] **RUB**: RUB OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
+- [ ] **RUB**: RUB OBJECT (TAKE) TO OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **SALUTE**: SALUTE OBJECT -> V-SALUTE (Pre: -) [syntax.zil]
+- [ ] **SAVE**: SAVE -> V-SAVE (Pre: -) [syntax.zil]
+- [ ] **SAY**: SAY TO OBJECT (FIND ACTORBIT) (IN-ROOM) -> V-TALK (Pre: -) [syntax.zil]
+- [ ] **SAY**: SAY -> V-SAY (Pre: -) [syntax.zil]
+- [ ] **SCOLD**: SCOLD OBJECT (FIND ACTORBIT) -> V-SCOLD (Pre: -) [syntax.zil]
+- [ ] **SCORE**: SCORE -> V-SCORE (Pre: -) [syntax.zil]
+- [ ] **SCRIPT**: SCRIPT -> V-SCRIPT (Pre: -) [syntax.zil]
+- [ ] **SCRUB**: SCRUB OBJECT -> V-SCRUB (Pre: -) [syntax.zil]
+- [ ] **SCRUB**: SCRUB UP OBJECT -> V-SCRUB (Pre: -) [syntax.zil]
+- [ ] **SCRUB**: SCRUB OBJECT WITH OBJECT (HAVE) -> V-SCRUB (Pre: -) [syntax.zil]
+- [ ] **SEARCH**: SEARCH OBJECT -> V-SEARCH (Pre: -) [syntax.zil]
+- [ ] **SEARCH**: SEARCH IN OBJECT -> V-SEARCH (Pre: -) [syntax.zil]
+- [ ] **SEARCH**: SEARCH FOR OBJECT -> V-FIND (Pre: -) [syntax.zil]
+- [ ] **SEARCH**: SEARCH WITH OBJECT -> V-SEARCH (Pre: -) [syntax.zil]
+- [ ] **SHAKE**: SHAKE OBJECT -> V-SHAKE (Pre: -) [syntax.zil]
+- [ ] **SHAKE**: SHAKE OBJECT WITH OBJECT (FIND ACTORBIT) -> V-SHAKE-WITH (Pre: -) [syntax.zil]
+- [ ] **SHOW**: SHOW OBJECT (HAVE) TO OBJECT (FIND ACTORBIT) -> V-SHOW (Pre: -) [syntax.zil]
+- [ ] **SIT**: SIT -> V-SIT (Pre: -) [syntax.zil]
+- [ ] **SIT**: SIT ON OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-ON (Pre: -) [syntax.zil]
+- [ ] **SIT**: SIT DOWN OBJECT (FIND RMUNGBIT) -> V-SIT-DOWN (Pre: -) [syntax.zil]
+- [ ] **SIT**: SIT IN OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
+- [ ] **SIT**: SIT OBJECT (HELD MANY HAVE TAKE) IN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **SIT**: SIT OBJECT (HELD MANY HAVE TAKE) UNDER OBJECT -> V-PUT-UNDER (Pre: PRE-PUT-UNDER) [syntax.zil]
+- [ ] **SIT**: SIT OBJECT (TAKE) OVER OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **SIT**: SIT OBJECT (TAKE) NEAR OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **SIT**: SIT OBJECT ACROSS OBJECT -> V-SPAN (Pre: -) [syntax.zil]
+- [ ] **SKIP**: SKIP -> V-SKIP (Pre: -) [syntax.zil]
+- [ ] **SLEEP**: SLEEP -> V-SLEEP (Pre: -) [syntax.zil]
+- [ ] **SLIDE**: SLIDE OBJECT UNDER OBJECT -> V-PUT-UNDER (Pre: PRE-PUT-UNDER) [syntax.zil]
+- [ ] **SLIDE**: SLIDE OBJECT (HELD CARRIED HAVE) WITH OBJECT -> V-SLIDE (Pre: -) [syntax.zil]
+- [ ] **SLIDE**: SLIDE OBJECT ACROSS OBJECT -> V-SPAN (Pre: -) [syntax.zil]
+- [ ] **SMELL**: SMELL OBJECT -> V-SMELL (Pre: -) [syntax.zil]
+- [ ] **SMILE**: SMILE AT OBJECT (FIND ACTORBIT) -> V-SMILE (Pre: -) [syntax.zil]
+- [ ] **SMILE**: SMILE -> V-SMILE (Pre: -) [syntax.zil]
+- [ ] **STAND**: STAND -> V-STAND (Pre: -) [syntax.zil]
+- [ ] **STAND**: STAND UP OBJECT (FIND RMUNGBIT) -> V-STAND (Pre: -) [syntax.zil]
+- [ ] **STAND**: STAND ON OBJECT -> V-STAND-ON (Pre: -) [syntax.zil]
+- [ ] **STEP**: STEP ON OBJECT -> V-STEP-ON (Pre: -) [syntax.zil]
+- [ ] **STEP**: STEP IN OBJECT -> V-STEP-ON (Pre: -) [syntax.zil]
+- [ ] **STRIKE**: STRIKE OBJECT (FIND ACTORBIT) (ON-GROUND IN-ROO... -> V-ATTACK (Pre: -) [syntax.zil]
+- [ ] **STRIKE**: STRIKE OBJECT (FIND ACTORBIT) (ON-GROUND IN-ROOM) -> V-ATTACK (Pre: -) [syntax.zil]
+- [ ] **SUPER**: SUPER -> V-SUPER-BRIEF (Pre: -) [syntax.zil]
+- [ ] **SWIM**: SWIM -> V-SWIM (Pre: -) [syntax.zil]
+- [ ] **SWIM**: SWIM OBJECT -> V-SWIM-DIR (Pre: -) [syntax.zil]
+- [ ] **SWIM**: SWIM TO OBJECT -> V-SWIM-DIR (Pre: -) [syntax.zil]
+- [ ] **SWIM**: SWIM IN OBJECT -> V-SWIM (Pre: -) [syntax.zil]
+- [ ] **SWIM**: SWIM UP OBJECT (FIND RMUNGBIT) -> V-SWIM-UP (Pre: -) [syntax.zil]
+- [ ] **SWIM**: SWIM DOWN OBJECT (FIND RMUNGBIT) -> V-SWIM-DIR (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (ON-GROUND MANY) -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
+- [ ] **TAKE**: TAKE IN OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
+- [ ] **TAKE**: TAKE OUT OBJECT (FIND RMUNGBIT) (ON-GROUND IN-R... -> V-DISEMBARK (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE ON OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-ON (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (CARRIED IN-ROOM) OU... -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (CARRIED IN-ROOM) OF... -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (MANY) (IN-ROOM CARR... -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
+- [ ] **TAKE**: TAKE OFF OBJECT (FIND WEARBIT) (HELD CARRIED MANY) -> V-TAKE-OFF (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE UP OBJECT (FIND RMUNGBIT) -> V-STAND (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT (TAKE) OVER OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT (TAKE) NEAR OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **TAKE**: TAKE OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
+- [ ] **TASTE**: TASTE OBJECT -> V-TASTE (Pre: -) [syntax.zil]
+- [ ] **TELL**: TELL OBJECT (FIND ACTORBIT) (IN-ROOM) -> V-TELL (Pre: -) [syntax.zil]
+- [ ] **TELL**: TELL OBJECT (FIND ACTORBIT) (IN-ROOM) FOR OBJECT -> V-ASK-FOR (Pre: -) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) AT OBJECT (ON-... -> V-THROW (Pre: -) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) WITH OBJECT (O... -> V-THROW (Pre: -) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) OFF OBJECT -> V-THROW-OFF (Pre: -) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) IN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) ON OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) OVER OBJECT -> V-THROW-OFF (Pre: -) [syntax.zil]
+- [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) -> V-THROW (Pre: -) [syntax.zil]
+- [ ] **TIME**: TIME -> V-TIME (Pre: -) [syntax.zil]
+- [ ] **TURN**: TURN OBJECT (HELD CARRIED ON-GROUND IN-ROOM) 	W... -> V-TURN (Pre: -) [syntax.zil]
+- [ ] **TURN**: TURN ON OBJECT (FIND LIGHTBIT) (HELD CARRIED ON... -> V-LAMP-ON (Pre: -) [syntax.zil]
+- [ ] **TURN**: TURN OFF OBJECT (FIND LIGHTBIT) (HELD CARRIED O... -> V-LAMP-OFF (Pre: -) [syntax.zil]
+- [ ] **TURN**: TURN OBJECT (ON-GROUND IN-ROOM) TO OBJECT -> V-SET (Pre: -) [syntax.zil]
+- [ ] **TURN**: TURN OBJECT (ON-GROUND IN-ROOM) -> V-SET (Pre: -) [syntax.zil]
+- [ ] **TYPE**: TYPE OBJECT -> V-TYPE (Pre: -) [syntax.zil]
+- [ ] **TYPE**: TYPE IN OBJECT -> V-TYPE (Pre: -) [syntax.zil]
+- [ ] **UNKNOWN**: \#RANDOM OBJECT -> V-$RANDOM (Pre: -) [syntax.zil]
+- [ ] **UNKNOWN**: \#COMMAND -> V-$COMMAND (Pre: -) [syntax.zil]
+- [ ] **UNKNOWN**: \#RECORD -> V-$RECORD (Pre: -) [syntax.zil]
+- [ ] **UNKNOWN**: \#UNRECORD -> V-$UNRECORD (Pre: -) [syntax.zil]
+- [ ] **UNLOCK**: UNLOCK OBJECT (ON-GROUND IN-ROOM) WITH 	OBJECT ... -> V-UNLOCK (Pre: -) [syntax.zil]
+- [ ] **UNSCRIPT**: UNSCRIPT -> V-UNSCRIPT (Pre: -) [syntax.zil]
+- [ ] **VERBOSE**: VERBOSE -> V-VERBOSE (Pre: -) [syntax.zil]
+- [ ] **VERSION**: VERSION -> V-VERSION (Pre: -) [syntax.zil]
+- [ ] **WAIT**: WAIT -> V-WAIT (Pre: -) [syntax.zil]
+- [ ] **WAKE**: WAKE OBJECT (FIND ACTORBIT) (ON-GROUND IN-ROOM) -> V-ALARM (Pre: -) [syntax.zil]
+- [ ] **WAKE**: WAKE UP OBJECT (FIND ACTORBIT) (ON-GROUND IN-ROOM) -> V-ALARM (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK OBJECT -> V-WALK (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK IN OBJECT -> V-THROUGH (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK WITH OBJECT -> V-THROUGH (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK AROUND OBJECT -> V-WALK-AROUND (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK UP OBJECT (FIND CLIMBBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-UP (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK DOWN OBJECT (FIND CLIMBBIT) (ON-GROUND IN-... -> V-CLIMB-DOWN (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK TO OBJECT -> V-WALK-TO (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK OUT OBJECT -> V-EXIT (Pre: -) [syntax.zil]
+- [ ] **WALK**: WALK OBJECT (HELD CARRIED HAVE) WITH OBJECT -> V-SLIDE (Pre: -) [syntax.zil]
+- [ ] **WAVE**: WAVE OBJECT (HELD CARRIED) -> V-WAVE (Pre: -) [syntax.zil]
+- [ ] **WAVE**: WAVE OBJECT (HELD CARRIED) AT OBJECT -> V-WAVE (Pre: -) [syntax.zil]
+- [ ] **WAVE**: WAVE OBJECT (TAKE) OVER OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **WAVE**: WAVE OBJECT (TAKE) NEAR OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
+- [ ] **WEAR**: WEAR OBJECT (HAVE TAKE) -> V-WEAR (Pre: -) [syntax.zil]
+- [ ] **YELL**: YELL -> V-YELL (Pre: -) [syntax.zil]
+- [ ] **YELL**: YELL AT OBJECT (FIND ACTORBIT) -> V-SCOLD (Pre: -) [syntax.zil]
+- [ ] **YES**: YES -> V-YES (Pre: -) [syntax.zil]
+- [ ] **YES**: YES OBJECT -> V-YES (Pre: -) [syntax.zil]
+- [ ] **Z**: Z -> V-ESCAPE (Pre: -) [syntax.zil]
+- [ ] **ZORK**: ZORK -> V-ZORK (Pre: -) [syntax.zil]
+
+## Routines / Systems
+|---|---|---|---|
+- [ ] **A-AN** (verbs.zil): Args: 
+- [ ] **ACCESS-PANEL-F** (comptwo.zil): Args: 
+- [ ] **ACCESSIBLE?** (verbs.zil): Args: OBJ "AUX" (L <LOC .OBJ>
+- [ ] **ACLAUSE-WIN** (parser.zil): Args: ADJ
+- [ ] **ADJ-CHECK** (parser.zil): Args: 
+- [ ] **ADMIN-CORRIDOR-F** (compone.zil): Args: RARG
+- [ ] **ADMIN-CORRIDOR-N-F** (compone.zil): Args: RARG
+- [ ] **ADMIN-CORRIDOR-S-F** (compone.zil): Args: RARG
+- [ ] **ALREADY** (verbs.zil): Args: ON-OFF "OPTIONAL" (OBJ <>
+- [ ] **ALREADY-BATTERY** (comptwo.zil): Args: 
+- [ ] **ALREADY-OPEN** (globals.zil): Args: 
+- [ ] **AMBASSADOR-F** (globals.zil): Args: 
+- [ ] **ANYMORE** (verbs.zil): Args: 
+- [ ] **BAD-BEDISTOR-F** (comptwo.zil): Args: 
+- [ ] **BALCONY-F** (compone.zil): Args: RARG
+- [ ] **BATTERY-FALLS** (verbs.zil): Args: 
+- [ ] **BATTERY-NOW** (comptwo.zil): Args: 
+- [ ] **BEAM-COLOR** (comptwo.zil): Args: 
+- [ ] **BED-F** (globals.zil): Args: "OPTIONAL" (RARG ,M-OBJECT
+- [ ] **BENCH-PSEUDO** (globals.zil): Args: 
+- [ ] **BIO-DOOR-EAST-F** (comptwo.zil): Args: 
+- [ ] **BIO-DOOR-WEST-F** (comptwo.zil): Args: 
+- [ ] **BIO-LAB-F** (comptwo.zil): Args: RARG
+- [ ] **BIO-LOCK-EAST-F** (comptwo.zil): Args: RARG
+- [ ] **BLATHER-F** (globals.zil): Args: 
+- [ ] **BLUE-ELEVATOR-BUTTON-F** (compone.zil): Args: 
+- [ ] **BOARD-F** (comptwo.zil): Args: 
+- [ ] **BOARD-SHOCK** (comptwo.zil): Args: 
+- [ ] **BUFFER-PRINT** (parser.zil): Args: BEG END CP "AUX" (NOSP <>
+- [ ] **BUT-MERGE** (parser.zil): Args: TBL "AUX" LEN BUTLEN (CNT 1
+- [ ] **BUTTON-PSEUDO** (globals.zil): Args: 
+- [ ] **CABINETS-PSEUDO** (globals.zil): Args: 
+- [ ] **CABLES-PSEUDO** (globals.zil): Args: 
+- [ ] **CALL-ME-FLOYD** (compone.zil): Args: 
+- [ ] **CAN-F** (compone.zil): Args: 
+- [ ] **CANT-ORPHAN** (parser.zil): Args: 
+- [ ] **CANT-USE** (parser.zil): Args: PTR "AUX" BUF
+- [ ] **CAPITALIZE** (parser.zil): Args: PTR
+- [ ] **CARPET-PSEUDO** (globals.zil): Args: 
+- [ ] **CARTON-F** (compone.zil): Args: 
+- [x] **CASTLE-PSEUDO** (globals.zil): Args: 
+- [ ] **CATWALK-PSEUDO** (globals.zil): Args: 
+- [ ] **CCOUNT** (verbs.zil): Args: OBJ "AUX" (CNT 0
+- [ ] **CELERY-F** (globals.zil): Args: 
+- [ ] **CHEM-BUTTON-F** (compone.zil): Args: 
+- [ ] **CHEM-SPOUT-PSEUDO** (globals.zil): Args: 
+- [ ] **CHEMICAL-DISPENSER-F** (compone.zil): Args: 
+- [ ] **CHEMICAL-FLUID-F** (compone.zil): Args: 
+- [ ] **CHEMICAL-POURS** (compone.zil): Args: 
+- [ ] **CHRONOMETER-F** (globals.zil): Args: 
+- [ ] **CLAUSE** (parser.zil): Args: PTR VAL WORD "AUX" OFF NUM (ANDFLG <>
+- [ ] **CLAUSE-ADD** (parser.zil): Args: WRD "AUX" PTR
+- [ ] **CLAUSE-COPY** (parser.zil): Args: BPTR EPTR "OPTIONAL" (INSRT <>
+- [ ] **CLAUSE-PRINT** (parser.zil): Args: BPTR EPTR "OPTIONAL" (THE? T
+- [x] **CLEFT-PSEUDO** (globals.zil): Args: 
+- [ ] **CLIFF-F** (globals.zil): Args: 
+- [ ] **CLOCKER** (misc.zil): Args: "AUX" C E TICK (FLG <>
+- [ ] **COMBINATION-DIAL-F** (compone.zil): Args: 
+- [ ] **COMBINATION-PAPER-F** (comptwo.zil): Args: 
+- [ ] **COMM-ROOM-F** (compone.zil): Args: RARG
+- [ ] **COMM-SETUP** (compone.zil): Args: 
+- [ ] **COMPUTER-ACTION** (comptwo.zil): Args: 
+- [ ] **CONFERENCE-DOOR-F** (compone.zil): Args: 
+- [ ] **CONFERENCE-ROOM-F** (compone.zil): Args: RARG
+- [ ] **CONTROL-CABIN-F** (globals.zil): Args: RARG
+- [ ] **CONTROLS-F** (globals.zil): Args: 
+- [ ] **COURTYARD-F** (compone.zil): Args: RARG
+- [ ] **CRACK-PSEUDO** (globals.zil): Args: 
+- [ ] **CRACKED-BOARD-F** (compone.zil): Args: 
+- [ ] **CRAG-F** (compone.zil): Args: RARG
+- [ ] **CRETIN-F** (globals.zil): Args: 
+- [ ] **CREVICE-F** (compone.zil): Args: 
+- [ ] **CRYO-ANTEROOM-F** (comptwo.zil): Args: RARG
+- [ ] **CRYO-BUTTON-PSEUDO** (globals.zil): Args: 
+- [ ] **CRYO-ELEVATOR-F** (comptwo.zil): Args: RARG
+- [ ] **CRYO-EXIT-F** (comptwo.zil): Args: 
+- [ ] **CUBBYHOLE-PSEUDO** (globals.zil): Args: 
+- [ ] **CUBE-F** (comptwo.zil): Args: 
+- [ ] **CUBE-SEEMS** (compone.zil): Args: 
+- [ ] **DARK-BUTTON-F** (comptwo.zil): Args: 
+- [ ] **DDESC** (globals.zil): Args: DOOR
+- [ ] **DEAD-FLOYD-F** (compone.zil): Args: 
+- [ ] **DECK-NINE-F** (globals.zil): Args: RARG
+- [ ] **DESCRIBE-MONITORS** (compone.zil): Args: 
+- [ ] **DESCRIBE-OBJECT** (verbs.zil): Args: OBJ V? LEVEL "AUX" (STR <>
+- [ ] **DESCRIBE-OBJECTS** (verbs.zil): Args: "OPTIONAL" (V? <>
+- [ ] **DESCRIBE-ROOM** (verbs.zil): Args: "OPTIONAL" (LOOK? <>
+- [ ] **DESCRIBE-SHUTTLE-ARRIVE** (globals.zil): Args: 
+- [ ] **DESCRIBE-SHUTTLE-TRIP** (globals.zil): Args: 
+- [ ] **DESCRIBE-VIEW** (globals.zil): Args: 
+- [ ] **DESK-F** (compone.zil): Args: 
+- [ ] **DESK-PSEUDO** (globals.zil): Args: 
+- [ ] **DEVICES-PSEUDO** (globals.zil): Args: 
+- [ ] **DIAGRAM-PSEUDO** (globals.zil): Args: 
+- [ ] **DISPENSER-F** (compone.zil): Args: 
+- [ ] **DO-SL** (parser.zil): Args: OBJ BIT1 BIT2
+- [ ] **DO-WALK** (verbs.zil): Args: DIR
+- [ ] **DOOR-CLOSED** (compone.zil): Args: 
+- [ ] **DOOR-PSEUDO** (globals.zil): Args: 
+- [ ] **DREAMING** (globals.zil): Args: 
+- [ ] **ELEVATOR-BUTTON-F** (compone.zil): Args: 
+- [ ] **ELEVATOR-DOOR-OPENS** (compone.zil): Args: 
+- [ ] **ELEVATOR-ENTER-F** (compone.zil): Args: 
+- [ ] **ELEVATOR-EXIT-F** (compone.zil): Args: 
+- [ ] **ELEVATOR-LOBBY-F** (compone.zil): Args: RARG
+- [ ] **ENUNCIATOR-PSEUDO** (globals.zil): Args: 
+- [ ] **EQUIPMENT-PSEUDO** (globals.zil): Args: 
+- [ ] **ESCALATOR-PSEUDO** (globals.zil): Args: 
+- [ ] **ESCAPE-POD-F** (globals.zil): Args: RARG
+- [ ] **EXAMINE-BOARD** (comptwo.zil): Args: 
+- [ ] **FENCE-PSEUDO** (globals.zil): Args: 
+- [ ] **FIND-IN** (globals.zil): Args: WHERE WHAT "AUX" W
+- [ ] **FIND-NOT-HERE** (globals.zil): Args: TBL PRSO? "AUX" M-F OBJ
+- [ ] **FINISH** (verbs.zil): Args: DIED "OPTIONAL" (REPEATING <>
+- [ ] **FIRSTER** (verbs.zil): Args: OBJ LEVEL
+- [ ] **FIXED-FONT-OFF** (verbs.zil): Args: 
+- [ ] **FIXED-FONT-ON** (verbs.zil): Args: 
+- [ ] **FLASK-F** (compone.zil): Args: 
+- [ ] **FLOYD-COMES-ALIVE** (compone.zil): Args: "AUX" FOO
+- [ ] **FLOYD-F** (compone.zil): Args: "AUX" X N
+- [ ] **FLOYD-INTO-LAB** (compone.zil): Args: 
+- [ ] **FLOYD-NOT-HAVE** (compone.zil): Args: 
+- [ ] **FLOYD-REVEAL-CARD-F** (globals.zil): Args: 
+- [ ] **FLOYD-THROUGH-HOLE** (comptwo.zil): Args: 
+- [ ] **FLOYDS-FAMOUS-DOOR-ROUTINE** (compone.zil): Args: 
+- [ ] **FLUSH** (compone.zil): Args: 
+- [ ] **FOOD-KIT-F** (globals.zil): Args: 
+- [ ] **FRIED-BOARD-F** (comptwo.zil): Args: 
+- [ ] **FUNGICIDE-BUTTON-F** (comptwo.zil): Args: 
+- [ ] **GAMES-PSEUDO** (globals.zil): Args: 
+- [ ] **GANGWAY-DOOR-F** (globals.zil): Args: 
+- [ ] **GANGWAY-F** (globals.zil): Args: RARG
+- [ ] **GET-OBJECT** (parser.zil): Args: TBL "OPTIONAL" (VRB T
+- [ ] **GLOBAL-CHECK** (parser.zil): Args: TBL "AUX" LEN RMG RMGL (CNT 0
+- [ ] **GLOBAL-DOORWAY-F** (globals.zil): Args: 
+- [ ] **GLOBAL-GAMES-F** (globals.zil): Args: 
+- [ ] **GLOBAL-IN?** (verbs.zil): Args: OBJ1 OBJ2 "AUX" TEE
+- [ ] **GLOBAL-POD-F** (globals.zil): Args: 
+- [ ] **GLOBAL-SHUTTLE-F** (globals.zil): Args: 
+- [ ] **GO** (misc.zil): Args: 
+- [ ] **GOO-F** (globals.zil): Args: 
+- [ ] **GOOD-BEDISTOR-F** (compone.zil): Args: 
+- [ ] **GOOD-BOARD-F** (comptwo.zil): Args: 
+- [ ] **GOTO** (verbs.zil): Args: RM "OPTIONAL" (V? T
+- [ ] **GRAFFITI-PSEUDO** (globals.zil): Args: 
+- [ ] **GREEN-SPOOL-F** (comptwo.zil): Args: 
+- [ ] **GROUND-F** (globals.zil): Args: 
+- [ ] **GRUE-F** (comptwo.zil): Args: 
+- [ ] **GWIM** (parser.zil): Args: GBIT LBIT PREP "AUX" OBJ
+- [ ] **HACK-HACK** (verbs.zil): Args: STR
+- [ ] **HANDS-F** (globals.zil): Args: 
+- [ ] **HELD?** (parser.zil): Args: CAN
+- [ ] **HELICOPTER-OBJECT-F** (compone.zil): Args: 
+- [ ] **HERE?** (parser.zil): Args: CAN
+- [ ] **HIGH-PROTEIN-F** (compone.zil): Args: "AUX" (X <>
+- [ ] **I-AMBASSADOR** (globals.zil): Args: 
+- [ ] **I-ANNOUNCEMENT** (comptwo.zil): Args: 
+- [ ] **I-BIO-EAST-CLOSES** (comptwo.zil): Args: 
+- [ ] **I-BIO-WEST-CLOSES** (comptwo.zil): Args: 
+- [ ] **I-BLATHER** (globals.zil): Args: 
+- [ ] **I-BLOWUP-FEINSTEIN** (globals.zil): Args: 
+- [ ] **I-CHASE-SCENE** (comptwo.zil): Args: 
+- [ ] **I-CLEAR-FLOYD-PEER** (comptwo.zil): Args: 
+- [ ] **I-CRYO-ELEVATOR-ARRIVE** (comptwo.zil): Args: 
+- [ ] **I-FALL-ASLEEP** (globals.zil): Args: 
+- [ ] **I-FLOYD** (compone.zil): Args: 
+- [ ] **I-FLOYD-FORAY** (comptwo.zil): Args: 
+- [ ] **I-FRY** (comptwo.zil): Args: 
+- [ ] **I-HUNGER-WARNINGS** (globals.zil): Args: 
+- [ ] **I-KITCHEN-DOOR-CLOSES** (globals.zil): Args: 
+- [ ] **I-LOWER-ELEVATOR-ARRIVE** (compone.zil): Args: 
+- [ ] **I-LOWER-ELEVATOR-TRIP** (compone.zil): Args: 
+- [ ] **I-MAGNET** (compone.zil): Args: 
+- [ ] **I-MICROBE** (comptwo.zil): Args: 
+- [ ] **I-NUKED-BLUE** (comptwo.zil): Args: 
+- [ ] **I-POD-TRIP** (globals.zil): Args: 
+- [ ] **I-RANDOM-INTERRUPTS** (misc.zil): Args: 
+- [ ] **I-REACTOR-DOOR-CLOSE** (compone.zil): Args: 
+- [ ] **I-SHUTTLE** (globals.zil): Args: 
+- [ ] **I-SICKNESS-WARNINGS** (globals.zil): Args: 
+- [ ] **I-SINK-POD** (globals.zil): Args: 
+- [ ] **I-SLEEP-WARNINGS** (globals.zil): Args: 
+- [ ] **I-TURNOFF-LOWER-ELEVATOR** (compone.zil): Args: 
+- [ ] **I-TURNOFF-MINI** (comptwo.zil): Args: 
+- [ ] **I-TURNOFF-SHUTTLE** (globals.zil): Args: 
+- [ ] **I-TURNOFF-TELEPORTATION** (globals.zil): Args: 
+- [ ] **I-TURNOFF-UPPER-ELEVATOR** (compone.zil): Args: 
+- [ ] **I-UNENTER** (compone.zil): Args: 
+- [ ] **I-UNFLOOD** (comptwo.zil): Args: 
+- [ ] **I-UPPER-ELEVATOR-ARRIVE** (compone.zil): Args: 
+- [ ] **I-UPPER-ELEVATOR-TRIP** (compone.zil): Args: 
+- [ ] **I-WARMTH** (comptwo.zil): Args: 
+- [ ] **IDROP** (verbs.zil): Args: 
+- [ ] **IN-BOOTH-PSEUDO** (globals.zil): Args: 
+- [ ] **INFIRMARY-F** (comptwo.zil): Args: RARG
+- [ ] **INT** (misc.zil): Args: RTN "OPTIONAL" (DEMON <>
+- [ ] **IS-CLOSED** (globals.zil): Args: 
+- [ ] **ITAKE** (verbs.zil): Args: "OPTIONAL" (VB T
+- [ ] **ITAKE-CHECK** (parser.zil): Args: TBL IBITS "AUX" PTR OBJ TAKEN
+- [ ] **JIGS-UP** (verbs.zil): Args: DESC "OPTIONAL" (PLAYER? <>
+- [ ] **KALAMONTEE-PLATFORM-F** (compone.zil): Args: RARG
+- [ ] **KEY-F** (compone.zil): Args: 
+- [ ] **KEYBOARD-PSEUDO** (globals.zil): Args: 
+- [ ] **KITCHEN-DOOR-F** (compone.zil): Args: 
+- [ ] **KLUDGE** (compone.zil): Args: 
+- [ ] **LAB-DESK-F** (comptwo.zil): Args: 
+- [ ] **LAB-OFFICE-F** (comptwo.zil): Args: RARG
+- [ ] **LAB-UNIFORM-F** (comptwo.zil): Args: 
+- [ ] **LADDER-EXIT-F** (compone.zil): Args: 
+- [ ] **LADDER-F** (compone.zil): Args: 
+- [ ] **LAMP-F** (comptwo.zil): Args: 
+- [ ] **LASER-COOLS** (comptwo.zil): Args: STRING
+- [ ] **LASER-DIAL-F** (comptwo.zil): Args: 
+- [ ] **LASER-F** (comptwo.zil): Args: "OPTIONAL" (RARG <>
+- [ ] **LASER-FEELS** (comptwo.zil): Args: STRING
+- [ ] **LAWANDA-PLATFORM-F** (comptwo.zil): Args: RARG
+- [ ] **LEVER-F** (globals.zil): Args: 
+- [ ] **LIBRARY-TYPE** (comptwo.zil): Args: 
+- [ ] **LIGHT-BUTTON-F** (comptwo.zil): Args: 
+- [ ] **LIGHTS-F** (globals.zil): Args: 
+- [ ] **LIKE-SLIME** (globals.zil): Args: STRING
+- [ ] **LIT?** (parser.zil): Args: RM "AUX" OHERE (LIT <>
+- [ ] **LOCK-PSEUDO** (globals.zil): Args: 
+- [ ] **LOGO-PSEUDO** (globals.zil): Args: 
+- [ ] **LONG-HALL-F** (compone.zil): Args: 
+- [ ] **LOWER-ELEVATOR-DOOR-F** (compone.zil): Args: 
+- [ ] **LOWER-ELEVATOR-F** (compone.zil): Args: RARG
+- [ ] **MACHINE-SHOP-F** (compone.zil): Args: RARG
+- [ ] **MAGNET-F** (compone.zil): Args: 
+- [ ] **MAIN-LOOP** (misc.zil): Args: "AUX" ICNT OCNT NUM CNT OBJ TBL V PTBL OBJ1 TMP
+- [ ] **MANY-CHECK** (parser.zil): Args: "AUX" (LOSS <>
+- [ ] **MAPS-PSEUDO** (globals.zil): Args: 
+- [ ] **MEDICINE-F** (comptwo.zil): Args: "AUX" (X <>
+- [ ] **MESS-CORRIDOR-F** (compone.zil): Args: RARG
+- [ ] **MESS-HALL-F** (compone.zil): Args: RARG
+- [ ] **META-LOC** (misc.zil): Args: OBJ
+- [ ] **MICROBE-F** (comptwo.zil): Args: 
+- [ ] **MIDDLE-OF-STRIP-F** (comptwo.zil): Args: RARG
+- [ ] **MINI-CARD-F** (comptwo.zil): Args: 
+- [ ] **MOBY-FIND** (parser.zil): Args: TBL "AUX" FOO LEN
+- [ ] **MONITORS-PSEUDO** (globals.zil): Args: 
+- [ ] **MONSTER-DEATH** (comptwo.zil): Args: 
+- [ ] **MURAL-PSEUDO** (globals.zil): Args: 
+- [ ] **NEAR-BOOTH-PSEUDO** (globals.zil): Args: 
+- [ ] **NO-BUTTON** (verbs.zil): Args: NUMBER
+- [ ] **NO-CLOSE** (globals.zil): Args: 
+- [ ] **NOT-HERE-OBJECT-F** (globals.zil): Args: "AUX" TBL (PRSO? T
+- [ ] **NOT-HERE-PRINT** (globals.zil): Args: PRSO?
+- [ ] **NOT-HOLDING** (verbs.zil): Args: 
+- [ ] **NULL-F** (misc.zil): Args: "OPTIONAL" A1 A2
+- [ ] **NUMBER?** (parser.zil): Args: PTR "AUX" CNT BPTR CHR (SUM 0
+- [ ] **NUMBERS-ONLY** (verbs.zil): Args: 
+- [ ] **OBJ-FOUND** (parser.zil): Args: OBJ TBL "AUX" PTR
+- [ ] **OCEAN-F** (globals.zil): Args: 
+- [ ] **OIL-CAN-F** (compone.zil): Args: 
+- [ ] **ORPHAN** (parser.zil): Args: D1 D2 "AUX" (CNT -1
+- [ ] **ORPHAN-MERGE** (parser.zil): Args: "AUX" (CNT -1
+- [ ] **OTHER-ELEVATOR-ENTER-F** (compone.zil): Args: 
+- [ ] **OWN-FEET** (verbs.zil): Args: 
+- [ ] **PADLOCK-F** (compone.zil): Args: 
+- [ ] **PARSER** (parser.zil): Args: "AUX" (PTR ,P-LEXSTART
+- [ ] **PARTITION-PSEUDO** (globals.zil): Args: 
+- [ ] **PATROL-UNIFORM-F** (globals.zil): Args: 
+- [ ] **PERFORM** (misc.zil): Args: A "OPTIONAL" (O <>
+- [ ] **PICK-ONE** (misc.zil): Args: FROB
+- [ ] **PLANETARY-COURSE-CONTROL-F** (comptwo.zil): Args: RARG
+- [ ] **PLANETARY-DEFENSE-F** (comptwo.zil): Args: RARG
+- [x] **PLAQUE-PSEUDO** (globals.zil): Args: 
+- [ ] **PLATE-PSEUDO** (globals.zil): Args: 
+- [ ] **PLAYBACK-BUTTON-F** (compone.zil): Args: 
+- [ ] **POD-DOOR-F** (globals.zil): Args: 
+- [ ] **POD-EXIT-F** (globals.zil): Args: 
+- [ ] **PRE-BOARD** (verbs.zil): Args: "AUX" AV
+- [ ] **PRE-EXAMINE** (verbs.zil): Args: 
+- [ ] **PRE-GIVE** (verbs.zil): Args: 
+- [ ] **PRE-MOVE** (verbs.zil): Args: 
+- [ ] **PRE-PUT** (verbs.zil): Args: 
+- [ ] **PRE-PUT-UNDER** (verbs.zil): Args: 
+- [ ] **PRE-READ** (verbs.zil): Args: 
+- [ ] **PRE-SGIVE** (verbs.zil): Args: 
+- [ ] **PRE-SZAP** (verbs.zil): Args: 
+- [ ] **PRE-TAKE** (verbs.zil): Args: 
+- [ ] **PRE-ZAP** (verbs.zil): Args: 
+- [ ] **PREP-FIND** (parser.zil): Args: PREP "AUX" (CNT 0
+- [ ] **PREP-PRINT** (parser.zil): Args: PREP "AUX" WRD
+- [ ] **PRINT-CONT** (verbs.zil): Args: OBJ "OPTIONAL" (V? <>
+- [ ] **PRINT-CONTENTS** (verbs.zil): Args: OBJ "AUX" F N (1ST? T
+- [ ] **PRINT-OUT-F** (comptwo.zil): Args: 
+- [ ] **PROJCON-OFFICE-F** (comptwo.zil): Args: RARG
+- [ ] **PRSO-PRINT** (parser.zil): Args: "AUX" PTR
+- [ ] **PUT-BOARD** (comptwo.zil): Args: 
+- [ ] **QUEUE** (misc.zil): Args: RTN TICK "AUX" CINT
+- [ ] **RAD-DOOR-EAST-F** (comptwo.zil): Args: 
+- [ ] **RAD-DOOR-WEST-F** (comptwo.zil): Args: 
+- [ ] **RADIATION-LAB-F** (comptwo.zil): Args: RARG
+- [ ] **RANDOMIZE-ORDER** (compone.zil): Args: "AUX" (COUNT 0
+- [ ] **REACTOR-BUTTON-PSEUDO** (globals.zil): Args: 
+- [ ] **REACTOR-ELEVATOR-DOOR-F** (compone.zil): Args: 
+- [ ] **REC-AREA-F** (compone.zil): Args: RARG
+- [ ] **RED-ELEVATOR-BUTTON-F** (compone.zil): Args: 
+- [ ] **RED-SPOOL-F** (comptwo.zil): Args: 
+- [ ] **RELAY-EXIT-F** (comptwo.zil): Args: 
+- [ ] **RELAY-F** (comptwo.zil): Args: 
+- [ ] **RESET-TIME** (globals.zil): Args: 
+- [ ] **RIFT-F** (compone.zil): Args: 
+- [ ] **ROB** (verbs.zil): Args: WHO WHERE "AUX" N X
+- [ ] **ROBOT-HOLE-F** (comptwo.zil): Args: 
+- [x] **RUBBLE-PSEUDO** (globals.zil): Args: 
+- [ ] **SAFETY-WEB-F** (globals.zil): Args: "OPTIONAL" (RARG ,M-OBJECT
+- [ ] **SCORE-OBJ** (verbs.zil): Args: OBJ
+- [ ] **SEARCH-LIST** (parser.zil): Args: OBJ TBL LVL "AUX" FLS NOBJ
+- [ ] **SEE-INSIDE?** (verbs.zil): Args: OBJ
+- [ ] **SHELVES-F** (globals.zil): Args: 
+- [ ] **SHOOT-MICROBE** (comptwo.zil): Args: 
+- [ ] **SHOOT-SPECK** (comptwo.zil): Args: 
+- [ ] **SHUTDOWN** (compone.zil): Args: 
+- [ ] **SHUTTLE-ACTIVATE** (globals.zil): Args: 
+- [ ] **SHUTTLE-CAR-F** (globals.zil): Args: RARG
+- [ ] **SHUTTLE-DOOR-F** (globals.zil): Args: 
+- [ ] **SHUTTLE-ENTER-F** (globals.zil): Args: 
+- [ ] **SHUTTLE-EXIT-F** (globals.zil): Args: 
+- [ ] **SLEEP-F** (globals.zil): Args: 
+- [ ] **SLIME-PSEUDO** (globals.zil): Args: 
+- [ ] **SLOT-F** (globals.zil): Args: 
+- [ ] **SNARF-OBJECTS** (parser.zil): Args: "AUX" PTR
+- [ ] **SNARFEM** (parser.zil): Args: PTR EPTR TBL "AUX" (BUT <>
+- [ ] **SPOOL-READER-F** (comptwo.zil): Args: 
+- [ ] **SPOUT-PSEUDO** (globals.zil): Args: 
+- [ ] **STATION-384-F** (comptwo.zil): Args: RARG
+- [ ] **STORAGE-WEST-DOOR-F** (compone.zil): Args: 
+- [ ] **STRIP-DISSOLVES** (compone.zil): Args: 
+- [ ] **STRIP-F** (comptwo.zil): Args: 
+- [ ] **STRIP-NEAR-RELAY-F** (comptwo.zil): Args: RARG
+- [x] **STRUCTURE-PSEUDO** (globals.zil): Args: 
+- [ ] **SUPPLIES-PSEUDO** (globals.zil): Args: 
+- [ ] **SYNTAX-CHECK** (parser.zil): Args: "AUX" SYN LEN NUM OBJ (DRIVE1 <>
+- [ ] **SYNTAX-FOUND** (parser.zil): Args: SYN
+- [ ] **SYSTEMS-MONITORS-F** (compone.zil): Args: RARG
+- [ ] **TABLES-F** (globals.zil): Args: 
+- [ ] **TAKE-CHECK** (parser.zil): Args: 
+- [ ] **TAKE-IT-OFF** (verbs.zil): Args: 
+- [ ] **TAPES-PSEUDO** (globals.zil): Args: 
+- [ ] **TELEPORT** (globals.zil): Args: BOOTH
+- [ ] **TELEPORTATION-BUTTON-1-F** (globals.zil): Args: 
+- [ ] **TELEPORTATION-BUTTON-2-F** (globals.zil): Args: 
+- [ ] **TELEPORTATION-BUTTON-3-F** (globals.zil): Args: 
+- [ ] **TELL-TIME** (globals.zil): Args: 
+- [ ] **TERMINAL-F** (comptwo.zil): Args: 
+- [ ] **THIS-IS-IT** (verbs.zil): Args: OBJ
+- [ ] **THIS-IT?** (parser.zil): Args: OBJ TBL "AUX" SYNS
+- [ ] **TIMELESS-VERB?** (misc.zil): Args: VRB
+- [ ] **TOILET-PSEUDO** (globals.zil): Args: 
+- [ ] **TOWEL-F** (globals.zil): Args: 
+- [ ] **TRANSLATOR-PSEUDO** (globals.zil): Args: 
+- [ ] **TRYTAKE** (verbs.zil): Args: 
+- [ ] **UNDERWATER-F** (compone.zil): Args: RARG
+- [ ] **UNKNOWN-WORD** (parser.zil): Args: PTR "AUX" BUF
+- [ ] **UPPER-ELEVATOR-DOOR-F** (compone.zil): Args: 
+- [ ] **UPPER-ELEVATOR-F** (compone.zil): Args: RARG
+- [ ] **USE-DIRECTIONS** (globals.zil): Args: 
+- [ ] **V-$COMMAND** (verbs.zil): Args: 
+- [ ] **V-$RANDOM** (verbs.zil): Args: 
+- [ ] **V-$RECORD** (verbs.zil): Args: 
+- [ ] **V-$UNRECORD** (verbs.zil): Args: 
+- [ ] **V-$VERIFY** (verbs.zil): Args: 
+- [ ] **V-AGAIN** (verbs.zil): Args: "AUX" OBJ
+- [ ] **V-ALARM** (verbs.zil): Args: 
+- [ ] **V-ANSWER** (verbs.zil): Args: 
+- [ ] **V-ASK-FOR** (verbs.zil): Args: 
+- [ ] **V-ATTACK** (verbs.zil): Args: 
+- [ ] **V-ATTRACT** (verbs.zil): Args: 
+- [ ] **V-BOARD** (verbs.zil): Args: "AUX" AV
+- [ ] **V-BOOTH** (verbs.zil): Args: 
+- [ ] **V-BRIEF** (verbs.zil): Args: 
+- [ ] **V-CARDS** (verbs.zil): Args: 
+- [ ] **V-CLIMB-DOWN** (verbs.zil): Args: 
+- [ ] **V-CLIMB-FOO** (verbs.zil): Args: 
+- [ ] **V-CLIMB-ON** (verbs.zil): Args: 
+- [ ] **V-CLIMB-UP** (verbs.zil): Args: "OPTIONAL" (DIR ,P?UP
+- [ ] **V-CLOSE** (verbs.zil): Args: 
+- [ ] **V-CRAG** (verbs.zil): Args: 
+- [ ] **V-CURSE** (verbs.zil): Args: 
+- [ ] **V-DIAGNOSE** (verbs.zil): Args: 
+- [ ] **V-DISEMBARK** (verbs.zil): Args: 
+- [ ] **V-DROP** (verbs.zil): Args: 
+- [ ] **V-EAT** (verbs.zil): Args: 
+- [ ] **V-EAT-FROM** (verbs.zil): Args: "AUX" X
+- [ ] **V-EMPTY** (verbs.zil): Args: "AUX" X
+- [ ] **V-ENTER** (verbs.zil): Args: 
+- [ ] **V-ESCAPE** (verbs.zil): Args: 
+- [ ] **V-EXAMINE** (verbs.zil): Args: 
+- [ ] **V-EXIT** (verbs.zil): Args: 
+- [ ] **V-FIND** (verbs.zil): Args: "AUX" (L <LOC ,PRSO>
+- [ ] **V-FIRST-LOOK** (verbs.zil): Args: 
+- [ ] **V-FIX** (verbs.zil): Args: 
+- [ ] **V-FIX-IT** (verbs.zil): Args: 
+- [ ] **V-FLUSH** (verbs.zil): Args: 
+- [ ] **V-FLY** (verbs.zil): Args: 
+- [ ] **V-FOLLOW** (verbs.zil): Args: 
+- [ ] **V-FORK** (verbs.zil): Args: 
+- [ ] **V-GIVE** (verbs.zil): Args: 
+- [ ] **V-GO-UP** (verbs.zil): Args: 
+- [ ] **V-HELLO** (verbs.zil): Args: 
+- [ ] **V-HELP** (verbs.zil): Args: 
+- [ ] **V-INSERT** (verbs.zil): Args: 
+- [ ] **V-INVENTORY** (verbs.zil): Args: 
+- [ ] **V-KICK** (verbs.zil): Args: 
+- [ ] **V-KISS** (verbs.zil): Args: 
+- [ ] **V-KNOCK** (verbs.zil): Args: 
+- [ ] **V-LAMP-OFF** (verbs.zil): Args: 
+- [ ] **V-LAMP-ON** (verbs.zil): Args: 
+- [ ] **V-LEAP** (verbs.zil): Args: 
+- [ ] **V-LEAVE** (verbs.zil): Args: 
+- [ ] **V-LISTEN** (verbs.zil): Args: 
+- [ ] **V-LOCK** (verbs.zil): Args: 
+- [ ] **V-LOOK** (verbs.zil): Args: 
+- [ ] **V-LOOK-BEHIND** (verbs.zil): Args: 
+- [ ] **V-LOOK-CRETIN** (verbs.zil): Args: 
+- [ ] **V-LOOK-DOWN** (verbs.zil): Args: 
+- [ ] **V-LOOK-INSIDE** (verbs.zil): Args: 
+- [ ] **V-LOOK-UNDER** (verbs.zil): Args: 
+- [ ] **V-MAYBE** (verbs.zil): Args: 
+- [ ] **V-MOVE** (verbs.zil): Args: 
+- [ ] **V-MUNG** (verbs.zil): Args: 
+- [ ] **V-NO** (verbs.zil): Args: 
+- [ ] **V-OIL** (verbs.zil): Args: 
+- [ ] **V-OPEN** (verbs.zil): Args: "AUX" F STR
+- [ ] **V-OPEN-WITH** (verbs.zil): Args: 
+- [ ] **V-PLAY** (verbs.zil): Args: 
+- [ ] **V-PLAY-WITH** (verbs.zil): Args: 
+- [ ] **V-POINT** (verbs.zil): Args: 
+- [ ] **V-POUR** (verbs.zil): Args: 
+- [ ] **V-PULL** (verbs.zil): Args: 
+- [ ] **V-PUSH** (verbs.zil): Args: 
+- [ ] **V-PUSH-DOWN** (verbs.zil): Args: 
+- [ ] **V-PUSH-UP** (verbs.zil): Args: 
+- [ ] **V-PUT** (verbs.zil): Args: 
+- [ ] **V-PUT-ON** (verbs.zil): Args: 
+- [ ] **V-PUT-UNDER** (verbs.zil): Args: 
+- [ ] **V-QUIT** (verbs.zil): Args: 
+- [ ] **V-RAPE** (verbs.zil): Args: 
+- [ ] **V-REACH** (verbs.zil): Args: 
+- [ ] **V-REACH-FOR** (verbs.zil): Args: 
+- [ ] **V-READ** (verbs.zil): Args: 
+- [ ] **V-REMOVE** (verbs.zil): Args: 
+- [ ] **V-REPLY** (verbs.zil): Args: 
+- [ ] **V-RESTART** (verbs.zil): Args: 
+- [ ] **V-RESTORE** (verbs.zil): Args: 
+- [ ] **V-RUB** (verbs.zil): Args: 
+- [ ] **V-SALUTE** (verbs.zil): Args: 
+- [ ] **V-SAVE** (verbs.zil): Args: 
+- [ ] **V-SAY** (verbs.zil): Args: "AUX" V
+- [ ] **V-SCOLD** (verbs.zil): Args: 
+- [ ] **V-SCORE** (verbs.zil): Args: "OPTIONAL" (ASK? T
+- [ ] **V-SCRIPT** (verbs.zil): Args: 
+- [ ] **V-SCRUB** (verbs.zil): Args: 
+- [ ] **V-SEARCH** (verbs.zil): Args: 
+- [ ] **V-SET** (verbs.zil): Args: 
+- [ ] **V-SGIVE** (verbs.zil): Args: 
+- [ ] **V-SHAKE** (verbs.zil): Args: "AUX" X
+- [ ] **V-SHAKE-WITH** (verbs.zil): Args: 
+- [ ] **V-SHOW** (verbs.zil): Args: 
+- [ ] **V-SIT** (verbs.zil): Args: 
+- [ ] **V-SIT-DOWN** (verbs.zil): Args: 
+- [ ] **V-SKIP** (verbs.zil): Args: 
+- [ ] **V-SLEEP** (verbs.zil): Args: 
+- [ ] **V-SLIDE** (verbs.zil): Args: 
+- [ ] **V-SMELL** (verbs.zil): Args: 
+- [ ] **V-SMILE** (verbs.zil): Args: 
+- [ ] **V-SPAN** (verbs.zil): Args: 
+- [ ] **V-STAND** (verbs.zil): Args: 
+- [ ] **V-STAND-ON** (verbs.zil): Args: 
+- [ ] **V-STEP-ON** (verbs.zil): Args: 
+- [ ] **V-SUPER-BRIEF** (verbs.zil): Args: 
+- [ ] **V-SWIM** (verbs.zil): Args: 
+- [ ] **V-SWIM-DIR** (verbs.zil): Args: 
+- [ ] **V-SWIM-UP** (verbs.zil): Args: 
+- [ ] **V-SZAP** (verbs.zil): Args: 
+- [ ] **V-TAKE** (verbs.zil): Args: 
+- [ ] **V-TAKE-OFF** (verbs.zil): Args: 
+- [ ] **V-TALK** (verbs.zil): Args: 
+- [ ] **V-TASTE** (verbs.zil): Args: 
+- [ ] **V-TELL** (verbs.zil): Args: 
+- [ ] **V-THROUGH** (globals.zil): Args: "OPTIONAL" (OBJ <>
+- [ ] **V-THROW** (verbs.zil): Args: 
+- [ ] **V-THROW-OFF** (verbs.zil): Args: 
+- [ ] **V-TIME** (verbs.zil): Args: 
+- [ ] **V-TURN** (verbs.zil): Args: 
+- [ ] **V-TYPE** (verbs.zil): Args: 
+- [ ] **V-UNLOCK** (verbs.zil): Args: 
+- [ ] **V-UNSCRIPT** (verbs.zil): Args: 
+- [ ] **V-VERBOSE** (verbs.zil): Args: 
+- [ ] **V-VERSION** (verbs.zil): Args: "AUX" (CNT 17
+- [ ] **V-WAIT** (verbs.zil): Args: 
+- [ ] **V-WALK** (verbs.zil): Args: "AUX" PT PTS STR OBJ RM TEMP-ELAPSED
+- [ ] **V-WALK-AROUND** (verbs.zil): Args: 
+- [ ] **V-WALK-TO** (verbs.zil): Args: 
+- [ ] **V-WAVE** (verbs.zil): Args: 
+- [ ] **V-WEAR** (verbs.zil): Args: 
+- [ ] **V-YELL** (verbs.zil): Args: 
+- [ ] **V-YES** (verbs.zil): Args: 
+- [ ] **V-ZAP** (verbs.zil): Args: 
+- [ ] **V-ZATTRACT** (verbs.zil): Args: 
+- [ ] **V-ZESCAPE** (verbs.zil): Args: 
+- [ ] **V-ZORK** (verbs.zil): Args: 
+- [ ] **VISIBLE?** (verbs.zil): Args: OBJ "AUX" (L <LOC .OBJ>
+- [ ] **VOID-PSEUDO** (globals.zil): Args: 
+- [ ] **WAKING-UP** (globals.zil): Args: "AUX" X N
+- [ ] **WALKWAY-PSEUDO** (globals.zil): Args: 
+- [ ] **WATER-LEVEL-F** (compone.zil): Args: 
+- [ ] **WEIGHT** (verbs.zil): Args: OBJ "AUX" CONT (WT 0
+- [ ] **WHICH-PRINT** (parser.zil): Args: TLEN LEN TBL "AUX" OBJ RLEN
+- [ ] **WINDING-STAIR-F** (compone.zil): Args: RARG
+- [ ] **WINDOW-F** (globals.zil): Args: 
+- [ ] **WORD-PRINT** (parser.zil): Args: CNT BUF
+- [ ] **WORD-TYPE** (verbs.zil): Args: OBJ WORD "AUX" SYNS
+- [ ] **WORTHLESS-ACTION** (compone.zil): Args: 
+- [ ] **WT?** (parser.zil): Args: PTR BIT "OPTIONAL" (B1 5
+- [ ] **YES?** (verbs.zil): Args: 
+- [ ] **ZAP-COUNT** (comptwo.zil): Args: 
+- [ ] **ZMEMQ** (parser.zil): Args: ITM TBL "OPTIONAL" (SIZE -1
+- [ ] **ZMEMQB** (parser.zil): Args: ITM TBL SIZE "AUX" (CNT 0

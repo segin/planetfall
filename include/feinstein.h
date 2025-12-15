@@ -21,4 +21,11 @@ void routine_ambassador();
 void routine_pod_trip();
 void routine_sink_pod();
 
+// Action routines
+bool deck_nine_f(int arg);
+bool gangway_f(int arg);
+bool ground_f(void);
+bool chronometer_f(int arg);
+bool patrol_uniform_f(void);
+
 #endif

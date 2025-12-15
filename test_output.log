@@ -1,0 +1,78 @@
+[2;24r[2J[HPlanetfall
+INTERLOGIC Science Fiction Phonytasy
+Copyright (c) 1983 Infocom, Inc. All rights reserved.
+
+[s[H[7m Deck Nine                                                        Day 1, 08:00 [0m[uDeck Nine
+This is a featureless corridor similar to every other corridor on the ship.
+It curves away to starboard, and a gangway leads up.
+To port is the entrance to one of the ship's primary escape pods.
+
+> Deck Nine
+This is a featureless corridor similar to every other corridor on the ship.
+It curves away to starboard, and a gangway leads up.
+To port is the entrance to one of the ship's primary escape pods.
+[s[H[7m Deck Nine                                                        Day 1, 08:10 [0m[u
+> You can't see any access-panel here.
+
+> [Ambiguous: found 2 matches, picking one]
+The panel swings open.
+The access panel is open.
+It contains:
+  fourth seventeen-centimeter fromitz board
+  third seventeen-centimeter fromitz board
+  second seventeen-centimeter fromitz board
+  first seventeen-centimeter fromitz board
+[s[H[7m Deck Nine                                                        Day 1, 08:20 [0m[u
+> Taken.
+[s[H[7m Deck Nine                                                        Day 1, 08:30 [0m[u
+> [Ambiguous: found 2 matches, picking one]
+The second seventeen-centimeter fromitz board doesn't fit.
+[s[H[7m Deck Nine                                                        Day 1, 08:40 [0m[u
+> [Ambiguous: found 2 matches, picking one]
+That verb is not implemented yet.
+
+A massive explosion rocks the ship. Echoes from the explosion resound
+deafeningly down the halls.
+The door to port slides open.
+[s[H[7m Deck Nine                                                        Day 1, 08:50 [0m[u
+> [Ambiguous: found 2 matches, picking one]
+The panel swings closed.
+
+You are deafened by more explosions and by the sound of emergency bulkheads
+slamming closed.
+[s[H[7m Deck Nine                                                        Day 1, 09:00 [0m[u
+> Deck Nine
+This is a featureless corridor similar to every other corridor on the ship.
+It curves away to starboard, and a gangway leads up.
+To port is the entrance to one of the ship's primary escape pods.
+
+More powerful explosions buffet the ship. The lights flicker madly,
+and the escape-pod bulkhead clangs shut.
+[s[H[7m Deck Nine                                                        Day 1, 09:10 [0m[u
+> You can't see any access-panel here.
+
+> [Ambiguous: found 2 matches, picking one]
+The panel swings open.
+The access panel is open.
+It contains:
+  fourth seventeen-centimeter fromitz board
+  third seventeen-centimeter fromitz board
+  first seventeen-centimeter fromitz board
+
+Explosions continue to rock the ship.
+[s[H[7m Deck Nine                                                        Day 1, 09:20 [0m[u
+> [Ambiguous: found 2 matches, picking one]
+The panel swings closed.
+
+An enormous explosion tears the walls of the ship apart. If only you
+had made it to an escape pod...
+**** You have died ****
+
+Would you like to RESTART, RESTORE, or QUIT?
+> 
+Would you like to RESTART, RESTORE, or QUIT?
+> 
+Would you like to RESTART, RESTORE, or QUIT?
+> 
+Would you like to RESTART, RESTORE, or QUIT?
+> [s[H[7m Deck Nine                                                        Day 1, 09:30 [0m[u[r
