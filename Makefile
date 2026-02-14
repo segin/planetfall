@@ -29,8 +29,8 @@ $(TEST_ENGINE_BIN): src/engine_core.o $(TEST_ENGINE_SRC)
 $(TEST_PARSER_BIN): src/engine_core.o src/parser.o src/syntax_gen.o $(TEST_PARSER_SRC)
 	$(CC) $(CFLAGS) -o $(TEST_PARSER_BIN) $(TEST_PARSER_SRC) src/engine_core.o src/parser.o src/syntax_gen.o
 
-$(TEST_EVENTS_BIN): src/events.o src/feinstein.o src/engine_core.o $(TEST_EVENTS_SRC)
-	$(CC) $(CFLAGS) -o $(TEST_EVENTS_BIN) $(TEST_EVENTS_SRC) src/events.o src/feinstein.o src/engine_core.o
+$(TEST_EVENTS_BIN): src/events.o src/feinstein.o src/feinstein_actions.o src/engine_core.o src/output.o $(TEST_EVENTS_SRC)
+	$(CC) $(CFLAGS) -o $(TEST_EVENTS_BIN) $(TEST_EVENTS_SRC) src/events.o src/feinstein.o src/feinstein_actions.o src/engine_core.o src/output.o
 
 clean:
 	rm -f src/*.o tests/run_tests $(BIN)
