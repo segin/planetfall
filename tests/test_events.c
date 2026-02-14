@@ -2,8 +2,10 @@
 #include <assert.h>
 #include "planetfall.h"
 #include "events.h"
+#include "parser.h"
 
 int brigs_up = 0;
+Command current_cmd; // Defined for linking
 
 // Mock logic
 void routine_mock() {
@@ -12,6 +14,10 @@ void routine_mock() {
 
 void perform_look() {
     // Stub
+}
+
+void jigs_up(const char *msg) {
+    printf("JIGS UP: %s\n", msg);
 }
 
 void test_events() {
@@ -25,6 +31,12 @@ void test_events() {
     
     int test_evt = EVT_SINK_POD; 
     queue_event(test_evt, 2);
+    // Since run_events() calls routine_sink_pod() which calls jigs_up(),
+    // and routine_sink_pod calls obj_move which uses objects... we need objects initialized.
+    // init_game() is in engine_core.c which is linked.
+    init_game();
+
+    // However, run_events checks if event is enabled.
     assert(is_event_enabled(test_evt));
     
     // Run events (Tick 1)
