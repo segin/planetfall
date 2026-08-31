@@ -898,6 +898,20 @@ void perform_walk(ZObjectID dest) {
       dest = water_level_f();
     }
   }
+  if ((current_room == R_REC_AREA && dest == R_CONFERENCE_ROOM) ||
+      (current_room == R_CONFERENCE_ROOM && dest == R_REC_AREA)) {
+    if (!obj_has_flag(O_CONFERENCE_DOOR, F_OPENBIT)) {
+      tellf("The door is closed.\n");
+      return;
+    }
+  }
+  if ((current_room == R_MESS_CORRIDOR && dest == R_STORAGE_WEST) ||
+      (current_room == R_STORAGE_WEST && dest == R_MESS_CORRIDOR)) {
+    if (!obj_has_flag(O_STORAGE_WEST_DOOR, F_OPENBIT)) {
+      tellf("The door is closed.\n");
+      return;
+    }
+  }
 
   if (dest == NOTHING || dest <= 0) {
     if (!is_lit(current_room) && (rand() % 100) < 75) {

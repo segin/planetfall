@@ -17,6 +17,7 @@ void init_game() {
     // Default Game State
     game_state.day = 1;
     game_state.load_allowed = 100;
+    game_state.number_needed = (rand() % 1000) + 1;
 }
 
 ZObject* get_obj(ZObjectID id) {

@@ -28,6 +28,10 @@ bool systems_monitors_f(int arg);
 ZObjectID water_level_f(void);
 
 // Object / Pseudo Actions
+bool combination_dial_f(int arg);
+bool conference_door_f(int arg);
+bool storage_west_door_f(int arg);
+bool padlock_f(int arg);
 bool chemical_dispenser_f(int arg);
 bool chem_button_f(int arg);
 bool floyd_f(int arg);
@@ -36,6 +40,12 @@ bool cleft_pseudo_action(int arg);
 bool plaque_pseudo_action(int arg);
 bool castle_pseudo_action(int arg);
 bool rubble_pseudo_action(int arg);
+bool games_pseudo_action(int arg);
+bool tapes_pseudo_action(int arg);
+bool near_booth_pseudo_action(int arg);
+bool in_booth_pseudo_action(int arg);
+bool partition_pseudo_action(int arg);
+bool toilet_pseudo_action(int arg);
 // Add more as needed
 
 #endif

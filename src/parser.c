@@ -15,6 +15,7 @@ typedef struct {
 
 Token tokens[MAX_TOKENS];
 int num_tokens = 0;
+Command current_cmd;
 
 VocabEntry *lookup_vocab(const char *word) {
   for (int i = 0; i < vocab_table_size; i++) {
@@ -99,6 +100,12 @@ int snarf_objects(int start, int end, unsigned int search_flags,
     return 0;
 
   int count = 0;
+  if (end - start == 1 && isdigit((unsigned char)tokens[start].word[0])) {
+    current_cmd.parsed_number = atoi(tokens[start].word);
+    out_list[0] = O_INTNUM;
+    return 1;
+  }
+
   bool is_all =
       (strcasecmp(tokens[start].word, "all") == 0 && (end - start == 1));
   bool is_it =
@@ -213,7 +220,30 @@ int snarf_objects(int start, int end, unsigned int search_flags,
   }
 
   check_list(OBJ_GLOBAL_OBJECTS);
-  check_list(OBJ_LOCAL_GLOBALS);
+  for (int g = 0; g < 10; g++) {
+    ZObjectID gobj = objects[current_room].globals[g];
+    if (gobj != NOTHING && gobj > 0 && gobj < MAX_OBJECTS) {
+      if (!obj_has_flag(gobj, F_INVISIBLE)) {
+        bool flags_match = true;
+        if (find_flags != 0 && (objects[gobj].flags & find_flags) == 0) {
+          flags_match = false;
+        }
+        if (flags_match) {
+          bool match = is_all || phrase_matches_object(&objects[gobj], start, end);
+          if (match) {
+            bool exists = false;
+            for (int k = 0; k < count; k++) {
+              if (out_list[k] == gobj)
+                exists = true;
+            }
+            if (!exists && count < max_count) {
+              out_list[count++] = gobj;
+            }
+          }
+        }
+      }
+    }
+  }
 
   // Disambiguation Logic (If not ALL)
   if (!is_all && count > 1) {

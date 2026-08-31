@@ -216,39 +216,73 @@ void init_complexone() {
   r = &objects[R_REC_AREA];
   r->id = R_REC_AREA;
   r->description = "Rec Area";
+  r->synonyms[0] = "area";
+  r->adjectives[0] = "rec";
   r->long_description = "This is a recreational facility of some sort. Games "
                         "and tapes are scattered\n"
                         "about the room. Hallways head off to the east and "
                         "south, and to the north is\n"
                         "a door which is closed and locked. A dial on the door "
-                        "is currently set to 0."; // Dynamic in action
-  r->flags = F_ONBIT | F_RLANDBIT;
+                        "is currently set to 0.";
+  r->flags = F_ONBIT | F_RLANDBIT | F_FLOYDBIT;
   r->south = R_PLAIN_HALL;
   r->east = R_REC_CORRIDOR;
-  r->north = R_CONFERENCE_ROOM; // Guarded by door in action
-  r->action_id = R_REC_AREA;    // Use Room ID as Action ID for simplicity map?
-  // Need to assign function pointer: r->action = rec_area_f;
+  r->north = R_CONFERENCE_ROOM;
+  r->action = rec_area_f;
   r->globals[0] = O_CONFERENCE_DOOR;
+
+  // Pseudo Objects for Rec Area
+  o = &objects[O_GAMES_PSEUDO];
+  o->id = O_GAMES_PSEUDO;
+  o->description = "games";
+  o->synonyms[0] = "games";
+  o->synonyms[1] = "game";
+  o->flags = F_NDESCBIT;
+  o->action = games_pseudo_action;
+  obj_move(O_GAMES_PSEUDO, R_REC_AREA);
+
+  o = &objects[O_TAPES_PSEUDO];
+  o->id = O_TAPES_PSEUDO;
+  o->description = "tapes";
+  o->synonyms[0] = "tapes";
+  o->synonyms[1] = "tape";
+  o->flags = F_NDESCBIT;
+  o->action = tapes_pseudo_action;
+  obj_move(O_TAPES_PSEUDO, R_REC_AREA);
 
   // R_CONFERENCE_ROOM
   r = &objects[R_CONFERENCE_ROOM];
   r->id = R_CONFERENCE_ROOM;
   r->description = "Conference Room";
+  r->synonyms[0] = "room";
+  r->adjectives[0] = "conference";
   r->long_description = "This is a fairly square room, almost filled by a "
                         "round conference table.";
   r->flags = F_RLANDBIT | F_ONBIT;
-  r->south = R_REC_AREA; // Guarded
-  r->out = R_REC_AREA;   // Guarded
+  r->south = R_REC_AREA;
+  r->out = R_REC_AREA;
   r->north = R_BOOTH_1;
   r->in = R_BOOTH_1;
+  r->action = conference_room_f;
   r->globals[0] = O_CONFERENCE_DOOR;
+  r->globals[1] = O_TABLES;
+
+  // Pseudo Object for Conference Room
+  o = &objects[O_NEAR_BOOTH_PSEUDO];
+  o->id = O_NEAR_BOOTH_PSEUDO;
+  o->description = "booth";
+  o->synonyms[0] = "booth";
+  o->flags = F_NDESCBIT;
+  o->action = near_booth_pseudo_action;
+  obj_move(O_NEAR_BOOTH_PSEUDO, R_CONFERENCE_ROOM);
 
   // O_CONFERENCE_DOOR
   o = &objects[O_CONFERENCE_DOOR];
   o->id = O_CONFERENCE_DOOR;
   o->description = "door";
   o->synonyms[0] = "door";
-  o->flags = F_DOORBIT | F_NDESCBIT; // Initially closed
+  o->flags = F_DOORBIT | F_NDESCBIT;
+  o->action = conference_door_f;
   obj_move(O_CONFERENCE_DOOR, OBJ_LOCAL_GLOBALS);
 
   // O_COMBINATION_DIAL
@@ -258,11 +292,15 @@ void init_complexone() {
   o->synonyms[0] = "dial";
   o->adjectives[0] = "combination";
   o->flags = F_MUNGBIT | F_NDESCBIT;
+  o->action = combination_dial_f;
   obj_move(O_COMBINATION_DIAL, R_REC_AREA);
+
   // R_BOOTH_1
   r = &objects[R_BOOTH_1];
   r->id = R_BOOTH_1;
   r->description = "Booth 1";
+  r->synonyms[0] = "booth";
+  r->adjectives[0] = "1";
   r->long_description = "This is a tiny room with a large \"1\" painted on the "
                         "wall. A panel contains\n"
                         "a slot about ten centimeters wide, a beige button "
@@ -271,13 +309,42 @@ void init_complexone() {
   r->flags = F_ONBIT | F_RLANDBIT;
   r->south = R_CONFERENCE_ROOM;
   r->out = R_CONFERENCE_ROOM;
-  // Globals: CONTROLS, SLOT, TELEPORTATION_BUTTON_2, TELEPORTATION_BUTTON_3
-  // Assume initialized elsewhere or added to globals later.
+
+  o = &objects[O_IN_BOOTH_PSEUDO];
+  o->id = O_IN_BOOTH_PSEUDO;
+  o->description = "booth";
+  o->synonyms[0] = "booth";
+  o->flags = F_NDESCBIT;
+  o->action = in_booth_pseudo_action;
+  obj_move(O_IN_BOOTH_PSEUDO, R_BOOTH_1);
+
+  // Common Pseudos for Dorms & SanFacs
+  o = &objects[O_PARTITION_PSEUDO];
+  o->id = O_PARTITION_PSEUDO;
+  o->description = "partition";
+  o->synonyms[0] = "partition";
+  o->synonyms[1] = "partitions";
+  o->flags = F_NDESCBIT;
+  o->action = partition_pseudo_action;
+  obj_move(O_PARTITION_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_TOILET_PSEUDO];
+  o->id = O_TOILET_PSEUDO;
+  o->description = "toilet";
+  o->synonyms[0] = "toilet";
+  o->synonyms[1] = "fixtures";
+  o->synonyms[2] = "fixture";
+  o->synonyms[3] = "bowl";
+  o->flags = F_NDESCBIT;
+  o->action = toilet_pseudo_action;
+  obj_move(O_TOILET_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // R_REC_CORRIDOR
   r = &objects[R_REC_CORRIDOR];
   r->id = R_REC_CORRIDOR;
   r->description = "Rec Corridor";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "rec";
   r->long_description = "This is a wide, east-west hallway. Portals lead north "
                         "and south, and another\n"
                         "corridor branches southwest.";
@@ -292,6 +359,8 @@ void init_complexone() {
   r = &objects[R_DORM_A];
   r->id = R_DORM_A;
   r->description = "Dorm A";
+  r->synonyms[0] = "dorm";
+  r->adjectives[0] = "a";
   r->long_description = "This is a very long room lined with multi-tiered "
                         "bunks. Flimsy partitions\n"
                         "between the tiers may have provided a modicum of "
@@ -303,12 +372,15 @@ void init_complexone() {
   r->flags = F_FLOYDBIT | F_ONBIT | F_RLANDBIT;
   r->south = R_SANFAC_A;
   r->north = R_REC_CORRIDOR;
-  // Globals: BED
+  r->globals[0] = O_BED;
+  r->globals[1] = O_PARTITION_PSEUDO;
 
   // R_SANFAC_A
   r = &objects[R_SANFAC_A];
   r->id = R_SANFAC_A;
   r->description = "SanFac A";
+  r->synonyms[0] = "sanfac";
+  r->adjectives[0] = "a";
   r->long_description = "This must be the sanitary facility for the adjacent "
                         "dormitory. The fixtures\n"
                         "are dry and dusty, the room dead and deserted. You "
@@ -318,12 +390,14 @@ void init_complexone() {
                         "north.";
   r->flags = F_ONBIT | F_RLANDBIT | F_FLOYDBIT;
   r->north = R_DORM_A;
-  // Pseudo: TOILET
+  r->globals[0] = O_TOILET_PSEUDO;
 
   // R_DORM_B
   r = &objects[R_DORM_B];
   r->id = R_DORM_B;
   r->description = "Dorm B";
+  r->synonyms[0] = "dorm";
+  r->adjectives[0] = "b";
   r->long_description = "This is a very long room lined with multi-tiered "
                         "bunks. Flimsy partitions\n"
                         "between the tiers may have provided a modicum of "
@@ -335,11 +409,15 @@ void init_complexone() {
   r->flags = F_FLOYDBIT | F_ONBIT | F_RLANDBIT;
   r->south = R_REC_CORRIDOR;
   r->north = R_SANFAC_B;
+  r->globals[0] = O_BED;
+  r->globals[1] = O_PARTITION_PSEUDO;
 
   // R_SANFAC_B
   r = &objects[R_SANFAC_B];
   r->id = R_SANFAC_B;
   r->description = "SanFac B";
+  r->synonyms[0] = "sanfac";
+  r->adjectives[0] = "b";
   r->long_description = "This must be the sanitary facility for the adjacent "
                         "dormitory. The fixtures\n"
                         "are dry and dusty, the room dead and deserted. You "
@@ -349,11 +427,14 @@ void init_complexone() {
                         "south.";
   r->flags = F_FLOYDBIT | F_ONBIT | F_RLANDBIT;
   r->south = R_DORM_B;
+  r->globals[0] = O_TOILET_PSEUDO;
 
   // R_DORM_C
   r = &objects[R_DORM_C];
   r->id = R_DORM_C;
   r->description = "Dorm C";
+  r->synonyms[0] = "dorm";
+  r->adjectives[0] = "c";
   r->long_description = "This is a very long room lined with multi-tiered "
                         "bunks. Flimsy partitions\n"
                         "between the tiers may have provided a modicum of "
@@ -365,11 +446,15 @@ void init_complexone() {
   r->flags = F_ONBIT | F_FLOYDBIT | F_RLANDBIT;
   r->north = R_DORM_CORRIDOR;
   r->south = R_SANFAC_C;
+  r->globals[0] = O_BED;
+  r->globals[1] = O_PARTITION_PSEUDO;
 
   // R_SANFAC_C
   r = &objects[R_SANFAC_C];
   r->id = R_SANFAC_C;
   r->description = "SanFac C";
+  r->synonyms[0] = "sanfac";
+  r->adjectives[0] = "c";
   r->long_description = "This must be the sanitary facility for the adjacent "
                         "dormitory. The fixtures\n"
                         "are dry and dusty, the room dead and deserted. You "
@@ -379,11 +464,14 @@ void init_complexone() {
                         "north.";
   r->flags = F_FLOYDBIT | F_ONBIT | F_RLANDBIT;
   r->north = R_DORM_C;
+  r->globals[0] = O_TOILET_PSEUDO;
 
   // R_DORM_D
   r = &objects[R_DORM_D];
   r->id = R_DORM_D;
   r->description = "Dorm D";
+  r->synonyms[0] = "dorm";
+  r->adjectives[0] = "d";
   r->long_description = "This is a very long room lined with multi-tiered "
                         "bunks. Flimsy partitions\n"
                         "between the tiers may have provided a modicum of "
@@ -395,11 +483,15 @@ void init_complexone() {
   r->flags = F_FLOYDBIT | F_ONBIT | F_RLANDBIT;
   r->south = R_DORM_CORRIDOR;
   r->north = R_SANFAC_D;
+  r->globals[0] = O_BED;
+  r->globals[1] = O_PARTITION_PSEUDO;
 
   // R_SANFAC_D
   r = &objects[R_SANFAC_D];
   r->id = R_SANFAC_D;
   r->description = "SanFac D";
+  r->synonyms[0] = "sanfac";
+  r->adjectives[0] = "d";
   r->long_description = "This must be the sanitary facility for the adjacent "
                         "dormitory. The fixtures\n"
                         "are dry and dusty, the room dead and deserted. You "
@@ -409,20 +501,24 @@ void init_complexone() {
                         "south.";
   r->flags = F_ONBIT | F_FLOYDBIT | F_RLANDBIT;
   r->south = R_DORM_D;
+  r->globals[0] = O_TOILET_PSEUDO;
 
   // R_MESS_CORRIDOR
   r = &objects[R_MESS_CORRIDOR];
   r->id = R_MESS_CORRIDOR;
   r->description = "Mess Corridor";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "mess";
   r->long_description =
       "This is a wide, east-west hallway with a large portal to the south. A\n"
       "small door to the north is closed and hooked with a simple steel "
-      "padlock."; // Dynamic in action/look
+      "padlock.";
   r->flags = F_ONBIT | F_RLANDBIT;
   r->south = R_MESS_HALL;
-  r->north = R_STORAGE_WEST; // Guarded by STORAGE_WEST_DOOR
+  r->north = R_STORAGE_WEST;
   r->east = R_DORM_CORRIDOR;
   r->west = R_REC_CORRIDOR;
+  r->action = mess_corridor_f;
   r->globals[0] = O_STORAGE_WEST_DOOR;
 
   // O_STORAGE_WEST_DOOR
@@ -430,7 +526,8 @@ void init_complexone() {
   o->id = O_STORAGE_WEST_DOOR;
   o->description = "door";
   o->synonyms[0] = "door";
-  o->flags = F_DOORBIT | F_NDESCBIT; // Initially closed
+  o->flags = F_DOORBIT | F_NDESCBIT;
+  o->action = storage_west_door_f;
   obj_move(O_STORAGE_WEST_DOOR, OBJ_LOCAL_GLOBALS);
 
   // O_PADLOCK
@@ -443,6 +540,7 @@ void init_complexone() {
   o->adjectives[1] = "steel";
   o->size = 10;
   o->flags = F_MUNGBIT | F_NDESCBIT | F_TAKEBIT | F_TRYTAKEBIT;
+  o->action = padlock_f;
   obj_move(O_PADLOCK, R_MESS_CORRIDOR);
   // R_MESS_HALL
   r = &objects[R_MESS_HALL];

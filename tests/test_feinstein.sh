@@ -60,6 +60,10 @@ run_test "Test 27: BALCONY and PLAQUE" "TELEPORT BALCONY\nREAD PLAQUE\nQUIT\nY" 
 run_test "Test 28: COURTYARD and CASTLE" "TELEPORT COURTYARD\nEXAMINE CASTLE\nQUIT\nY" "ancient and crumbling" "Castle pseudo examine works" "CASTLE pseudo"
 run_test "Test 29: WEST WING and refusal" "TELEPORT WING\nDOWN\nQUIT\nY" "Certain death" "West Wing down refusal works" "WEST WING DOWN"
 run_test "Test 30: UNDERWATER drowning" "TELEPORT UNDERWATER\nWAIT\nWAIT\nQUIT\n" "mighty undertow" "Underwater drowning works" "UNDERWATER drowning"
+run_test "Test 31: REC AREA dial" "TELEPORT AREA\nEXAMINE DIAL\nSET DIAL TO 500\nQUIT\nY" "dial is now set to 500" "Rec area dial setting works" "REC AREA dial"
+run_test "Test 32: REC AREA games and tapes" "TELEPORT AREA\nEXAMINE GAMES\nEXAMINE TAPES\nQUIT\nY" "All the usual games" "Rec area games/tapes examine works" "GAMES/TAPES"
+run_test "Test 33: DORM and SANFAC" "TELEPORT DORM\nEXAMINE PARTITION\nSOUTH\nEXAMINE TOILET\nFLUSH TOILET\nQUIT\nY" "water seems to be turned off" "Dorm and SanFac interactions work" "DORM/SANFAC"
+run_test "Test 34: MESS CORRIDOR padlock and door" "TELEPORT MESS\nOPEN DOOR\nTAKE PADLOCK\nUNLOCK PADLOCK\nQUIT\nY" "padlock is locked to the door" "Mess corridor door and padlock work" "MESS CORRIDOR"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

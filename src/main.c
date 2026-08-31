@@ -15,7 +15,6 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-Command current_cmd;
 volatile sig_atomic_t need_repaint = 0;
 
 void handle_winch(int sig) { need_repaint = 1; }
@@ -103,17 +102,7 @@ void init_game_data() {
 }
 
 void perform_walk_dir(ZObjectID direction_field) {
-  if (direction_field == NOTHING) {
-    tellf("You can't go that way.\n");
-    return;
-  }
-  if (direction_field == R_CERTAIN_DEATH_MSG) {
-    tellf("Certain death.\n");
-    return;
-  }
-  obj_move(player, direction_field);
-  current_room = direction_field;
-  perform_first_look();
+  perform_walk(direction_field);
 }
 
 bool show_status = true;

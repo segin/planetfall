@@ -167,6 +167,78 @@ bool rubble_pseudo_action(int verb) {
   return false;
 }
 
+bool games_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("All the usual games -- Chess, Cribbage, Galactic\n"
+          "Overlord, Double Fannucci...\n");
+    return true;
+  }
+  if (verb == V_PLAY) {
+    tellf("You fiddle with the games for a while, but there's nobody to play against.\n");
+    return true;
+  }
+  return false;
+}
+
+bool tapes_pseudo_action(int verb) {
+  if (verb == V_READ || verb == V_PLAY || verb == V_TAKE) {
+    tellf("Hardly the time or place for reading recreational tapes.\n");
+    return true;
+  }
+  if (verb == V_EXAMINE) {
+    tellf("Let's see...here are some musical selections, here are\n"
+          "some bestselling romantic novels, here is a biography of a famous Double\n"
+          "Fannucci champion...\n");
+    return true;
+  }
+  return false;
+}
+
+bool near_booth_pseudo_action(int verb) {
+  if (verb == V_DROP || verb == V_EXIT || verb == V_DISEMBARK) {
+    tellf("You're not in the booth!\n");
+    return true;
+  }
+  if (verb == V_THROUGH || verb == V_BOARD || verb == V_WALK_TO || verb == V_ENTER) {
+    perform_walk(objects[current_room].in);
+    return true;
+  }
+  return false;
+}
+
+bool in_booth_pseudo_action(int verb) {
+  if (verb == V_THROUGH || verb == V_BOARD || verb == V_WALK_TO || verb == V_ENTER) {
+    tellf("You're already in the booth!\n");
+    return true;
+  }
+  if (verb == V_DROP || verb == V_EXIT || verb == V_DISEMBARK) {
+    perform_walk(objects[current_room].out);
+    return true;
+  }
+  return false;
+}
+
+bool partition_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("The partitions are very plain, and were\n"
+          "obviously intended to separate this huge room into smaller areas.\n");
+    return true;
+  }
+  return false;
+}
+
+bool toilet_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("The fixtures are all dry and dusty.\n");
+    return true;
+  }
+  if (verb == V_FLUSH) {
+    tellf("The water seems to be turned off.\n");
+    return true;
+  }
+  return false;
+}
+
 #include "parser.h"
 
 // Helper macros
