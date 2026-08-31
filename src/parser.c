@@ -93,6 +93,81 @@ bool phrase_matches_object(ZObject *obj, int start, int end) {
   return true;
 }
 
+// Scan the direct children of `parent` (and one level into open containers) for
+// objects matching the noun clause spanning tokens [start, end), appending hits
+// to out_list. Callers invoke this once per scope (inventory, room, globals),
+// so it dedups against what is already in the list.
+static void check_list(ZObjectID parent, int start, int end,
+                       unsigned int find_flags, bool is_all,
+                       ZObjectID *out_list, int max_count, int *count) {
+  ZObjectID curr = objects[parent].child;
+  while (curr != NOTHING) {
+    if (!obj_has_flag(curr, F_INVISIBLE)) {
+
+      bool flags_match = true;
+      if (is_all && find_flags != 0) {
+        if ((objects[curr].flags & find_flags) == 0) {
+          flags_match = false;
+        }
+      }
+
+      if (flags_match) {
+        bool match = false;
+        if (is_all) {
+          match = true; // "ALL" matches everything that passes flag check
+        } else {
+          if (phrase_matches_object(&objects[curr], start, end)) {
+            match = true;
+          }
+        }
+
+        if (match) {
+          // Check if already in list (dedup if searching multiple scopes)
+          bool exists = false;
+          for (int k = 0; k < *count; k++)
+            if (out_list[k] == curr)
+              exists = true;
+
+          if (!exists && *count < max_count) {
+            out_list[(*count)++] = curr;
+          }
+        }
+      }
+    }
+
+    // Recurse for containers
+    if (obj_has_flag(curr, F_CONTBIT) && obj_has_flag(curr, F_OPENBIT)) {
+      ZObjectID inner = objects[curr].child;
+      while (inner != NOTHING) {
+        if (!obj_has_flag(inner, F_INVISIBLE)) {
+          bool inner_flags_match = true;
+          if (is_all && find_flags != 0) {
+            if ((objects[inner].flags & find_flags) == 0)
+              inner_flags_match = false;
+          }
+
+          bool match = false;
+          if (is_all)
+            match = true;
+          else if (phrase_matches_object(&objects[inner], start, end))
+            match = true;
+
+          if (inner_flags_match && match) {
+            bool exists = false;
+            for (int k = 0; k < *count; k++)
+              if (out_list[k] == inner)
+                exists = true;
+            if (!exists && *count < max_count)
+              out_list[(*count)++] = inner;
+          }
+        }
+        inner = objects[inner].sibling;
+      }
+    }
+    curr = objects[curr].sibling;
+  }
+}
+
 // Returns count found
 int snarf_objects(int start, int end, unsigned int search_flags,
                   unsigned int find_flags, ZObjectID *out_list, int max_count) {
@@ -118,75 +193,6 @@ int snarf_objects(int start, int end, unsigned int search_flags,
     return 0;
   }
 
-  void check_list(ZObjectID parent) {
-    ZObjectID curr = objects[parent].child;
-    while (curr != NOTHING) {
-      if (!obj_has_flag(curr, F_INVISIBLE)) {
-
-        bool flags_match = true;
-        if (is_all && find_flags != 0) {
-          if ((objects[curr].flags & find_flags) == 0) {
-            flags_match = false;
-          }
-        }
-
-        if (flags_match) {
-          bool match = false;
-          if (is_all) {
-            match = true; // "ALL" matches everything that passes flag check
-          } else {
-            if (phrase_matches_object(&objects[curr], start, end)) {
-              match = true;
-            }
-          }
-
-          if (match) {
-            // Check if already in list (dedup if searching multiple scopes)
-            bool exists = false;
-            for (int k = 0; k < count; k++)
-              if (out_list[k] == curr)
-                exists = true;
-
-            if (!exists && count < max_count) {
-              out_list[count++] = curr;
-            }
-          }
-        }
-      }
-
-      // Recurse for containers
-      if (obj_has_flag(curr, F_CONTBIT) && obj_has_flag(curr, F_OPENBIT)) {
-        ZObjectID inner = objects[curr].child;
-        while (inner != NOTHING) {
-          if (!obj_has_flag(inner, F_INVISIBLE)) {
-            bool inner_flags_match = true;
-            if (is_all && find_flags != 0) {
-              if ((objects[inner].flags & find_flags) == 0)
-                inner_flags_match = false;
-            }
-
-            bool match = false;
-            if (is_all)
-              match = true;
-            else if (phrase_matches_object(&objects[inner], start, end))
-              match = true;
-
-            if (inner_flags_match && match) {
-              bool exists = false;
-              for (int k = 0; k < count; k++)
-                if (out_list[k] == inner)
-                  exists = true;
-              if (!exists && count < max_count)
-                out_list[count++] = inner;
-            }
-          }
-          inner = objects[inner].sibling;
-        }
-      }
-      curr = objects[curr].sibling;
-    }
-  }
-
   if (search_flags & SEARCH_ALL) {
     // Iterate ALL objects
     // Assuming we have access to total objects count or MAX_OBJECTS
@@ -210,12 +216,12 @@ int snarf_objects(int start, int end, unsigned int search_flags,
   } else {
     bool explicit_scope = (search_flags & (SEARCH_HELD | SEARCH_ROOM | SEARCH_GROUND)) != 0;
     if (!explicit_scope || (search_flags & SEARCH_HELD) || (search_flags & PARSE_TRY_TAKE))
-      check_list(player);
+      check_list(player, start, end, find_flags, is_all, out_list, max_count, &count);
     if (!explicit_scope || (search_flags & (SEARCH_ROOM | SEARCH_GROUND)) || (search_flags & PARSE_TRY_TAKE))
-      check_list(current_room);
+      check_list(current_room, start, end, find_flags, is_all, out_list, max_count, &count);
   }
 
-  check_list(OBJ_GLOBAL_OBJECTS);
+  check_list(OBJ_GLOBAL_OBJECTS, start, end, find_flags, is_all, out_list, max_count, &count);
   for (int g = 0; g < 10; g++) {
     ZObjectID gobj = objects[current_room].globals[g];
     if (gobj != NOTHING && gobj > 0 && gobj < MAX_OBJECTS) {

@@ -7,7 +7,7 @@
 
 # Current issues to address:
 
-- You can enter the escape pod before the explosions open the escape pod door. 
+- You can enter the escape pod before the explosions open the escape pod door.
 - You do not have enough time to explore the ship before dying. Compare against original game.
 - Status bar has time and no score. 
 

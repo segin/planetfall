@@ -1,5 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -Iinclude -g
+# -std=c23 pins the *language* to ISO C23 (no GNU extensions). _DEFAULT_SOURCE
+# keeps the POSIX/BSD library surface we rely on visible (strcasecmp, sigaction,
+# TIOCGWINSZ), which a strict ISO mode would otherwise hide.
+CFLAGS = -std=c23 -D_DEFAULT_SOURCE -Wall -Iinclude -g
 
 SRC = src/engine_core.c src/parser.c src/main.c src/events.c src/feinstein.c src/complexone.c src/complextwo.c src/feinstein_actions.c src/complexone_actions.c src/complextwo_actions.c src/global_objects.c src/syntax_gen.c src/actions.c src/output.c src/savegame.c
 OBJ = $(SRC:.c=.o)
