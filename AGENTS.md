@@ -48,8 +48,8 @@ with the original, modulo catalogued Release 1 wording.
   | Objects            | 120/150  |
   | Action Routines    | 103/136  |
   | Verbs and Syntax   | 128/251  |
-  | Routines / Systems | 191/505  |
-  | **Total**          | **638/1147** |
+  | Routines / Systems | 193/505  |
+  | **Total**          | **640/1147** |
 
   The weakest areas by far are Verbs/Syntax and Routines/Systems -- the world is
   largely built but the verb layer behind it is thin.

@@ -724,7 +724,7 @@
 - [x] **COMBINATION-DIAL-F** (compone.zil): Args: 
 - [x] **COMBINATION-PAPER-F** (comptwo.zil): Args: 
 - [x] **COMM-ROOM-F** (compone.zil): Args: RARG
-- [ ] **COMM-SETUP** (compone.zil): Args: 
+- [x] **COMM-SETUP** (compone.zil): Args: 
 - [x] **COMPUTER-ACTION** (comptwo.zil): Args: 
 - [x] **CONFERENCE-DOOR-F** (compone.zil): Args: 
 - [x] **CONFERENCE-ROOM-F** (compone.zil): Args: RARG
@@ -959,7 +959,7 @@
 - [x] **RAD-DOOR-EAST-F** (comptwo.zil): Args: 
 - [x] **RAD-DOOR-WEST-F** (comptwo.zil): Args: 
 - [x] **RADIATION-LAB-F** (comptwo.zil): Args: RARG
-- [ ] **RANDOMIZE-ORDER** (compone.zil): Args: "AUX" (COUNT 0
+- [x] **RANDOMIZE-ORDER** (compone.zil): Args: "AUX" (COUNT 0
 - [ ] **REACTOR-BUTTON-PSEUDO** (globals.zil): Args: 
 - [x] **REACTOR-ELEVATOR-DOOR-F** (compone.zil): Args: 
 - [x] **REC-AREA-F** (compone.zil): Args: RARG
