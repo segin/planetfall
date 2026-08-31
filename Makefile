@@ -42,8 +42,8 @@ compare: $(BIN)
 $(TEST_ENGINE_BIN): src/engine_core.o $(TEST_ENGINE_SRC)
 	$(CC) $(CFLAGS) -o $(TEST_ENGINE_BIN) $(TEST_ENGINE_SRC) src/engine_core.o
 
-$(TEST_PARSER_BIN): src/engine_core.o src/parser.o src/syntax_gen.o $(TEST_PARSER_SRC)
-	$(CC) $(CFLAGS) -o $(TEST_PARSER_BIN) $(TEST_PARSER_SRC) src/engine_core.o src/parser.o src/syntax_gen.o
+$(TEST_PARSER_BIN): src/engine_core.o src/parser.o src/syntax_gen.o src/output.o $(TEST_PARSER_SRC)
+	$(CC) $(CFLAGS) -o $(TEST_PARSER_BIN) $(TEST_PARSER_SRC) src/engine_core.o src/parser.o src/syntax_gen.o src/output.o
 
 $(TEST_EVENTS_BIN): src/events.o $(TEST_EVENTS_SRC)
 	$(CC) $(CFLAGS) -o $(TEST_EVENTS_BIN) $(TEST_EVENTS_SRC) src/events.o

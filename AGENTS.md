@@ -16,18 +16,14 @@ Release 39 -- wording drifted between them, and the sources win. Confirmed
 release differences are listed in `KNOWN_DIFFS` in `tests/compare_original.py`
 so they do not drown the real signal.
 
-Current: 15/30 probes match, 12 known release differences, 3 real findings
+Current: 15/30 probes match, 14 known release differences, 1 real finding
 (listed below). Add probes as chapters land.
 
 # Current issues to address:
 
 - Findings from `make compare` that are real port bugs, not release drift:
-  - **IN PROGRESS** — An unknown word reports "I don't understand that
-    sentence." where ZIL says "I don't know the word 'xyzzy'." The parser does
-    not distinguish an unrecognised word from a sentence it cannot fit to a
-    syntax line. A verb with a missing object hits the same generic failure,
-    where ZIL asks "What do you want to take?"
-  - `DIAGNOSE` is unimplemented; ZIL reports health, rest and hunger.
+  - **IN PROGRESS** — `DIAGNOSE` is unimplemented; ZIL reports health, rest
+    and hunger.
 
 - Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
   just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. Run

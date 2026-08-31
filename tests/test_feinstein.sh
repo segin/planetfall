@@ -132,6 +132,13 @@ run_test "Test 59: HELIPAD fence and helicopter boarding" "TELEPORT HELIPAD\nNOR
 run_test "Test 60: COMM ROOM playback and screen" "TELEPORT COMM ROOM\nPUSH PLAYBACK BUTTON\nREAD SCREEN\nEXAMINE CABLES\nQUIT\nY" "Feinstein" "Comm room playback button and screen reading work" "COMM ROOM"
 run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST\nLOOK\nQUIT\nY" "Kalamontee Staashun" "Kalamontee platform navigation and description work" "KALAMONTEE PLATFORM"
 
+# --- Parser errors (UNKNOWN-WORD / ORPHAN / I beg your pardon) --------------
+run_test "Test 106: Unknown words are named" "XYZZY\nQUIT\nY" "don't know the word \"xyzzy\." "UNKNOWN-WORD reports the word" "Unknown word"
+run_test "Test 107: A verb with no object asks for one" "TAKE\nQUIT\nY" "What do you want to take" "ORPHAN asks for the missing object" "Orphan"
+run_test "Test 108: Empty input" "\nQUIT\nY" "beg your pardon" "Empty input is handled" "Empty input"
+run_test "Test 109: Unparseable but known words" "TAKE BRUSH BRUSH BRUSH\nQUIT\nY" "don't understand that sentence|can't see any" "Known words that do not parse still fail cleanly" "Bad sentence"
+run_test "Test 110: Not-here message wording" "READ TOWEL\nQUIT\nY" "can't see any towel here!" "Not-here message matches the R39 source" "Not here"
+
 # --- The escape pod (ESCAPE-POD-F, SAFETY-WEB-F, POD-EXIT-F, I-SINK-POD) -----
 # The first blast opens the bulkhead around turn 38; boarding the web and riding
 # the pod down takes another dozen turns. POD_LANDED leaves the player webbed in

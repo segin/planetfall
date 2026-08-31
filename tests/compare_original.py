@@ -87,6 +87,9 @@ KNOWN_DIFFS = {
     'inventory':      'R1 calls it a "Patrol ID card"; R39 DESC is "ID card"',
     'examine-uniform': 'R1 says "radiation and mosquitoes"; R39 says "mild '
                        'radiation, repels all insects"',
+    'read-towel-absent': 'R39 ends the not-here message "here!"; R1 "here."',
+    'bad-verb':       'R39 UNKNOWN-WORD quotes the word "like this." and R1 '
+                      "'like this'.",
 }
 
 STATUS_RE = re.compile(r'Score:\s*-?\d+\s+Moves:\s*\d+')

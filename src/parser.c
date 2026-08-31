@@ -78,6 +78,31 @@ bool word_matches_object(ZObject *obj, const char *word) {
   return false;
 }
 
+// Is this word in any dictionary at all -- the verb/preposition table, an
+// object's synonyms or adjectives, or one of the words the parser skips over?
+// ZIL's lexer knows every vocabulary word up front, so it can tell an
+// unrecognised word from a sentence it merely cannot fit to a syntax line.
+static bool word_is_known(const char *word) {
+  if (lookup_vocab(word))
+    return true;
+  if (isdigit((unsigned char)word[0]))
+    return true;
+
+  static const char *skipped[] = {"the", "a", "an", "all", "it", "of"};
+  for (size_t i = 0; i < sizeof(skipped) / sizeof(skipped[0]); i++) {
+    if (strcasecmp(word, skipped[i]) == 0)
+      return true;
+  }
+
+  for (int i = 0; i < MAX_OBJECTS; i++) {
+    if (objects[i].id == NOTHING)
+      continue;
+    if (word_matches_object(&objects[i], word))
+      return true;
+  }
+  return false;
+}
+
 bool phrase_matches_object(ZObject *obj, int start, int end) {
   for (int i = start; i < end; i++) {
     if (!word_matches_object(obj, tokens[i].word)) {
@@ -259,8 +284,23 @@ int snarf_objects(int start, int end, unsigned int search_flags,
 
 bool parse_command(char *input, Command *cmd) {
   tokenize(input);
-  if (num_tokens == 0)
+  if (num_tokens == 0) {
+    tellf("I beg your pardon?\n");
     return false;
+  }
+
+  // UNKNOWN-WORD (parser.zil): report a word that is in no dictionary before
+  // trying to fit the sentence to anything.
+  for (int i = 0; i < num_tokens; i++) {
+    if (!word_is_known(tokens[i].word)) {
+      tellf("I don't know the word \"%s.\"\n", tokens[i].word);
+      return false;
+    }
+  }
+
+  // Set when some syntax line for this verb wanted a direct object and the
+  // player did not supply one, so we can ask for it the way ORPHAN does.
+  bool wanted_object = false;
 
   cmd->prso_count = 0;
   cmd->prsi = NOTHING;
@@ -396,8 +436,11 @@ bool parse_command(char *input, Command *cmd) {
         }
       }
 
-      if (nc1_start >= nc1_end)
+      if (nc1_start >= nc1_end) {
+        // The verb fits, but nothing was named to apply it to.
+        wanted_object = true;
         goto next_syntax;
+      }
     }
 
     if (se->obj2_present) {
@@ -414,7 +457,7 @@ bool parse_command(char *input, Command *cmd) {
       count1 = snarf_objects(nc1_start, nc1_end, se->obj1_search, se->obj1_find,
                              cmd->prso_list, MAX_OBJECTS_PER_CMD);
       if (count1 == 0) {
-        printf("You can't see any %s here.\n", tokens[nc1_start].word);
+        tellf("You can't see any %s here!\n", tokens[nc1_start].word);
         return false;
       }
       cmd->prso_count = count1;
@@ -426,7 +469,7 @@ bool parse_command(char *input, Command *cmd) {
       int count2 = snarf_objects(nc2_start, nc2_end, se->obj2_search,
                                  se->obj2_find, prsi_list, 2);
       if (count2 == 0) {
-        printf("You can't see any %s here.\n", tokens[nc2_start].word);
+        tellf("You can't see any %s here!\n", tokens[nc2_start].word);
         return false;
       }
       cmd->prsi = prsi_list[0];
@@ -439,6 +482,12 @@ bool parse_command(char *input, Command *cmd) {
     continue;
   }
 
-  printf("I don't understand that sentence.\n");
+  if (wanted_object) {
+    // ORPHAN (parser.zil): "What do you want to take?"
+    tellf("What do you want to %s?\n", tokens[0].word);
+    return false;
+  }
+
+  tellf("I don't understand that sentence.\n");
   return false;
 }
