@@ -79,6 +79,9 @@ run_test "Test 46: LARGE OFFICE desk and access cards" "TELEPORT LARGE OFFICE\nO
 run_test "Test 47: STORAGE EAST box and cracked board" "TELEPORT STORAGE EAST\nLOOK IN BOX\nEXAMINE BOARD\nQUIT\nY" "twisted maze of silicon circuits" "Storage East box and board examine work" "STORAGE EAST"
 run_test "Test 48: OIL CAN and BOX close refusal" "TELEPORT STORAGE EAST\nTAKE OIL CAN\nPOUR CAN\nCLOSE BOX\nQUIT\nY" "You can't close that" "Oil can pour and box close refusal work" "OIL CAN / BOX"
 run_test "Test 49: PHYSICAL PLANT catwalk climb" "TELEPORT PHYSICAL PLANT\nCLIMB CATWALK\nQUIT\nY" "catwalks are too high" "Physical plant catwalk climb refusal works" "PHYSICAL PLANT"
+run_test "Test 50: REACTOR CONTROL elevator door button" "TELEPORT REACTOR CONTROL\nPUSH BUTTON\nEAST\nLOOK\nWEST\nQUIT\nY" "Reactor Elevator" "Reactor control elevator door button works" "REACTOR CONTROL"
+run_test "Test 51: TOOL ROOM flask and pliers" "TELEPORT TOOL ROOM\nEXAMINE FLASK\nEXAMINE PLIERS\nQUIT\nY" "wide-nosed pliers" "Tool room flask and pliers examine work" "TOOL ROOM"
+run_test "Test 52: MAGNET crevice key extraction" "TELEPORT TOOL ROOM\nTAKE MAGNET\nTELEPORT ADMIN SOUTH\nEXAMINE CREVICE\nPUT MAGNET OVER CREVICE\nQUIT\nY" "metal leaps from" "Magnet pulling key from crevice works" "MAGNET KEY EXTRACTION"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

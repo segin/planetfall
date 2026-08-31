@@ -42,6 +42,8 @@ void routine_ambassador();
 void routine_pod_trip();
 void routine_sink_pod();
 void routine_hunger();
+void i_magnet();
+void i_reactor_door_close();
 
 bool run_events() {
     for (int i = 0; i < MAX_EVENTS; i++) {
@@ -69,6 +71,8 @@ bool run_events() {
                 case EVT_POD_TRIP: routine_pod_trip(); break;
                 case EVT_SINK_POD: routine_sink_pod(); break;
                 case EVT_HUNGER_WARNINGS: routine_hunger(); break;
+                case EVT_MAGNET: i_magnet(); break;
+                case EVT_REACTOR_DOOR_CLOSE: i_reactor_door_close(); break;
                 default: break;
             }
         }

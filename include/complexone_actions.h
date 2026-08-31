@@ -73,6 +73,15 @@ void examine_board(void);
 bool good_bedistor_f(int arg);
 bool catwalk_pseudo_action(int arg);
 bool desk_f(int arg);
+bool reactor_control_f(int arg);
+bool reactor_elevator_f(int arg);
+bool reactor_elevator_door_f(int arg);
+bool reactor_button_pseudo_action(int arg);
+bool diagram_pseudo_action(int arg);
+bool flask_f(int arg);
+bool magnet_f(int arg);
+void i_magnet(void);
+void i_reactor_door_close(void);
 bool partition_pseudo_action(int arg);
 bool toilet_pseudo_action(int arg);
 // Add more as needed

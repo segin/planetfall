@@ -928,6 +928,13 @@ void perform_walk(ZObjectID dest) {
       return;
     }
   }
+  if ((current_room == R_REACTOR_CONTROL && dest == R_REACTOR_ELEVATOR) ||
+      (current_room == R_REACTOR_ELEVATOR && dest == R_REACTOR_CONTROL)) {
+    if (!obj_has_flag(O_REACTOR_ELEVATOR_DOOR, F_OPENBIT)) {
+      tellf("The elevator door is closed.\n");
+      return;
+    }
+  }
 
   if (dest == NOTHING || dest <= 0) {
     if (!is_lit(current_room) && (rand() % 100) < 75) {

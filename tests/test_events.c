@@ -16,6 +16,8 @@ void routine_ambassador() {}
 void routine_pod_trip() {}
 void routine_sink_pod() {}
 void routine_hunger() {}
+void i_magnet() {}
+void i_reactor_door_close() {}
 
 void test_events() {
     printf("Testing Event Queue...\n");

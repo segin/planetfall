@@ -1223,6 +1223,142 @@ void init_complexone() {
   o->action = catwalk_pseudo_action;
   obj_move(O_CATWALK_PSEUDO, OBJ_LOCAL_GLOBALS);
 
+  // R_REACTOR_CONTROL
+  r = &objects[R_REACTOR_CONTROL];
+  r->id = R_REACTOR_CONTROL;
+  r->description = "Reactor Control";
+  r->synonyms[0] = "control";
+  r->synonyms[1] = "room";
+  r->adjectives[0] = "reactor";
+  r->long_description =
+      "This room contains many dials and gauges for controlling a massive planetary\n"
+      "power reactor which, according to a diagram on the wall, must be buried far\n"
+      "below this very complex. The exit is to the west. To the east is a metal door,\n"
+      "and next to it, a button. A dark stairway winds downward.";
+  r->flags = F_RLANDBIT | F_FLOYDBIT | F_ONBIT;
+  r->west = R_MECH_CORRIDOR;
+  r->east = R_REACTOR_ELEVATOR;
+  r->in = R_REACTOR_ELEVATOR;
+  r->down = R_REACTOR_ACCESS_STAIRS;
+  r->globals[0] = O_CONTROLS;
+  r->globals[1] = O_STAIRS;
+  r->globals[2] = O_REACTOR_ELEVATOR_DOOR;
+  r->globals[3] = O_REACTOR_BUTTON_PSEUDO;
+  r->globals[4] = O_DIAGRAM_PSEUDO;
+
+  // O_REACTOR_ELEVATOR_DOOR
+  o = &objects[O_REACTOR_ELEVATOR_DOOR];
+  o->id = O_REACTOR_ELEVATOR_DOOR;
+  o->description = "reactor elevator door";
+  o->synonyms[0] = "door";
+  o->adjectives[0] = "reactor";
+  o->adjectives[1] = "elevator";
+  o->adjectives[2] = "metal";
+  o->flags = F_DOORBIT;
+  o->action = reactor_elevator_door_f;
+  obj_move(O_REACTOR_ELEVATOR_DOOR, OBJ_LOCAL_GLOBALS);
+
+  // O_REACTOR_BUTTON_PSEUDO
+  o = &objects[O_REACTOR_BUTTON_PSEUDO];
+  o->id = O_REACTOR_BUTTON_PSEUDO;
+  o->description = "button";
+  o->synonyms[0] = "button";
+  o->flags = F_NDESCBIT;
+  o->action = reactor_button_pseudo_action;
+  obj_move(O_REACTOR_BUTTON_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  // O_DIAGRAM_PSEUDO
+  o = &objects[O_DIAGRAM_PSEUDO];
+  o->id = O_DIAGRAM_PSEUDO;
+  o->description = "diagram";
+  o->synonyms[0] = "diagram";
+  o->flags = F_NDESCBIT;
+  o->action = diagram_pseudo_action;
+  obj_move(O_DIAGRAM_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  // R_REACTOR_ACCESS_STAIRS
+  r = &objects[R_REACTOR_ACCESS_STAIRS];
+  r->id = R_REACTOR_ACCESS_STAIRS;
+  r->description = "Reactor Access Stairs";
+  r->synonyms[0] = "stairs";
+  r->synonyms[1] = "stairway";
+  r->adjectives[0] = "reactor";
+  r->adjectives[1] = "access";
+  r->long_description = "The stairway seems to go down forever into darkness. The only exit is up.";
+  r->flags = F_RLANDBIT;
+  r->up = R_REACTOR_CONTROL;
+  r->down = R_REACTOR_ACCESS_STAIRS;
+  r->globals[0] = O_STAIRS;
+
+  // R_REACTOR_ELEVATOR
+  r = &objects[R_REACTOR_ELEVATOR];
+  r->id = R_REACTOR_ELEVATOR;
+  r->description = "Reactor Elevator";
+  r->synonyms[0] = "elevator";
+  r->adjectives[0] = "reactor";
+  r->long_description =
+      "This is an elevator with a door to the west, currently open. A control panel\n"
+      "contains an Up button, a Down button, and a small slot.";
+  r->flags = F_RLANDBIT | F_ONBIT;
+  r->west = R_REACTOR_CONTROL;
+  r->out = R_REACTOR_CONTROL;
+  r->globals[0] = O_REACTOR_ELEVATOR_DOOR;
+  r->globals[1] = O_SLOT;
+  r->globals[2] = O_CONTROLS;
+
+  // R_TOOL_ROOM
+  r = &objects[R_TOOL_ROOM];
+  r->id = R_TOOL_ROOM;
+  r->description = "Tool Room";
+  r->synonyms[0] = "room";
+  r->adjectives[0] = "tool";
+  r->long_description = "This is apparently a storage room for tools. Exits lead northeast and east.";
+  r->flags = F_RLANDBIT | F_FLOYDBIT | F_ONBIT;
+  r->ne = R_MECH_CORRIDOR_S;
+  r->east = R_MACHINE_SHOP;
+  r->globals[0] = O_SHELVES;
+
+  // O_FLASK
+  o = &objects[O_FLASK];
+  o->id = O_FLASK;
+  o->description = "glass flask";
+  o->synonyms[0] = "flask";
+  o->adjectives[0] = "glass";
+  o->adjectives[1] = "large";
+  o->adjectives[2] = "plastic";
+  o->flags = F_CONTBIT | F_SEARCHBIT | F_OPENBIT | F_TAKEBIT;
+  o->size = 10;
+  o->capacity = 2;
+  o->action = flask_f;
+  obj_move(O_FLASK, R_TOOL_ROOM);
+
+  // O_MAGNET
+  o = &objects[O_MAGNET];
+  o->id = O_MAGNET;
+  o->description = "curved metal bar";
+  o->synonyms[0] = "magnet";
+  o->synonyms[1] = "bar";
+  o->adjectives[0] = "curved";
+  o->adjectives[1] = "metal";
+  o->adjectives[2] = "horseshoe";
+  o->flags = F_TRYTAKEBIT | F_TAKEBIT;
+  o->size = 10;
+  o->action = magnet_f;
+  obj_move(O_MAGNET, R_TOOL_ROOM);
+
+  // O_PLIERS
+  o = &objects[O_PLIERS];
+  o->id = O_PLIERS;
+  o->description = "pair of wide-nosed pliers";
+  o->synonyms[0] = "pair";
+  o->synonyms[1] = "pliers";
+  o->adjectives[0] = "wide-nosed";
+  o->adjectives[1] = "wide";
+  o->adjectives[2] = "nosed";
+  o->flags = F_TAKEBIT;
+  o->size = 15;
+  obj_move(O_PLIERS, R_TOOL_ROOM);
+
   // R_MACHINE_SHOP
   r = &objects[R_MACHINE_SHOP];
   r->id = R_MACHINE_SHOP;

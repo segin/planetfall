@@ -15,6 +15,8 @@ typedef enum {
     EVT_HUNGER_WARNINGS,
     EVT_SLEEP_WARNINGS,
     EVT_FALL_ASLEEP,
+    EVT_MAGNET,
+    EVT_REACTOR_DOOR_CLOSE,
     // Add others as needed
     MAX_EVENTS
 } EventID;

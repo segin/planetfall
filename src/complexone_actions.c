@@ -1275,6 +1275,103 @@ bool catwalk_pseudo_action(int verb) {
   return false;
 }
 
+bool reactor_elevator_door_f(int verb) {
+  if (verb == V_OPEN || verb == V_CLOSE) {
+    tellf("It won't budge.\n");
+    return true;
+  }
+  return false;
+}
+
+void i_reactor_door_close(void) {
+  if (current_room != R_REACTOR_ELEVATOR) {
+    obj_clear_flag(O_REACTOR_ELEVATOR_DOOR, F_OPENBIT);
+    if (current_room == R_REACTOR_CONTROL) {
+      tellf("\nThe elevator door slides shut.\n");
+    }
+    dequeue_event(EVT_REACTOR_DOOR_CLOSE);
+  } else {
+    queue_event(EVT_REACTOR_DOOR_CLOSE, -1);
+  }
+}
+
+bool reactor_button_pseudo_action(int verb) {
+  if (verb == V_PUSH) {
+    obj_set_flag(O_REACTOR_ELEVATOR_DOOR, F_OPENBIT);
+    tellf("The metal doors slide open, revealing a small room to the east.\n");
+    queue_event(EVT_REACTOR_DOOR_CLOSE, 30);
+    return true;
+  }
+  return false;
+}
+
+bool diagram_pseudo_action(int verb) {
+  if (verb == V_EXAMINE || verb == V_READ) {
+    tellf("The diagram shows a massive planetary power reactor far below this very complex.\n");
+    return true;
+  }
+  return false;
+}
+
+bool flask_f(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("The flask has a wide mouth and looks large enough to hold one or two liters.\n"
+          "It is made of glass, or perhaps some tough plastic");
+    if (obj_in(O_CHEMICAL_FLUID, O_FLASK)) {
+      tellf(", and is filled with a milky white fluid");
+    }
+    tellf(".\n");
+    return true;
+  }
+  if (verb == V_CLOSE) {
+    tellf("You can't close that.\n");
+    return true;
+  }
+  return false;
+}
+
+void i_magnet(void) {
+  if (obj_in(O_MAGNET, player)) {
+    if (obj_in(O_KITCHEN_CARD, player)) obj_set_flag(O_KITCHEN_CARD, F_SCRAMBLEDBIT);
+    if (obj_in(O_SHUTTLE_CARD, player)) obj_set_flag(O_SHUTTLE_CARD, F_SCRAMBLEDBIT);
+    if (obj_in(O_UPPER_ELEVATOR_CARD, player)) obj_set_flag(O_UPPER_ELEVATOR_CARD, F_SCRAMBLEDBIT);
+    if (obj_in(O_LOWER_ELEVATOR_CARD, player)) obj_set_flag(O_LOWER_ELEVATOR_CARD, F_SCRAMBLEDBIT);
+  } else {
+    dequeue_event(EVT_MAGNET);
+  }
+}
+
+bool magnet_f(int verb) {
+  if (verb == V_TAKE) {
+    queue_event(EVT_MAGNET, -1);
+    return false; // let normal take proceed
+  }
+  if (verb == V_ATTRACT || verb == V_PUT_ON) {
+    if (current_cmd.prso_count > 0 && current_cmd.prso_list[0] == O_MAGNET && !obj_in(O_MAGNET, player)) {
+      tellf("You're not holding that!\n");
+      return true;
+    }
+    ZObjectID prsi = current_cmd.prsi;
+    if (prsi == O_KEY || prsi == O_CREVICE) {
+      if (obj_has_flag(O_KEY, F_TOUCHBIT)) {
+        obj_move(O_KEY, player);
+        tellf("The key jumps against the ends of the magnet and sticks there. Proud of your\n"
+              "feat, you remove the key from the magnet.\n");
+      } else {
+        obj_move(O_KEY, player);
+        obj_clear_flag(O_KEY, F_INVISIBLE);
+        obj_clear_flag(O_KEY, F_TRYTAKEBIT);
+        obj_set_flag(O_KEY, F_TOUCHBIT);
+        tellf("With a spray of dust and a loud clank, a piece of metal leaps from the\n"
+              "crevice and affixes itself to the magnet. It is a steel key! With a tug,\n"
+              "you remove the key from the magnet.\n");
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
 bool systems_monitors_f(int arg) {
   if (arg == M_LOOK) {
     TELL("This is a large room filled with tables full of strange equipment. ");

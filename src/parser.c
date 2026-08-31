@@ -207,15 +207,11 @@ int snarf_objects(int start, int end, unsigned int search_flags,
         }
       }
     }
-  } else if (search_flags == 0) {
-    check_list(player);
-    check_list(current_room);
   } else {
-    if (search_flags & SEARCH_HELD)
+    bool explicit_scope = (search_flags & (SEARCH_HELD | SEARCH_ROOM | SEARCH_GROUND)) != 0;
+    if (!explicit_scope || (search_flags & SEARCH_HELD) || (search_flags & PARSE_TRY_TAKE))
       check_list(player);
-    if (search_flags & SEARCH_ROOM)
-      check_list(current_room);
-    if (search_flags & SEARCH_GROUND)
+    if (!explicit_scope || (search_flags & (SEARCH_ROOM | SEARCH_GROUND)) || (search_flags & PARSE_TRY_TAKE))
       check_list(current_room);
   }
 
