@@ -5,7 +5,34 @@
 - Make a commit and push that commit after each and every completed item. Do not mark the next one as in-progress until after the commit and push are completed.
 - Update the current issues to address in this document as you work. Constant updates to this file are required.
 
+# Differential testing against the real game
+
+`zil/planetfall.beta` is a genuine Z-machine v3 build of Planetfall (Release 1,
+serial 830517). With `dfrotz` installed (`pacman -S frotz-dumb`), `make compare`
+drives the same input through it and through `./planetfall` and diffs the
+replies. It reports findings rather than gating, and is deliberately *not* part
+of `make test`, because the binary is Release 1 while the ZIL being ported is
+Release 39 -- wording drifted between them, and the sources win. Confirmed
+release differences are listed in `KNOWN_DIFFS` in `tests/compare_original.py`
+so they do not drown the real signal.
+
+Current: 14/30 probes match, 10 known release differences, 6 real findings
+(listed below). Add probes as chapters land.
+
 # Current issues to address:
+
+- Findings from `make compare` that are real port bugs, not release drift:
+  - `READ ID CARD` fails to parse -- the ID card has no adjectives, so "id"
+    is an unknown word. ZIL: `(ADJECTIVE PATROL ID IDENTIFICATION)`.
+  - `EXAMINE UNIFORM` lists the pocket's contents instead of describing it;
+    `patrol_uniform_f` is written but never attached to the object.
+  - An unknown word reports "I don't understand that sentence." where ZIL says
+    "I don't know the word 'xyzzy'." The parser does not distinguish an
+    unrecognised word from a sentence it cannot fit to a syntax line.
+  - A verb with a missing object reports the same generic failure where ZIL
+    asks "What do you want to take?"
+  - `DIAGNOSE` is unimplemented; ZIL reports health, rest and hunger.
+  - `INVENTORY` lists items in the reverse of ZIL's order.
 
 - Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
   just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. Run

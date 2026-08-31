@@ -16,7 +16,7 @@ TEST_EVENTS_BIN = tests/run_test_events
 
 BIN = planetfall
 
-.PHONY: all test check clean
+.PHONY: all test check compare clean
 
 all: $(BIN)
 
@@ -30,6 +30,14 @@ test: $(TEST_ENGINE_BIN) $(TEST_PARSER_BIN) $(TEST_EVENTS_BIN) $(BIN)
 	bash tests/test_feinstein.sh
 
 check: test
+
+# Differential comparison against the real game. zil/planetfall.beta is a
+# Z-machine v3 build of Planetfall, so with dfrotz (pacman -S frotz-dumb) the
+# same input can be driven through both and the replies compared. Reports
+# findings rather than gating, because the binary is Release 1 while the ZIL we
+# are porting is Release 39. Not part of `make test`.
+compare: $(BIN)
+	python3 tests/compare_original.py
 
 $(TEST_ENGINE_BIN): src/engine_core.o $(TEST_ENGINE_SRC)
 	$(CC) $(CFLAGS) -o $(TEST_ENGINE_BIN) $(TEST_ENGINE_SRC) src/engine_core.o
