@@ -88,7 +88,7 @@ void init_game_data() {
   o->id = O_ID_CARD;
   o->description = "ID card";
   o->synonyms[0] = "card";
-  o->flags = F_TAKEBIT | F_READBIT;
+  o->flags = F_TAKEBIT | F_READBIT | F_VOWELBIT;
   o->text = "STELLAR PATROL - ID 6172-531-541";
   obj_move(O_ID_CARD, O_PATROL_UNIFORM);
 

@@ -107,34 +107,106 @@ void perform_drop(ZObjectID obj) {
   }
 }
 
-void perform_examine(ZObjectID obj) {
-  if (obj == NOTHING)
-    return;
+bool see_inside(ZObjectID obj) {
+  if (obj <= 0 || obj >= MAX_OBJECTS)
+    return false;
+  if (obj_has_flag(obj, F_INVISIBLE))
+    return false;
+  return obj_has_flag(obj, F_TRANSBIT) || obj_has_flag(obj, F_OPENBIT);
+}
 
-  if (objects[obj].text && obj_has_flag(obj, F_READBIT)) {
-    tellf("%s\n", objects[obj].text);
-  } else if (obj_has_flag(obj, F_CONTBIT) || obj_has_flag(obj, F_DOORBIT)) {
+bool global_in(ZObjectID obj, ZObjectID room) {
+  if (room <= 0 || room >= MAX_OBJECTS)
+    return false;
+  for (int i = 0; i < 10; i++) {
+    if (objects[room].globals[i] == obj && obj != NOTHING)
+      return true;
+  }
+  return false;
+}
+
+bool is_here(ZObjectID obj) {
+  if (obj <= 0 || obj >= MAX_OBJECTS)
+    return false;
+  if (obj == current_room)
+    return true;
+  if (obj_in(obj, OBJ_GLOBAL_OBJECTS))
+    return true;
+  if (obj_in(obj, OBJ_LOCAL_GLOBALS) && global_in(obj, current_room))
+    return true;
+  if (global_in(obj, current_room))
+    return true;
+
+  ZObjectID p = objects[obj].parent;
+  while (p != NOTHING) {
+    if (p == current_room || p == player)
+      return true;
+    p = objects[p].parent;
+  }
+  return false;
+}
+
+bool pre_examine(ZObjectID obj) {
+  if (!is_here(obj)) {
+    tellf("You can't see any %s here!\n", objects[obj].description);
+    return false;
+  }
+  return true;
+}
+
+void perform_look_inside(ZObjectID obj) {
+  if (obj_has_flag(obj, F_ACTORBIT)) {
+    tellf("There is nothing special to be seen.\n");
+  } else if (obj_has_flag(obj, F_DOORBIT)) {
     if (obj_has_flag(obj, F_OPENBIT)) {
-      tellf("The %s is open.\n", objects[obj].description);
-      ZObjectID child = objects[obj].child;
-      if (child) {
-        tellf("It contains:\n");
-        while (child != NOTHING) {
-          tellf("  %s\n", objects[child].description);
-          child = objects[child].sibling;
-        }
+      tellf("The %s is open, but I can't tell what's beyond it.\n",
+            objects[obj].description);
+    } else {
+      tellf("The %s is closed.\n", objects[obj].description);
+    }
+  } else if (obj_has_flag(obj, F_CONTBIT)) {
+    if (!obj_has_flag(obj, F_OPENBIT)) {
+      tellf("The %s is closed.\n", objects[obj].description);
+    } else if (see_inside(obj)) {
+      if (objects[obj].child != NOTHING && print_cont(obj, false, 0)) {
+        return;
+      } else if (obj_has_flag(obj, F_SURFACEBIT)) {
+        tellf("There is nothing on the %s.\n", objects[obj].description);
       } else {
-        tellf("It is empty.\n");
+        tellf("The %s is empty.\n", objects[obj].description);
       }
     } else {
       tellf("The %s is closed.\n", objects[obj].description);
     }
+  } else if (obj_has_flag(obj, F_TRANSBIT)) {
+    tellf("You can see dimly through the %s.\n", objects[obj].description);
   } else {
-    if (objects[obj].long_description && !obj_has_flag(obj, F_TOUCHBIT)) {
-      tellf("%s\n", objects[obj].long_description);
+    const char *art = obj_has_flag(obj, F_VOWELBIT) ? "an" : "a";
+    tellf("You can't look inside %s %s.\n", art, objects[obj].description);
+  }
+}
+
+void perform_examine(ZObjectID obj) {
+  game_state.c_elapsed = 32;
+  if (!pre_examine(obj))
+    return;
+
+  if (objects[obj].action && objects[obj].action(V_EXAMINE)) {
+    return;
+  }
+
+  if (objects[obj].text) {
+    tellf("%s\n", objects[obj].text);
+  } else if (obj_has_flag(obj, F_DOORBIT)) {
+    perform_look_inside(obj);
+  } else if (obj_has_flag(obj, F_CONTBIT)) {
+    if (obj_has_flag(obj, F_OPENBIT)) {
+      perform_look_inside(obj);
     } else {
-      tellf("I see nothing special about the %s.\n", objects[obj].description);
+      tellf("The %s is closed.\n", objects[obj].description);
     }
+  } else {
+    tellf("I see nothing special about the %s.\n", objects[obj].description);
   }
 }
 
@@ -175,14 +247,18 @@ bool describe_room(bool look) {
     v = true;
   }
 
-  tellf("%s\n", objects[current_room].description);
+  tellf("%s", objects[current_room].description);
+  ZObjectID av = objects[player].parent;
+  if (av != current_room && av != NOTHING && obj_has_flag(av, F_VEHBIT)) {
+    tellf(", in the %s", objects[av].description);
+  }
+  tellf("\n");
 
   if (look || !game_state.super_brief) {
     if (v) {
       if (objects[current_room].action && objects[current_room].action(M_LOOK)) {
-        return true;
-      }
-      if (objects[current_room].long_description) {
+        // Handled by room action
+      } else if (objects[current_room].long_description) {
         tellf("%s\n", objects[current_room].long_description);
       }
     } else {
@@ -190,9 +266,144 @@ bool describe_room(bool look) {
         objects[current_room].action(M_FLASH);
       }
     }
+
+    if (av != current_room && av != NOTHING && obj_has_flag(av, F_VEHBIT)) {
+      if (objects[av].action) {
+        objects[av].action(M_LOOK);
+      }
+    }
   }
 
   return true;
+}
+
+bool firster(ZObjectID obj, int level) {
+  if (obj == player) {
+    tellf("You are carrying:\n");
+    return true;
+  }
+  if (obj != current_room && !obj_in(obj, OBJ_ROOMS)) {
+    if (level > 0) {
+      for (int i = 0; i < level; i++)
+        tellf("  ");
+    }
+    if (obj_has_flag(obj, F_SURFACEBIT)) {
+      tellf("Sitting on the %s is:\n", objects[obj].description);
+    } else if (obj_has_flag(obj, F_ACTORBIT)) {
+      tellf("The %s is holding:\n", objects[obj].description);
+    } else {
+      tellf("The %s contains:\n", objects[obj].description);
+    }
+    return true;
+  }
+  return false;
+}
+
+bool describe_object(ZObjectID obj, bool v, int level) {
+  if (level == 0 && objects[obj].action && objects[obj].action(M_OBJDESC)) {
+    return true;
+  }
+  if (obj == game_state.spout_placed && game_state.spout_placed != NOTHING) {
+    return true;
+  }
+
+  if (level == 0) {
+    if (!obj_has_flag(obj, F_TOUCHBIT) && objects[obj].long_description) {
+      tellf("%s", objects[obj].long_description);
+    } else {
+      const char *art = obj_has_flag(obj, F_VOWELBIT) ? "an" : "a";
+      tellf("There is %s %s here.", art, objects[obj].description);
+    }
+  } else {
+    for (int i = 0; i < level; i++)
+      tellf("  ");
+    const char *art = obj_has_flag(obj, F_VOWELBIT) ? "An" : "A";
+    tellf("%s %s", art, objects[obj].description);
+    if (obj_has_flag(obj, F_WORNBIT)) {
+      tellf(" (being worn)");
+    }
+  }
+
+  ZObjectID av = objects[player].parent;
+  if (level == 0 && av != current_room && av != NOTHING &&
+      obj_has_flag(av, F_VEHBIT)) {
+    tellf(" (outside the %s)", objects[av].description);
+  }
+  tellf("\n");
+
+  if (see_inside(obj) && objects[obj].child != NOTHING) {
+    print_cont(obj, v, level);
+  }
+  return true;
+}
+
+bool print_cont(ZObjectID obj, bool v, int level) {
+  ZObjectID y = objects[obj].child;
+  if (y == NOTHING)
+    return true;
+
+  ZObjectID av = objects[player].parent;
+  if (av != NOTHING && !obj_has_flag(av, F_VEHBIT)) {
+    av = NOTHING;
+  }
+
+  bool first = true;
+  bool pv = false;
+  bool inv = (obj == player || objects[obj].parent == player);
+
+  if (!inv) {
+    // Pass 1: Objects with initial/first descriptions (FDESC)
+    y = objects[obj].child;
+    while (y != NOTHING) {
+      if (y == av) {
+        pv = true;
+      } else if (y != player) {
+        if (!obj_has_flag(y, F_INVISIBLE) &&
+            !obj_has_flag(y, F_TOUCHBIT) &&
+            objects[y].long_description) {
+          if (!obj_has_flag(y, F_NDESCBIT)) {
+            tellf("%s\n", objects[y].long_description);
+          }
+          if (see_inside(y) && (!objects[obj].action) &&
+              objects[y].child != NOTHING) {
+            print_cont(y, v, 0);
+          }
+        }
+      }
+      y = objects[y].sibling;
+    }
+  }
+
+  // Pass 2: Remaining objects
+  y = objects[obj].child;
+  while (y != NOTHING) {
+    if (y != av && y != player) {
+      if (!obj_has_flag(y, F_INVISIBLE) &&
+          (inv || obj_has_flag(y, F_TOUCHBIT) ||
+           !objects[y].long_description)) {
+        if (!obj_has_flag(y, F_NDESCBIT)) {
+          if (first) {
+            if (firster(obj, level)) {
+              if (level < 0)
+                level = 0;
+            }
+            level = level + 1;
+            first = false;
+          }
+          describe_object(y, v, level);
+        } else if (objects[y].child != NOTHING && see_inside(y)) {
+          print_cont(y, v, level);
+        }
+      }
+    }
+    y = objects[y].sibling;
+  }
+
+  if (pv && av != NOTHING && objects[av].child != NOTHING) {
+    print_cont(av, v, level);
+  }
+
+  return !first;
 }
 
 bool describe_objects(bool look) {
@@ -201,21 +412,9 @@ bool describe_objects(bool look) {
     return false;
   }
 
-  ZObjectID child = objects[current_room].child;
-  while (child != NOTHING) {
-    if (child != player && !obj_has_flag(child, F_NDESCBIT) &&
-        !obj_has_flag(child, F_INVISIBLE)) {
-      if (objects[child].action && objects[child].action(M_OBJDESC)) {
-        // Handled by object action callback
-      } else if (!obj_has_flag(child, F_TOUCHBIT) &&
-                 objects[child].long_description) {
-        tellf("%s\n", objects[child].long_description);
-      } else {
-        const char *art = obj_has_flag(child, F_VOWELBIT) ? "an" : "a";
-        tellf("There is %s %s here.\n", art, objects[child].description);
-      }
-    }
-    child = objects[child].sibling;
+  bool v = look || game_state.verbose;
+  if (objects[current_room].child != NOTHING) {
+    print_cont(current_room, v, -1);
   }
   return true;
 }
@@ -259,28 +458,11 @@ void perform_look_cretin() {
 }
 
 void perform_inventory() {
-  tellf("You are carrying:\n");
-  ZObjectID child = objects[player].child;
-  if (child == NOTHING) {
-    tellf("  Nothing.\n");
-    return;
-  }
-  while (child != NOTHING) {
-    tellf("  %s", objects[child].description);
-    if (obj_has_flag(child, F_WORNBIT))
-      tellf(" (being worn)");
-    if (obj_has_flag(child, F_OPENBIT) && obj_has_flag(child, F_CONTBIT)) {
-      ZObjectID inner = objects[child].child;
-      if (inner) {
-        tellf("\n    containing:");
-        while (inner != NOTHING) {
-          tellf("\n      %s", objects[inner].description);
-          inner = objects[inner].sibling;
-        }
-      }
-    }
-    tellf("\n");
-    child = objects[child].sibling;
+  game_state.c_elapsed = 18;
+  if (objects[player].child != NOTHING) {
+    print_cont(player, false, 0);
+  } else {
+    tellf("You are empty-handed.\n");
   }
 }
 

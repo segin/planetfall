@@ -176,8 +176,17 @@ void obj_rob(ZObjectID victim, ZObjectID dest);
 
 // Parser/Output
 bool is_lit(ZObjectID room);
+bool see_inside(ZObjectID obj);
+bool is_here(ZObjectID obj);
+bool global_in(ZObjectID obj, ZObjectID room);
+bool firster(ZObjectID obj, int level);
+bool print_cont(ZObjectID obj, bool v, int level);
+bool describe_object(ZObjectID obj, bool v, int level);
 bool describe_room(bool look);
 bool describe_objects(bool look);
+bool pre_examine(ZObjectID obj);
+void perform_examine(ZObjectID obj);
+void perform_look_inside(ZObjectID obj);
 void perform_look();
 void perform_first_look();
 void perform_verbose();

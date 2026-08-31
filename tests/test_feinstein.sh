@@ -42,6 +42,8 @@ run_test "Test 9: VERBOSE command" "VERBOSE\nQUIT\nY" "Maximum verbosity" "VERBO
 run_test "Test 10: BRIEF command" "BRIEF\nQUIT\nY" "Brief descriptions" "BRIEF works" "BRIEF command"
 run_test "Test 11: SUPER-BRIEF command" "SUPER\nQUIT\nY" "Super-brief descriptions" "SUPER-BRIEF works" "SUPER-BRIEF command"
 run_test "Test 12: LOOK object (cretin check)" "LOOK BRUSH\nQUIT\nY" "primitive two-word-parser" "LOOK <OBJECT> cretin message works" "LOOK <OBJECT>"
+run_test "Test 13: EXAMINE container" "EXAMINE UNIFORM\nQUIT\nY" "Patrol uniform contains" "EXAMINE container works" "EXAMINE container"
+run_test "Test 14: PRE-EXAMINE absent object" "EXAMINE LADDER\nQUIT\nY" "can't see any" "PRE-EXAMINE absent check works" "PRE-EXAMINE"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
