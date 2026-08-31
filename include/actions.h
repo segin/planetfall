@@ -6,6 +6,8 @@
 
 // Core Dispatch
 bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi);
+// Re-dispatch under a different verb/objects, as ZIL's PERFORM does.
+bool perform(int verb, ZObjectID prso, ZObjectID prsi);
 
 // Verbs
 void perform_look();

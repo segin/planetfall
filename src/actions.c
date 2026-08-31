@@ -883,6 +883,17 @@ void perform_walk_to(ZObjectID obj) {
 }
 
 void perform_walk(ZObjectID dest) {
+  // What this move will cost if it succeeds. ZIL takes this from the room's
+  // C-MOVE table and falls back to DEFAULT-MOVE; those tables are not ported,
+  // so the fallback stands except where a routine names its own cost.
+  int move_cost = DEFAULT_MOVE;
+
+  // SAFETY-WEB-F's M-BEG hook: you cannot walk anywhere while still strapped in.
+  if (obj_in(player, O_SAFETY_WEB)) {
+    tellf("You'll have to stand up, first.\n");
+    return;
+  }
+
   if (current_room == R_WEST_WING && dest == R_CERTAIN_DEATH_MSG) {
     tellf("Certain death.\n");
     return;
@@ -939,6 +950,15 @@ void perform_walk(ZObjectID dest) {
         return;
       }
     }
+  }
+  // POD-EXIT-F's post-landing branch: swimming out is still gated on the
+  // bulkhead, and the swim itself is slow.
+  if (current_room == R_ESCAPE_POD && dest == R_UNDERWATER) {
+    if (!obj_has_flag(O_POD_DOOR, F_OPENBIT)) {
+      tellf("The pod door is closed.\n");
+      return;
+    }
+    move_cost = 30; // <SETG C-ELAPSED 30> -- swimming clear takes a while.
   }
   if ((current_room == R_MESS_CORRIDOR && dest == R_STORAGE_WEST) ||
       (current_room == R_STORAGE_WEST && dest == R_MESS_CORRIDOR)) {
@@ -1022,12 +1042,33 @@ void perform_walk(ZObjectID dest) {
   }
   // V-WALK charges the move cost only once the exit is known to be passable;
   // every blocked-exit path above returns early and so costs the default 7.
-  // The per-room C-MOVE tables are not ported yet, so this is ZIL's
-  // DEFAULT-MOVE fallback for all movement.
-  game_state.c_elapsed = DEFAULT_MOVE;
+  game_state.c_elapsed = move_cost;
   obj_move(player, dest);
   current_room = dest;
   perform_first_look();
+}
+
+// PERFORM (misc.zil): re-run the dispatcher under a different verb and objects,
+// then put the parser's view back. Object action routines read current_cmd, so a
+// bare dispatch_action call would leave them looking at the original verb.
+bool perform(int verb, ZObjectID prso, ZObjectID prsi) {
+  int saved_verb = current_cmd.verb;
+  int saved_count = current_cmd.prso_count;
+  ZObjectID saved_prso = current_cmd.prso_list[0];
+  ZObjectID saved_prsi = current_cmd.prsi;
+
+  current_cmd.verb = verb;
+  current_cmd.prso_list[0] = prso;
+  current_cmd.prso_count = (prso == NOTHING) ? 0 : 1;
+  current_cmd.prsi = prsi;
+
+  bool handled = dispatch_action(verb, prso, prsi);
+
+  current_cmd.verb = saved_verb;
+  current_cmd.prso_count = saved_count;
+  current_cmd.prso_list[0] = saved_prso;
+  current_cmd.prsi = saved_prsi;
+  return handled;
 }
 
 bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
@@ -1157,6 +1198,21 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return true;
   case V_READ:
     perform_read(prso);
+    return true;
+  case V_STAND: {
+    // V-STAND (verbs.zil): standing up means getting out of whatever you are
+    // sitting in, so hand off to the vehicle's own DISEMBARK handling.
+    ZObjectID vehicle = objects[player].parent;
+    if (vehicle != NOTHING && vehicle != current_room &&
+        obj_has_flag(vehicle, F_VEHBIT)) {
+      return perform(V_DISEMBARK, vehicle, NOTHING);
+    }
+    tellf("You are already standing, I think.\n");
+    return true;
+  }
+  case V_EXIT:
+    // V-EXIT (verbs.zil) is just <DO-WALK ,P?OUT>.
+    perform_walk(objects[current_room].out);
     return true;
   default:
     break;

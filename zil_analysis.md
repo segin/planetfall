@@ -293,7 +293,7 @@
 - [x] **CONFERENCE-DOOR-F** (Object Action) [Obj: CONFERENCE-DOOR]
 - [x] **CONFERENCE-ROOM-F** (Room Action) [Obj: CONFERENCE-ROOM]
 - [ ] **CONTROL-CABIN-F** (Room Action) [Obj: BETTY-CONTROL-WEST]
-- [ ] **CONTROLS-F** (Object Action) [Obj: CONTROLS]
+- [x] **CONTROLS-F** (Object Action) [Obj: CONTROLS]
 - [x] **COURTYARD-F** (Room Action) [Obj: COURTYARD]
 - [x] **CRACKED-BOARD-F** (Object Action) [Obj: CRACKED-BOARD]
 - [x] **CRAG-F** (Room Action) [Obj: CRAG]
@@ -309,20 +309,20 @@
 - [x] **DISPENSER-F** (Object Action) [Obj: DISPENSER]
 - [x] **ELEVATOR-BUTTON-F** (Object Action) [Obj: ELEVATOR-BUTTON]
 - [x] **ELEVATOR-LOBBY-F** (Room Action) [Obj: ELEVATOR-LOBBY]
-- [ ] **ESCAPE-POD-F** (Room Action) [Obj: ESCAPE-POD]
+- [x] **ESCAPE-POD-F** (Room Action) [Obj: ESCAPE-POD]
 - [x] **FLASK-F** (Object Action) [Obj: FLASK]
 - [x] **FLOYD-F** (Object Action) [Obj: FLOYD]
-- [ ] **FOOD-KIT-F** (Object Action) [Obj: FOOD-KIT]
+- [x] **FOOD-KIT-F** (Object Action) [Obj: FOOD-KIT]
 - [ ] **FRIED-BOARD-F** (Object Action) [Obj: FRIED-BOARD]
 - [x] **FUNGICIDE-BUTTON-F** (Object Action) [Obj: FUNGICIDE-BUTTON]
 - [x] **GANGWAY-DOOR-F** (Object Action) [Obj: GANGWAY-DOOR]
 - [x] **GANGWAY-F** (Room Action) [Obj: GANGWAY]
 - [ ] **GLOBAL-DOORWAY-F** (Object Action) [Obj: GLOBAL-DOORWAY]
 - [ ] **GLOBAL-GAMES-F** (Object Action) [Obj: GLOBAL-GAMES]
-- [ ] **GLOBAL-POD-F** (Object Action) [Obj: GLOBAL-POD]
+- [x] **GLOBAL-POD-F** (Object Action) [Obj: GLOBAL-POD]
 - [ ] **GLOBAL-SHUTTLE-F** (Object Action) [Obj: GLOBAL-SHUTTLE]
 - [ ] **GO** (Object Action) [Obj: PSEUDO-OBJECT]
-- [ ] **GOO-F** (Object Action) [Obj: GREEN-GOO]
+- [x] **GOO-F** (Object Action) [Obj: GREEN-GOO]
 - [x] **GOOD-BEDISTOR-F** (Object Action) [Obj: GOOD-BEDISTOR]
 - [x] **GOOD-BOARD-F** (Object Action) [Obj: GOOD-BOARD]
 - [ ] **GREEN-SPOOL-F** (Object Action) [Obj: GREEN-SPOOL]
@@ -377,7 +377,7 @@
 - [ ] **RELAY-F** (Object Action) [Obj: RELAY]
 - [x] **RIFT-F** (Object Action) [Obj: RIFT]
 - [x] **ROBOT-HOLE-F** (Object Action) [Obj: ROBOT-HOLE]
-- [ ] **SAFETY-WEB-F** (Object Action) [Obj: SAFETY-WEB]
+- [x] **SAFETY-WEB-F** (Object Action) [Obj: SAFETY-WEB]
 - [ ] **SHELVES-F** (Object Action) [Obj: SHELVES]
 - [ ] **SHUTTLE-CAR-F** (Room Action) [Obj: SHUTTLE-CAR-BETTY]
 - [ ] **SHUTTLE-DOOR-F** (Object Action) [Obj: SHUTTLE-DOOR]
@@ -394,7 +394,7 @@
 - [ ] **TELEPORTATION-BUTTON-2-F** (Object Action) [Obj: TELEPORTATION-BUTTON-2]
 - [ ] **TELEPORTATION-BUTTON-3-F** (Object Action) [Obj: TELEPORTATION-BUTTON-3]
 - [x] **TERMINAL-F** (Object Action) [Obj: TERMINAL]
-- [ ] **TOWEL-F** (Object Action) [Obj: TOWEL]
+- [x] **TOWEL-F** (Object Action) [Obj: TOWEL]
 - [x] **UNDERWATER-F** (Room Action) [Obj: UNDERWATER]
 - [x] **UPPER-ELEVATOR-DOOR-F** (Object Action) [Obj: UPPER-ELEVATOR-DOOR]
 - [x] **UPPER-ELEVATOR-F** (Room Action) [Obj: UPPER-ELEVATOR]
@@ -421,7 +421,7 @@
 - [x] **BOARD**: BOARD OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
 - [x] **BRIEF**: BRIEF -> V-BRIEF (Pre: -) [syntax.zil]
 - [ ] **CLIMB**: CLIMB -> V-GO-UP (Pre: -) [syntax.zil]
-- [ ] **CLIMB**: CLIMB ON OBJECT (FIND CLIMBBIT) (ON-GROUND IN-R... -> V-CLIMB-ON (Pre: -) [syntax.zil]
+- [x] **CLIMB**: CLIMB ON OBJECT (FIND CLIMBBIT) (ON-GROUND IN-R... -> V-CLIMB-ON (Pre: -) [syntax.zil]
 - [ ] **CLIMB**: CLIMB UP OBJECT (FIND RMUNGBIT) -> V-CLIMB-UP (Pre: -) [syntax.zil]
 - [ ] **CLIMB**: CLIMB TO OBJECT -> V-CLIMB-UP (Pre: -) [syntax.zil]
 - [x] **CLIMB**: CLIMB WITH OBJECT -> V-THROUGH (Pre: -) [syntax.zil]
@@ -449,8 +449,8 @@
 - [x] **EXAMINE**: EXAMINE OBJECT (HELD CARRIED ON-GROUND IN-ROOM ... -> V-EXAMINE (Pre: PRE-EXAMINE) [syntax.zil]
 - [x] **EXAMINE**: EXAMINE IN OBJECT (HELD CARRIED IN-ROOM ON-GROU... -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
 - [x] **EXAMINE**: EXAMINE ON OBJECT (HELD CARRIED IN-ROOM ON-GROU... -> V-LOOK-INSIDE (Pre: -) [syntax.zil]
-- [ ] **EXIT**: EXIT -> V-EXIT (Pre: -) [syntax.zil]
-- [ ] **EXIT**: EXIT OBJECT -> V-EXIT (Pre: -) [syntax.zil]
+- [x] **EXIT**: EXIT -> V-EXIT (Pre: -) [syntax.zil]
+- [x] **EXIT**: EXIT OBJECT -> V-EXIT (Pre: -) [syntax.zil]
 - [ ] **FIND**: FIND OBJECT -> V-FIND (Pre: -) [syntax.zil]
 - [ ] **FIRE**: FIRE OBJECT WITH OBJECT (HELD) -> V-SZAP (Pre: PRE-SZAP) [syntax.zil]
 - [ ] **FIRE**: FIRE OBJECT -> V-ZAP (Pre: PRE-ZAP) [syntax.zil]
@@ -495,7 +495,7 @@
 - [ ] **LOOK**: LOOK FOR OBJECT -> V-FIND (Pre: -) [syntax.zil]
 - [ ] **LOOK**: LOOK DOWN OBJECT (FIND RMUNGBIT) -> V-LOOK-DOWN (Pre: -) [syntax.zil]
 - [ ] **MAYBE**: MAYBE -> V-MAYBE (Pre: -) [syntax.zil]
-- [ ] **MOVE**: MOVE OBJECT (ON-GROUND IN-ROOM) -> V-MOVE (Pre: PRE-MOVE) [syntax.zil]
+- [x] **MOVE**: MOVE OBJECT (ON-GROUND IN-ROOM) -> V-MOVE (Pre: PRE-MOVE) [syntax.zil]
 - [ ] **MOVE**: MOVE UP OBJECT -> V-PUSH-UP (Pre: -) [syntax.zil]
 - [ ] **MOVE**: MOVE DOWN OBJECT -> V-PUSH-DOWN (Pre: -) [syntax.zil]
 - [ ] **NO**: NO -> V-NO (Pre: -) [syntax.zil]
@@ -517,15 +517,15 @@
 - [ ] **POUR**: POUR OBJECT ON OBJECT -> V-POUR (Pre: -) [syntax.zil]
 - [ ] **POUR**: POUR OBJECT OUT OBJECT -> V-POUR (Pre: -) [syntax.zil]
 - [ ] **POUR**: POUR OBJECT IN OBJECT -> V-POUR (Pre: -) [syntax.zil]
-- [ ] **PULL**: PULL OBJECT -> V-PULL (Pre: -) [syntax.zil]
+- [x] **PULL**: PULL OBJECT -> V-PULL (Pre: -) [syntax.zil]
 - [ ] **PULL**: PULL DOWN OBJECT -> V-PUSH-DOWN (Pre: -) [syntax.zil]
 - [ ] **PULL**: PULL UP OBJECT -> V-PUSH-UP (Pre: -) [syntax.zil]
-- [ ] **PULL**: PULL ON OBJECT -> V-PULL (Pre: -) [syntax.zil]
+- [x] **PULL**: PULL ON OBJECT -> V-PULL (Pre: -) [syntax.zil]
 - [ ] **PULL**: PULL OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
-- [ ] **PUSH**: PUSH OBJECT -> V-PUSH (Pre: -) [syntax.zil]
-- [ ] **PUSH**: PUSH ON OBJECT -> V-PUSH (Pre: -) [syntax.zil]
-- [ ] **PUSH**: PUSH OFF OBJECT -> V-PUSH (Pre: -) [syntax.zil]
-- [ ] **PUSH**: PUSH AGAINST OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [x] **PUSH**: PUSH OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [x] **PUSH**: PUSH ON OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [x] **PUSH**: PUSH OFF OBJECT -> V-PUSH (Pre: -) [syntax.zil]
+- [x] **PUSH**: PUSH AGAINST OBJECT -> V-PUSH (Pre: -) [syntax.zil]
 - [ ] **PUSH**: PUSH UP OBJECT -> V-PUSH-UP (Pre: -) [syntax.zil]
 - [ ] **PUSH**: PUSH DOWN OBJECT -> V-PUSH-DOWN (Pre: -) [syntax.zil]
 - [ ] **PUSH**: PUSH OBJECT UNDER OBJECT -> V-PUT-UNDER (Pre: PRE-PUT-UNDER) [syntax.zil]
@@ -570,7 +570,7 @@
 - [ ] **SHAKE**: SHAKE OBJECT WITH OBJECT (FIND ACTORBIT) -> V-SHAKE-WITH (Pre: -) [syntax.zil]
 - [ ] **SHOW**: SHOW OBJECT (HAVE) TO OBJECT (FIND ACTORBIT) -> V-SHOW (Pre: -) [syntax.zil]
 - [ ] **SIT**: SIT -> V-SIT (Pre: -) [syntax.zil]
-- [ ] **SIT**: SIT ON OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-ON (Pre: -) [syntax.zil]
+- [x] **SIT**: SIT ON OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-ON (Pre: -) [syntax.zil]
 - [ ] **SIT**: SIT DOWN OBJECT (FIND RMUNGBIT) -> V-SIT-DOWN (Pre: -) [syntax.zil]
 - [x] **SIT**: SIT IN OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
 - [x] **SIT**: SIT OBJECT (HELD MANY HAVE TAKE) IN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
@@ -586,8 +586,8 @@
 - [x] **SMELL**: SMELL OBJECT -> V-SMELL (Pre: -) [syntax.zil]
 - [ ] **SMILE**: SMILE AT OBJECT (FIND ACTORBIT) -> V-SMILE (Pre: -) [syntax.zil]
 - [ ] **SMILE**: SMILE -> V-SMILE (Pre: -) [syntax.zil]
-- [ ] **STAND**: STAND -> V-STAND (Pre: -) [syntax.zil]
-- [ ] **STAND**: STAND UP OBJECT (FIND RMUNGBIT) -> V-STAND (Pre: -) [syntax.zil]
+- [x] **STAND**: STAND -> V-STAND (Pre: -) [syntax.zil]
+- [x] **STAND**: STAND UP OBJECT (FIND RMUNGBIT) -> V-STAND (Pre: -) [syntax.zil]
 - [ ] **STAND**: STAND ON OBJECT -> V-STAND-ON (Pre: -) [syntax.zil]
 - [ ] **STEP**: STEP ON OBJECT -> V-STEP-ON (Pre: -) [syntax.zil]
 - [ ] **STEP**: STEP IN OBJECT -> V-STEP-ON (Pre: -) [syntax.zil]
@@ -603,12 +603,12 @@
 - [x] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (ON-GROUND MANY) -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
 - [x] **TAKE**: TAKE IN OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
 - [x] **TAKE**: TAKE OUT OBJECT (FIND RMUNGBIT) (ON-GROUND IN-R... -> V-DISEMBARK (Pre: -) [syntax.zil]
-- [ ] **TAKE**: TAKE ON OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-ON (Pre: -) [syntax.zil]
+- [x] **TAKE**: TAKE ON OBJECT (FIND VEHBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-ON (Pre: -) [syntax.zil]
 - [x] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (CARRIED IN-ROOM) OU... -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
 - [x] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (CARRIED IN-ROOM) OF... -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
 - [x] **TAKE**: TAKE OBJECT (FIND TAKEBIT) (MANY) (IN-ROOM CARR... -> V-TAKE (Pre: PRE-TAKE) [syntax.zil]
 - [ ] **TAKE**: TAKE OFF OBJECT (FIND WEARBIT) (HELD CARRIED MANY) -> V-TAKE-OFF (Pre: -) [syntax.zil]
-- [ ] **TAKE**: TAKE UP OBJECT (FIND RMUNGBIT) -> V-STAND (Pre: -) [syntax.zil]
+- [x] **TAKE**: TAKE UP OBJECT (FIND RMUNGBIT) -> V-STAND (Pre: -) [syntax.zil]
 - [ ] **TAKE**: TAKE OBJECT (TAKE) OVER OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
 - [ ] **TAKE**: TAKE OBJECT (TAKE) NEAR OBJECT -> V-ATTRACT (Pre: -) [syntax.zil]
 - [ ] **TAKE**: TAKE OBJECT WITH OBJECT (TAKE) -> V-ZATTRACT (Pre: -) [syntax.zil]
@@ -623,18 +623,18 @@
 - [ ] **THROW**: THROW OBJECT (HELD CARRIED HAVE) OVER OBJECT -> V-THROW-OFF (Pre: -) [syntax.zil]
 - [x] **THROW**: THROW OBJECT (HELD CARRIED HAVE) -> V-THROW (Pre: -) [syntax.zil]
 - [x] **TIME**: TIME -> V-TIME (Pre: -) [syntax.zil]
-- [ ] **TURN**: TURN OBJECT (HELD CARRIED ON-GROUND IN-ROOM) 	W... -> V-TURN (Pre: -) [syntax.zil]
+- [x] **TURN**: TURN OBJECT (HELD CARRIED ON-GROUND IN-ROOM) 	W... -> V-TURN (Pre: -) [syntax.zil]
 - [ ] **TURN**: TURN ON OBJECT (FIND LIGHTBIT) (HELD CARRIED ON... -> V-LAMP-ON (Pre: -) [syntax.zil]
 - [ ] **TURN**: TURN OFF OBJECT (FIND LIGHTBIT) (HELD CARRIED O... -> V-LAMP-OFF (Pre: -) [syntax.zil]
-- [ ] **TURN**: TURN OBJECT (ON-GROUND IN-ROOM) TO OBJECT -> V-SET (Pre: -) [syntax.zil]
-- [ ] **TURN**: TURN OBJECT (ON-GROUND IN-ROOM) -> V-SET (Pre: -) [syntax.zil]
+- [x] **TURN**: TURN OBJECT (ON-GROUND IN-ROOM) TO OBJECT -> V-SET (Pre: -) [syntax.zil]
+- [x] **TURN**: TURN OBJECT (ON-GROUND IN-ROOM) -> V-SET (Pre: -) [syntax.zil]
 - [ ] **TYPE**: TYPE OBJECT -> V-TYPE (Pre: -) [syntax.zil]
 - [ ] **TYPE**: TYPE IN OBJECT -> V-TYPE (Pre: -) [syntax.zil]
 - [ ] **UNKNOWN**: \#RANDOM OBJECT -> V-$RANDOM (Pre: -) [syntax.zil]
 - [ ] **UNKNOWN**: \#COMMAND -> V-$COMMAND (Pre: -) [syntax.zil]
 - [ ] **UNKNOWN**: \#RECORD -> V-$RECORD (Pre: -) [syntax.zil]
 - [ ] **UNKNOWN**: \#UNRECORD -> V-$UNRECORD (Pre: -) [syntax.zil]
-- [ ] **UNLOCK**: UNLOCK OBJECT (ON-GROUND IN-ROOM) WITH 	OBJECT ... -> V-UNLOCK (Pre: -) [syntax.zil]
+- [x] **UNLOCK**: UNLOCK OBJECT (ON-GROUND IN-ROOM) WITH 	OBJECT ... -> V-UNLOCK (Pre: -) [syntax.zil]
 - [x] **UNSCRIPT**: UNSCRIPT -> V-UNSCRIPT (Pre: -) [syntax.zil]
 - [x] **VERBOSE**: VERBOSE -> V-VERBOSE (Pre: -) [syntax.zil]
 - [x] **VERSION**: VERSION -> V-VERSION (Pre: -) [syntax.zil]
@@ -648,7 +648,7 @@
 - [ ] **WALK**: WALK UP OBJECT (FIND CLIMBBIT) (ON-GROUND IN-ROOM) -> V-CLIMB-UP (Pre: -) [syntax.zil]
 - [ ] **WALK**: WALK DOWN OBJECT (FIND CLIMBBIT) (ON-GROUND IN-... -> V-CLIMB-DOWN (Pre: -) [syntax.zil]
 - [x] **WALK**: WALK TO OBJECT -> V-WALK-TO (Pre: -) [syntax.zil]
-- [ ] **WALK**: WALK OUT OBJECT -> V-EXIT (Pre: -) [syntax.zil]
+- [x] **WALK**: WALK OUT OBJECT -> V-EXIT (Pre: -) [syntax.zil]
 - [x] **WALK**: WALK OBJECT (HELD CARRIED HAVE) WITH OBJECT -> V-SLIDE (Pre: -) [syntax.zil]
 - [ ] **WAVE**: WAVE OBJECT (HELD CARRIED) -> V-WAVE (Pre: -) [syntax.zil]
 - [ ] **WAVE**: WAVE OBJECT (HELD CARRIED) AT OBJECT -> V-WAVE (Pre: -) [syntax.zil]
@@ -729,7 +729,7 @@
 - [x] **CONFERENCE-DOOR-F** (compone.zil): Args: 
 - [x] **CONFERENCE-ROOM-F** (compone.zil): Args: RARG
 - [ ] **CONTROL-CABIN-F** (globals.zil): Args: RARG
-- [ ] **CONTROLS-F** (globals.zil): Args: 
+- [x] **CONTROLS-F** (globals.zil): Args: 
 - [x] **COURTYARD-F** (compone.zil): Args: RARG
 - [ ] **CRACK-PSEUDO** (globals.zil): Args: 
 - [x] **CRACKED-BOARD-F** (compone.zil): Args: 
@@ -772,7 +772,7 @@
 - [ ] **ENUNCIATOR-PSEUDO** (globals.zil): Args: 
 - [ ] **EQUIPMENT-PSEUDO** (globals.zil): Args: 
 - [ ] **ESCALATOR-PSEUDO** (globals.zil): Args: 
-- [ ] **ESCAPE-POD-F** (globals.zil): Args: RARG
+- [x] **ESCAPE-POD-F** (globals.zil): Args: RARG
 - [x] **EXAMINE-BOARD** (comptwo.zil): Args: 
 - [ ] **FENCE-PSEUDO** (globals.zil): Args: 
 - [ ] **FIND-IN** (globals.zil): Args: WHERE WHAT "AUX" W
@@ -790,7 +790,7 @@
 - [x] **FLOYD-THROUGH-HOLE** (comptwo.zil): Args: 
 - [ ] **FLOYDS-FAMOUS-DOOR-ROUTINE** (compone.zil): Args: 
 - [ ] **FLUSH** (compone.zil): Args: 
-- [ ] **FOOD-KIT-F** (globals.zil): Args: 
+- [x] **FOOD-KIT-F** (globals.zil): Args: 
 - [ ] **FRIED-BOARD-F** (comptwo.zil): Args: 
 - [x] **FUNGICIDE-BUTTON-F** (comptwo.zil): Args: 
 - [ ] **GAMES-PSEUDO** (globals.zil): Args: 
@@ -801,10 +801,10 @@
 - [ ] **GLOBAL-DOORWAY-F** (globals.zil): Args: 
 - [ ] **GLOBAL-GAMES-F** (globals.zil): Args: 
 - [ ] **GLOBAL-IN?** (verbs.zil): Args: OBJ1 OBJ2 "AUX" TEE
-- [ ] **GLOBAL-POD-F** (globals.zil): Args: 
+- [x] **GLOBAL-POD-F** (globals.zil): Args: 
 - [ ] **GLOBAL-SHUTTLE-F** (globals.zil): Args: 
 - [ ] **GO** (misc.zil): Args: 
-- [ ] **GOO-F** (globals.zil): Args: 
+- [x] **GOO-F** (globals.zil): Args: 
 - [x] **GOOD-BEDISTOR-F** (compone.zil): Args: 
 - [x] **GOOD-BOARD-F** (comptwo.zil): Args: 
 - [ ] **GOTO** (verbs.zil): Args: RM "OPTIONAL" (V? T
@@ -927,7 +927,7 @@
 - [ ] **PARSER** (parser.zil): Args: "AUX" (PTR ,P-LEXSTART
 - [ ] **PARTITION-PSEUDO** (globals.zil): Args: 
 - [x] **PATROL-UNIFORM-F** (globals.zil): Args: 
-- [ ] **PERFORM** (misc.zil): Args: A "OPTIONAL" (O <>
+- [x] **PERFORM** (misc.zil): Args: A "OPTIONAL" (O <>
 - [ ] **PICK-ONE** (misc.zil): Args: FROB
 - [x] **PLANETARY-COURSE-CONTROL-F** (comptwo.zil): Args: RARG
 - [x] **PLANETARY-DEFENSE-F** (comptwo.zil): Args: RARG
@@ -972,7 +972,7 @@
 - [ ] **ROB** (verbs.zil): Args: WHO WHERE "AUX" N X
 - [x] **ROBOT-HOLE-F** (comptwo.zil): Args: 
 - [ ] **RUBBLE-PSEUDO** (globals.zil): Args: 
-- [ ] **SAFETY-WEB-F** (globals.zil): Args: "OPTIONAL" (RARG ,M-OBJECT
+- [x] **SAFETY-WEB-F** (globals.zil): Args: "OPTIONAL" (RARG ,M-OBJECT
 - [x] **SCORE-OBJ** (verbs.zil): Args: OBJ
 - [ ] **SEARCH-LIST** (parser.zil): Args: OBJ TBL LVL "AUX" FLS NOBJ
 - [ ] **SEE-INSIDE?** (verbs.zil): Args: OBJ
@@ -1016,7 +1016,7 @@
 - [ ] **THIS-IT?** (parser.zil): Args: OBJ TBL "AUX" SYNS
 - [ ] **TIMELESS-VERB?** (misc.zil): Args: VRB
 - [ ] **TOILET-PSEUDO** (globals.zil): Args: 
-- [ ] **TOWEL-F** (globals.zil): Args: 
+- [x] **TOWEL-F** (globals.zil): Args: 
 - [ ] **TRANSLATOR-PSEUDO** (globals.zil): Args: 
 - [x] **TRYTAKE** (verbs.zil): Args: 
 - [x] **UNDERWATER-F** (compone.zil): Args: RARG

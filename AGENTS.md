@@ -17,15 +17,28 @@
   |--------------------|----------|
   | Rooms              |  96/105  |
   | Objects            | 120/150  |
-  | Action Routines    |  92/136  |
-  | Verbs and Syntax   |  89/251  |
-  | Routines / Systems | 167/505  |
-  | **Total**          | **564/1147** |
+  | Action Routines    |  99/136  |
+  | Verbs and Syntax   | 109/251  |
+  | Routines / Systems | 175/505  |
+  | **Total**          | **599/1147** |
 
   The weakest areas by far are Verbs/Syntax and Routines/Systems -- the world is
-  largely built but the verb layer behind it is thin. Suggested order: finish the
-  verb handlers in `verbs.zil` (which retires `legacy_dispatch`), then the parser
-  gaps below, then sweep the remaining per-room action routines chapter by chapter.
+  largely built but the verb layer behind it is thin.
+
+  **Agreed strategy: chapter by chapter.** Finish the Feinstein completely, then
+  `compone.zil`, then `comptwo.zil`, so each chapter becomes fully playable in
+  turn. Remaining Feinstein work, in order:
+
+  1. **IN PROGRESS** — Brig and shared scenery: `GRAFFITI-PSEUDO`, `DOOR-PSEUDO`,
+     `CRETIN-F` (EXAMINE ME), `HANDS-F`, `WINDOW-F`, `LIGHTS-F`. The brig is
+     reachable (Blather puts you there) but has no scenery and no way out.
+  3. Player status daemons. `I-SLEEP-WARNINGS`, `I-FALL-ASLEEP`, `DREAMING`,
+     `WAKING-UP` and `I-SICKNESS-WARNINGS` do not exist; `I-HUNGER-WARNINGS` is a
+     stub on the wrong schedule (ZIL escalates 450/150/100/50 rather than counting
+     to 600). All are queued by GO on turn one, but at 3600/2000/1000 ticks they
+     only fire well into the planet chapters, and `WAKING-UP` depends on Floyd,
+     the canteen and the flask -- so this lands after `compone.zil` is further
+     along, not during the Feinstein.
 - Parser gaps in `src/parser.c`: "IT" is a stub that always fails to resolve
   (`snarf_objects` bails early) though ZIL tracks P-IT-OBJECT from GO onward;
   disambiguation prints a debug line and silently takes the first match; container

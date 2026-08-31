@@ -31,6 +31,202 @@ bool deck_nine_f(int arg) {
   return false;
 }
 
+// DDESC (globals.zil): renders a door's state for inline use in descriptions.
+const char *ddesc(ZObjectID door) {
+  return obj_has_flag(door, F_OPENBIT) ? "open" : "closed";
+}
+
+// ESCAPE-POD-F (globals.zil).
+bool escape_pod_f(int arg) {
+  if (arg == M_LOOK) {
+    tellf("This is one of the Feinstein's primary escape pods, for use in "
+          "extreme\n"
+          "emergencies. A mass of safety webbing, large enough to hold several "
+          "dozen\n"
+          "people, fills half the pod. The controls are entirely automated. "
+          "The\n"
+          "bulkhead leading out is %s.\n",
+          ddesc(O_POD_DOOR));
+    return true;
+  }
+  return false;
+}
+
+// SAFETY-WEB-F (globals.zil). Riding out the launch in the webbing is the whole
+// point of the pod; standing up again once you have landed drops the pod off
+// its ledge and starts it sinking.
+bool safety_web_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_EXAMINE:
+    TELL("The safety webbing fills most of the pod. It could accomodate\n"
+         "from one to, perhaps, twenty people.\n");
+    return true;
+  case V_TAKE:
+    if (obj_in(player, O_SAFETY_WEB)) {
+      TELL("You're in it!\n");
+    } else {
+      TELL("The safety web seems to be more intended for getting into than\n"
+           "grabbing onto.\n");
+    }
+    return true;
+  case V_BOARD:
+  case V_CLIMB_ON:
+    if (obj_in(player, O_SAFETY_WEB)) {
+      TELL("You're in it!\n");
+    } else {
+      obj_move(player, O_SAFETY_WEB);
+      TELL("You are now safely cushioned within the web.\n");
+    }
+    return true;
+  case V_EXIT:
+  case V_DISEMBARK:
+  case V_STAND:
+    if (!obj_in(player, O_SAFETY_WEB))
+      return false;
+    obj_move(player, current_room);
+    if (game_state.trip_counter > 14 && !is_event_enabled(EVT_SINK_POD)) {
+      queue_event(EVT_SINK_POD, -1);
+      TELL("As you stand, the pod shifts slightly and you feel it falling.\n"
+           "A moment later, the fall stops with a shock, and you see water\n"
+           "rising past the viewport.\n");
+    } else {
+      TELL("You are standing again.\n");
+    }
+    return true;
+  default:
+    return false;
+  }
+}
+
+// CONTROLS-F (globals.zil).
+bool controls_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_RUB:
+  case V_MOVE:
+  case V_TURN:
+  case V_SET:
+  case V_TAKE:
+  case V_EXAMINE:
+  case V_PUSH:
+  case V_PULL:
+    if (current_room == R_HELICOPTER) {
+      TELL("The controls are covered and locked.\n");
+    } else if (current_room == R_ESCAPE_POD) {
+      TELL("The controls are entirely automated.\n");
+    } else {
+      TELL("The controls are incredibly complicated and you shouldn't even\n"
+           "be thinking about touching them.\n");
+    }
+    return true;
+  case V_OPEN:
+  case V_UNLOCK:
+    if (current_room == R_HELICOPTER) {
+      TELL("You don't even have the orange key!\n");
+      return true;
+    }
+    return false;
+  default:
+    return false;
+  }
+}
+
+// FOOD-KIT-F (globals.zil).
+bool food_kit_f(int arg) {
+  (void)arg;
+  if (current_cmd.verb == V_EMPTY) {
+    if (!obj_has_flag(O_FOOD_KIT, F_OPENBIT)) {
+      TELL("The kit is closed!\n");
+    } else if (obj_first_child(O_FOOD_KIT) != NOTHING) {
+      TELL("The goo, being gooey, sticks to the inside of the kit. You would "
+           "probably\n"
+           "have to shake the kit to get the goo out.\n");
+    }
+    return true;
+  }
+  return false;
+}
+
+// GOO-F (globals.zil). The goo is edible but not portable -- it has to be eaten
+// straight out of the survival kit.
+bool goo_f(int arg) {
+  (void)arg;
+  ZObjectID self = current_cmd.prso_list[0];
+
+  switch (current_cmd.verb) {
+  case V_EAT:
+    if (game_state.hunger_level == 0) {
+      TELL("Thanks, but you're not hungry.\n");
+    } else if (!obj_in(O_FOOD_KIT, player)) {
+      tellf("You're not holding the %s.\n", objects[O_FOOD_KIT].description);
+    } else {
+      obj_remove(self);
+      game_state.c_elapsed = 15;
+      game_state.hunger_level = 0;
+      queue_event(EVT_HUNGER_WARNINGS, 1450);
+      tellf("Mmmm...that tasted just like %s.\n",
+            self == O_BROWN_GOO  ? "delicious Nebulan fungus pudding"
+            : self == O_RED_GOO  ? "scrumptious cherry pie"
+                                 : "yummy lima beans");
+    }
+    return true;
+  case V_TAKE:
+    TELL("It would ooze through your fingers. You'll have to eat it right from "
+         "the survival kit.\n");
+    return true;
+  case V_DROP:
+    TELL("The goo, being gooey, sticks where it is. You'll have to eat it right "
+         "from the survival kit.\n");
+    return true;
+  default:
+    return false;
+  }
+}
+
+// TOWEL-F (globals.zil).
+bool towel_f(int arg) {
+  (void)arg;
+  if (current_cmd.verb == V_EXAMINE) {
+    TELL("A pretty ordinary towel. Something is written in its corner.\n");
+    return true;
+  }
+  return false;
+}
+
+// GLOBAL-POD-F (globals.zil): the pod as seen from outside, so that ENTER POD
+// and friends route through the bulkhead rather than teleporting you inside.
+bool global_pod_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_THROUGH:
+  case V_BOARD:
+  case V_WALK_TO:
+    if (current_room == R_ESCAPE_POD) {
+      TELL("You're already in it!\n");
+    } else {
+      perform_walk(objects[current_room].west);
+    }
+    return true;
+  case V_EXIT:
+  case V_DISEMBARK:
+  case V_DROP:
+    if (current_room == R_DECK_NINE) {
+      TELL("You're not in it!\n");
+      return true;
+    }
+    if (current_room == R_ESCAPE_POD) {
+      perform_walk(objects[current_room].out);
+      return true;
+    }
+    return false;
+  case V_OPEN:
+    return pod_door_f(arg);
+  default:
+    return false;
+  }
+}
+
 // POD-DOOR-F (globals.zil). The bulkhead is never the player's to operate: it is
 // blown open by the first explosion and clangs shut again when the pod launches.
 // Without this the generic V_OPEN handler would cheerfully unlock the escape pod

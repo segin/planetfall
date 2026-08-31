@@ -82,7 +82,10 @@ run_test "Test 17: AGAIN command" "LOOK\nAGAIN\nQUIT\nY" "Deck Nine" "AGAIN comm
 run_test "Test 18: QUIT decline" "QUIT\nN\nQUIT\nY" "Ok" "QUIT decline confirmation works" "QUIT decline"
 run_test "Test 19: SAVE and RESTORE" "SAVE\nRESTORE\nQUIT\nY" "Game saved.*Game restored" "SAVE and RESTORE work" "SAVE/RESTORE"
 run_test "Test 20: WALK AROUND" "WALK AROUND BRUSH\nQUIT\nY" "Use compass directions" "WALK AROUND works" "WALK AROUND"
-run_test "Test 21: WALK TO" "WALK TO POD\nQUIT\nY" "It's here" "WALK TO works" "WALK TO"
+run_test "Test 21: WALK TO" "WALK TO FLOOR\nQUIT\nY" "It's here" "WALK TO works" "WALK TO"
+# GLOBAL-POD-F intercepts WALK-TO and routes it through the bulkhead rather than
+# answering "It's here!", so walking to the pod is refused while it is sealed.
+run_test "Test 21a: WALK TO POD goes through the bulkhead" "WALK TO POD\nQUIT\nY" "escape pod bulkhead is closed" "WALK TO POD routes through the door" "WALK TO POD"
 run_test "Test 22: DROP and TAKE" "DROP BRUSH\nTAKE BRUSH\nQUIT\nY" "Dropped.*Taken" "DROP and TAKE work" "DROP/TAKE"
 run_test "Test 23: PUT" "PUT BRUSH IN UNIFORM\nQUIT\nY" "Done" "PUT works" "PUT"
 run_test "Test 24: THROW" "THROW BRUSH\nQUIT\nY" "Thrown" "THROW works" "THROW"
@@ -123,6 +126,30 @@ run_test "Test 58: UPPER ELEVATOR trip activation" "TELEPORT SMALL OFFICE\nOPEN 
 run_test "Test 59: HELIPAD fence and helicopter boarding" "TELEPORT HELIPAD\nNORTH\nBOARD VEHICLE\nFLY\nOUT\nQUIT\nY" "locked" "Helipad fence and helicopter boarding work" "HELIPAD / HELICOPTER"
 run_test "Test 60: COMM ROOM playback and screen" "TELEPORT COMM ROOM\nPUSH PLAYBACK BUTTON\nREAD SCREEN\nEXAMINE CABLES\nQUIT\nY" "Feinstein" "Comm room playback button and screen reading work" "COMM ROOM"
 run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST\nLOOK\nQUIT\nY" "Kalamontee Staashun" "Kalamontee platform navigation and description work" "KALAMONTEE PLATFORM"
+
+# --- The escape pod (ESCAPE-POD-F, SAFETY-WEB-F, POD-EXIT-F, I-SINK-POD) -----
+# The first blast opens the bulkhead around turn 38; boarding the web and riding
+# the pod down takes another dozen turns. POD_LANDED leaves the player webbed in
+# a pod resting on the water.
+WAIT_38=$(printf 'WAIT\\n%.0s' $(seq 1 38))
+WAIT_12=$(printf 'WAIT\\n%.0s' $(seq 1 12))
+POD_BOARDED="${WAIT_38}WEST\n"
+POD_LANDED="${POD_BOARDED}ENTER WEB\n${WAIT_12}"
+
+run_test "Test 78: Pod describes its own bulkhead" "${POD_BOARDED}LOOK\nQUIT\nY" "bulkhead leading out is open" "ESCAPE-POD-F reports bulkhead state" "Pod description"
+run_test "Test 79: Examining the safety web" "${POD_BOARDED}EXAMINE WEB\nQUIT\nY" "one to, perhaps, twenty people" "Safety web description works" "Safety web examine"
+run_test "Test 80: Pod controls are automated" "${POD_BOARDED}EXAMINE CONTROLS\nQUIT\nY" "entirely automated" "CONTROLS-F pod branch works" "Pod controls"
+run_test "Test 81: Boarding the web" "${POD_BOARDED}ENTER WEB\nQUIT\nY" "safely cushioned within the web" "Boarding the web works" "Web boarding"
+run_test "Test 82: Landing produces provisions" "${POD_LANDED}LOOK\nQUIT\nY" "survival kit" "Landing reveals the survival kit" "Pod provisions"
+run_test "Test 83: Cannot walk while webbed" "${POD_LANDED}OUT\nQUIT\nY" "stand up, first" "Walking while webbed is refused" "Webbed movement"
+run_test "Test 84: Standing drops the pod into the water" "${POD_LANDED}STAND\nQUIT\nY" "you feel it falling" "Standing starts the pod sinking" "Pod sinking"
+run_test "Test 85: The sinking pod crushes you" "${POD_LANDED}STAND\nWAIT\nWAIT\nWAIT\nWAIT\nQUIT\nY" "pod splits open" "Sinking pod kills a sealed-in player" "Sink death"
+run_test "Test 86: Escaping the sinking pod" "${POD_LANDED}STAND\nOPEN BULKHEAD\nOUT\nUP\nQUIT\nY" "reached a cleft in the cliff wall" "Player can escape the pod to the Crag" "Pod escape"
+# The survival kit is closed on arrival (ZIL gives FOOD-KIT no OPENBIT), so the
+# goo is out of scope until you open it.
+run_test "Test 87: Goo must be eaten from the kit" "${POD_LANDED}STAND\nOPEN KIT\nTAKE RED GOO\nQUIT\nY" "ooze through your fingers" "GOO-F refuses to be carried" "Goo take"
+run_test "Test 87a: Goo is out of scope while the kit is shut" "${POD_LANDED}STAND\nTAKE RED GOO\nQUIT\nY" "can't see any" "Closed kit hides the goo" "Closed kit scope"
+run_test "Test 88: Reading the towel" "${POD_LANDED}STAND\nREAD TOWEL\nQUIT\nY" "Don't Panic" "Towel text works" "Towel"
 
 # --- Blather and the alien ambassador (I-BLATHER / I-AMBASSADOR) -------------
 # Blather's off-post branch is unconditional, so leaving Deck Nine always

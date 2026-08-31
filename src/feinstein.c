@@ -84,9 +84,18 @@ void init_feinstein_act() {
   r->long_description = "This is one of the Feinstein's primary escape pods. A "
                         "mass of safety webbing fills half the pod.";
   r->flags = F_RLANDBIT | F_ONBIT | F_VEHBIT;
+  r->value = 3;
+  // POD-EXIT-F: before launch the pod opens back onto Deck Nine and UP goes
+  // nowhere; after the landing it opens into the water instead and EAST goes
+  // nowhere. See routine_pod_trip for the switch.
   r->east = R_DECK_NINE;
   r->out = R_DECK_NINE;
   r->globals[0] = O_POD_DOOR;
+  r->globals[1] = O_CONTROLS;
+  r->globals[2] = O_LIGHTS;
+  r->globals[3] = O_GLOBAL_POD;
+  r->globals[4] = O_WINDOW;
+  r->action = escape_pod_f;
 
   // === OBJECTS ===
 
@@ -99,8 +108,42 @@ void init_feinstein_act() {
   o->id = O_GLOBAL_POD;
   o->description = "escape pod";
   o->synonyms[0] = "pod";
-  o->flags = F_VEHBIT | F_NDESCBIT;
+  o->adjectives[0] = "escape";
+  o->adjectives[1] = "emergency";
+  o->adjectives[2] = "primary";
+  o->flags = F_VOWELBIT | F_VEHBIT | F_NDESCBIT;
+  o->action = global_pod_f;
   obj_move(O_GLOBAL_POD, R_DECK_NINE);
+
+  // CONTROLS / LIGHTS / WINDOW: fittings shared by the pod, the elevators, the
+  // shuttle cars and the helicopter.
+  o = &objects[O_CONTROLS];
+  o->id = O_CONTROLS;
+  o->description = "set of controls";
+  o->synonyms[0] = "controls";
+  o->synonyms[1] = "control";
+  o->synonyms[2] = "panel";
+  o->flags = F_NDESCBIT;
+  o->action = controls_f;
+  obj_move(O_CONTROLS, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_LIGHTS];
+  o->id = O_LIGHTS;
+  o->description = "lights";
+  o->synonyms[0] = "lights";
+  o->synonyms[1] = "light";
+  o->flags = F_NDESCBIT;
+  obj_move(O_LIGHTS, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_WINDOW];
+  o->id = O_WINDOW;
+  o->description = "window";
+  o->synonyms[0] = "window";
+  o->synonyms[1] = "port";
+  o->synonyms[2] = "viewport";
+  o->adjectives[0] = "view";
+  o->flags = F_NDESCBIT;
+  obj_move(O_WINDOW, OBJ_LOCAL_GLOBALS);
 
   // POD-DOOR
   o = &objects[O_POD_DOOR];
@@ -203,7 +246,11 @@ void init_feinstein_act() {
   o->description = "safety web";
   o->synonyms[0] = "web";
   o->synonyms[1] = "webbing";
+  o->synonyms[2] = "mass";
+  o->synonyms[3] = "net";
+  o->adjectives[0] = "safety";
   o->flags = F_VEHBIT | F_NDESCBIT | F_CLIMBBIT;
+  o->action = safety_web_f;
   obj_move(O_SAFETY_WEB, R_ESCAPE_POD);
 
   // TOWEL
@@ -211,6 +258,8 @@ void init_feinstein_act() {
   o->id = O_TOWEL;
   o->description = "towel";
   o->synonyms[0] = "towel";
+  o->size = 10;
+  o->action = towel_f;
   o->flags = F_TAKEBIT | F_READBIT;
   o->text = "\"S.P.S. FEINSTEIN\n  Escape Pod #42\n   Don't Panic!\"";
   // Towel appears later in pod, so don't place yet.
@@ -245,24 +294,43 @@ void init_feinstein_act() {
   o->id = O_FOOD_KIT;
   o->description = "survival kit";
   o->synonyms[0] = "kit";
-  o->flags = F_TAKEBIT | F_CONTBIT;
-  // Contents
-  objects[O_RED_GOO].id = O_RED_GOO;
-  objects[O_RED_GOO].description = "blob of red goo";
-  objects[O_RED_GOO].synonyms[0] = "goo";
-  objects[O_RED_GOO].flags = F_FOODBIT | F_TAKEBIT;
+  o->synonyms[1] = "provisions";
+  o->adjectives[0] = "survival";
+  o->adjectives[1] = "emergency";
+  o->size = 10;
+  o->action = food_kit_f;
+  o->flags = F_TAKEBIT | F_CONTBIT | F_SEARCHBIT;
+
+  // The goo is deliberately not takeable -- GOO-F insists you eat it straight
+  // from the kit.
+  o = &objects[O_RED_GOO];
+  o->id = O_RED_GOO;
+  o->description = "blob of red goo";
+  o->synonyms[0] = "goo";
+  o->synonyms[1] = "blob";
+  o->adjectives[0] = "red";
+  o->flags = F_ACIDBIT | F_FOODBIT;
+  o->action = goo_f;
   obj_move(O_RED_GOO, O_FOOD_KIT);
 
-  objects[O_BROWN_GOO].id = O_BROWN_GOO;
-  objects[O_BROWN_GOO].description = "blob of brown goo";
-  objects[O_BROWN_GOO].synonyms[0] = "goo";
-  objects[O_BROWN_GOO].flags = F_FOODBIT | F_TAKEBIT;
+  o = &objects[O_BROWN_GOO];
+  o->id = O_BROWN_GOO;
+  o->description = "blob of brown goo";
+  o->synonyms[0] = "goo";
+  o->synonyms[1] = "blob";
+  o->adjectives[0] = "brown";
+  o->flags = F_ACIDBIT | F_FOODBIT;
+  o->action = goo_f;
   obj_move(O_BROWN_GOO, O_FOOD_KIT);
 
-  objects[O_GREEN_GOO].id = O_GREEN_GOO;
-  objects[O_GREEN_GOO].description = "blob of green goo";
-  objects[O_GREEN_GOO].synonyms[0] = "goo";
-  objects[O_GREEN_GOO].flags = F_FOODBIT | F_TAKEBIT;
+  o = &objects[O_GREEN_GOO];
+  o->id = O_GREEN_GOO;
+  o->description = "blob of green goo";
+  o->synonyms[0] = "goo";
+  o->synonyms[1] = "blob";
+  o->adjectives[0] = "green";
+  o->flags = F_ACIDBIT | F_FOODBIT;
+  o->action = goo_f;
   obj_move(O_GREEN_GOO, O_FOOD_KIT);
 
   // Start Daemons
@@ -574,14 +642,18 @@ void routine_pod_trip() {
       obj_move(O_TOWEL, R_ESCAPE_POD);
       obj_move(O_FOOD_KIT, R_ESCAPE_POD);
 
-      // Update connections
-      objects[R_ESCAPE_POD].out = R_CRAG;
-      objects[R_ESCAPE_POD].east = R_CRAG;
-      objects[R_ESCAPE_POD].up = R_CRAG;
+      // POD-EXIT-F's post-landing branch: the pod is wedged above open water,
+      // so OUT and UP put you in it and EAST is no longer anywhere.
+      objects[R_ESCAPE_POD].out = R_UNDERWATER;
+      objects[R_ESCAPE_POD].up = R_UNDERWATER;
+      objects[R_ESCAPE_POD].east = NOTHING;
 
-      // Move the visible pod object to the Crag so it can be entered
+      // Move the visible pod object to the Crag so it can be seen from outside
       obj_move(O_GLOBAL_POD, R_CRAG);
 
+      // TRIP-COUNTER is parked at 15, which is what SAFETY-WEB-F and POD-DOOR-F
+      // test to know the pod is down and the water is waiting.
+      game_state.trip_counter = 15;
       dequeue_event(EVT_POD_TRIP);
 
     } else {
@@ -595,10 +667,31 @@ void routine_pod_trip() {
   }
 }
 
+// I-SINK-POD (globals.zil). Once you climb out of the webbing the pod slips off
+// its ledge; you have a handful of turns to get out before it crushes or floods.
 void routine_sink_pod() {
   game_state.sink_counter++;
-  if (game_state.sink_counter > 5) {
-    jigs_up("\nThe pod sinks. You drown.");
+
+  if (current_room != R_ESCAPE_POD)
+    return;
+
+  if (game_state.sink_counter == 3) {
+    tellf("\nThe pod is now completely submerged, and you feel it smash against "
+          "underwater\n"
+          "rocks. Bubbles streaming upward past the window indicate that the "
+          "pod is\n"
+          "continuing to sink.\n");
+  } else if (game_state.sink_counter == 4 &&
+             !obj_has_flag(O_POD_DOOR, F_OPENBIT)) {
+    tellf("\nThe pod creaks ominously from the increasing pressure.\n");
+  } else if (game_state.sink_counter == 5) {
+    if (obj_has_flag(O_POD_DOOR, F_OPENBIT)) {
+      jigs_up("\nBetween the swirling waters and the increasing pressure, it's "
+              "curtains\n"
+              "for you. Perhaps you should have left the pod a bit sooner.");
+    } else {
+      jigs_up("\nThe pod splits open, and water pours in.");
+    }
   }
 }
 
