@@ -55,6 +55,30 @@ void test_flags() {
     printf("Flags Passed.\n");
 }
 
+void test_score_obj() {
+    printf("Testing Score Obj...\n");
+    init_game();
+    assert(game_state.score == 0);
+    assert(game_state.day == 1);
+    assert(game_state.internal_moves == 0);
+
+    ZObjectID item = 50;
+    objects[item].id = item;
+    objects[item].value = 5;
+    objects[item].flags = 0;
+
+    score_obj(item);
+    assert(game_state.score == 5);
+    assert(objects[item].value == 0);
+    assert(obj_has_flag(item, F_TOUCHBIT));
+
+    // Scoring it again shouldn't increase score
+    score_obj(item);
+    assert(game_state.score == 5);
+
+    printf("Score Obj Passed.\n");
+}
+
 void init_objects() {
     // Dummy init for test
 }
@@ -62,5 +86,6 @@ void init_objects() {
 int main() {
     test_object_linking();
     test_flags();
+    test_score_obj();
     return 0;
 }

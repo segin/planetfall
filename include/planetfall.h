@@ -164,6 +164,7 @@ bool obj_in(ZObjectID obj, ZObjectID parent);
 bool obj_has_flag(ZObjectID obj, ZFlag flag);
 void obj_set_flag(ZObjectID obj, ZFlag flag);
 void obj_clear_flag(ZObjectID obj, ZFlag flag);
+void score_obj(ZObjectID obj);
 
 // Hierarchy Traversal
 ZObjectID obj_first_child(ZObjectID parent);

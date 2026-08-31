@@ -33,13 +33,7 @@ int count_contents(ZObjectID obj) {
   return cnt;
 }
 
-void score_obj(ZObjectID obj) {
-  if (objects[obj].value > 0) {
-    obj_set_flag(obj, F_TOUCHBIT);
-    game_state.score += objects[obj].value;
-    objects[obj].value = 0;
-  }
-}
+
 
 bool itake(ZObjectID obj, bool verbose) {
   if (!obj_has_flag(obj, F_TAKEBIT)) {

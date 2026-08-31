@@ -40,6 +40,15 @@ bool obj_has_flag(ZObjectID id, ZFlag flag) {
     return (obj->flags & flag) != 0;
 }
 
+void score_obj(ZObjectID obj) {
+    if (obj <= 0 || obj >= MAX_OBJECTS) return;
+    if (objects[obj].value > 0) {
+        obj_set_flag(obj, F_TOUCHBIT);
+        game_state.score += objects[obj].value;
+        objects[obj].value = 0;
+    }
+}
+
 // Moves obj to dest (re-linking parent/child/sibling)
 void obj_move(ZObjectID id, ZObjectID dest_id) {
     if (id == NOTHING) return;
