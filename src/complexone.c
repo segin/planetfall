@@ -750,6 +750,9 @@ void init_complexone() {
   r = &objects[R_ADMIN_CORRIDOR_S];
   r->id = R_ADMIN_CORRIDOR_S;
   r->description = "Admin Corridor South";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "admin";
+  r->adjectives[1] = "south";
   r->long_description =
       "This section of hallway seems to have suffered some minor structural\n"
       "damage. The walls are cracked, and a jagged crevice crosses the floor.\n"
@@ -758,6 +761,7 @@ void init_complexone() {
   r->south = R_CORRIDOR_JUNCTION;
   r->north = R_ADMIN_CORRIDOR;
   r->east = R_SANFAC_E;
+  r->action = admin_corridor_s_f;
 
   // O_CREVICE
   o = &objects[O_CREVICE];
@@ -769,6 +773,7 @@ void init_complexone() {
   o->adjectives[0] = "narrow";
   o->adjectives[1] = "jagged";
   o->flags = F_NDESCBIT;
+  o->action = crevice_f;
   obj_move(O_CREVICE, R_ADMIN_CORRIDOR_S);
 
   // O_KEY
@@ -776,12 +781,83 @@ void init_complexone() {
   o->id = O_KEY;
   o->description = "key";
   o->synonyms[0] = "key";
+  o->synonyms[1] = "metal";
+  o->synonyms[2] = "object";
   o->adjectives[0] = "steel";
   o->adjectives[1] = "shiny";
+  o->adjectives[2] = "iron";
   o->flags =
-      F_TAKEBIT | F_TOOLBIT | F_INVISIBLE | F_TRYTAKEBIT; // Invisible initially
+      F_TAKEBIT | F_TOOLBIT | F_INVISIBLE | F_TRYTAKEBIT | F_ACIDBIT;
   o->size = 3;
+  o->action = key_f;
   obj_move(O_KEY, R_ADMIN_CORRIDOR_S);
+
+  // R_SANFAC_E
+  r = &objects[R_SANFAC_E];
+  r->id = R_SANFAC_E;
+  r->description = "SanFac E";
+  r->synonyms[0] = "sanfac";
+  r->adjectives[0] = "e";
+  r->long_description =
+      "Here is another sanitary facility. Like the others, it is dusty and\n"
+      "deserted.";
+  r->flags = F_ONBIT | F_FLOYDBIT | F_RLANDBIT;
+  r->west = R_ADMIN_CORRIDOR_S;
+  r->out = R_ADMIN_CORRIDOR_S;
+  r->globals[0] = O_TOILET_PSEUDO;
+
+  // R_ADMIN_CORRIDOR
+  r = &objects[R_ADMIN_CORRIDOR];
+  r->id = R_ADMIN_CORRIDOR;
+  r->description = "Admin Corridor";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "admin";
+  r->long_description =
+      "The hallway, in fact the entire building, has been rent apart here, presumably\n"
+      "by seismic upheaval. You can see the sky through the severed roof above, and\n"
+      "the ground is thick with rubble. To the north is a gaping rift, at least eight\n"
+      "meters across and thirty meters deep. A wide doorway, labelled \"Sistumz Moniturz,\" leads west.";
+  r->flags = F_ONBIT | F_RLANDBIT;
+  r->south = R_ADMIN_CORRIDOR_S;
+  r->north = R_ADMIN_CORRIDOR_N;
+  r->west = R_SYSTEMS_MONITORS;
+  r->action = admin_corridor_f;
+  r->globals[0] = O_RIFT;
+  r->globals[1] = O_RUBBLE_PSEUDO;
+
+  // R_ADMIN_CORRIDOR_N
+  r = &objects[R_ADMIN_CORRIDOR_N];
+  r->id = R_ADMIN_CORRIDOR_N;
+  r->description = "Admin Corridor North";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "admin";
+  r->adjectives[1] = "north";
+  r->long_description =
+      "The corridor ends here. Portals lead west, north, and east. Signs above these\n"
+      "portals read, respectively, \"Administraativ Awfisiz,\" \"Tranzportaashun\n"
+      "Suplii,\" and \"Plan Ruum.\" To the south is a wide rift separating this area from the rest of the building.";
+  r->flags = F_ONBIT | F_RLANDBIT;
+  r->south = R_ADMIN_CORRIDOR;
+  r->north = R_TRANSPORTATION_SUPPLY;
+  r->east = R_PLAN_ROOM;
+  r->west = R_SMALL_OFFICE;
+  r->action = admin_corridor_n_f;
+  r->globals[0] = O_RIFT;
+
+  // O_RIFT
+  o = &objects[O_RIFT];
+  o->id = O_RIFT;
+  o->description = "rift";
+  o->synonyms[0] = "rift";
+  o->synonyms[1] = "gulf";
+  o->synonyms[2] = "precipice";
+  o->synonyms[3] = "hole";
+  o->adjectives[0] = "wide";
+  o->adjectives[1] = "deep";
+  o->adjectives[2] = "gaping";
+  o->flags = F_NDESCBIT;
+  o->action = rift_f;
+  obj_move(O_RIFT, OBJ_LOCAL_GLOBALS);
   // R_MACHINE_SHOP
   r = &objects[R_MACHINE_SHOP];
   r->id = R_MACHINE_SHOP;

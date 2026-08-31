@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "planetfall.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 // Helper macros for ZIL translation
 // Helper macros for ZIL translation (macros moved to output.h)
@@ -306,7 +307,7 @@ bool ladder_f(int verb) {
     }
     return true;
   }
-  if ((verb == V_SPAN || verb == V_ATTRACT) && current_cmd.prsi == O_RIFT) {
+  if (verb == V_SPAN || verb == V_ATTRACT) {
     if (game_state.ladder_flag) {
       tellf("The ladder already spans the rift.\n");
     } else {
@@ -875,53 +876,105 @@ bool admin_corridor_n_f(int arg) {
 
 bool admin_corridor_s_f(int arg) {
   if (arg == M_END && obj_has_flag(O_KEY, F_INVISIBLE)) {
-    // PROB 20 logic
-    // if (rand() % 5 == 0) // Basic prob check
-    TELL("You catch, out of the corner of your eye, a glint of light from the "
-         "direction\n"
-         "of the floor.\n");
-    return true;
+    if ((rand() % 5) == 0) {
+      tellf("You catch, out of the corner of your eye, a glint of light from the direction\n"
+            "of the floor.\n");
+      return true;
+    }
   }
   return false;
 }
 
-bool crevice_f(int arg) {
-  if (current_cmd.verb == V_REACH) {
-    TELL("The crevice is too narrow to reach into.\n");
+bool crevice_f(int verb) {
+  if (verb == V_REACH) {
+    tellf("The crevice is too narrow to reach into.\n");
     return true;
   }
-  if (current_cmd.verb == V_LOOK_INSIDE || current_cmd.verb == V_EXAMINE ||
-      current_cmd.verb == V_SEARCH) {
+  if (verb == V_LOOK_INSIDE || verb == V_EXAMINE || verb == V_SEARCH) {
     if (obj_has_flag(O_KEY, F_TOUCHBIT)) {
-      TELL("Nothing there but bunches of dust.\n");
+      tellf("Nothing there but bunches of dust.\n");
     } else {
       obj_clear_flag(O_KEY, F_INVISIBLE);
-      TELL("Lying at the bottom of the narrow crack, partly covered by layers "
-           "of dust,\n"
-           "is a shiny steel key!\n");
+      tellf("Lying at the bottom of the narrow crack, partly covered by layers of dust,\n"
+            "is a shiny steel key!\n");
     }
     return true;
   }
   return false;
 }
 
-bool key_f(int arg) {
-  if ((current_cmd.verb == V_TAKE || current_cmd.verb == V_MOVE) &&
+bool key_f(int verb) {
+  if ((verb == V_TAKE || verb == V_MOVE || verb == V_ATTRACT) &&
       !obj_has_flag(O_KEY, F_TOUCHBIT)) {
-    if (current_cmd.prsi ==
-        O_MAGNET) { // Assuming magnet implemented later, but logic is here
-      // PERFORM ATTRACT MAGNET KEY
-      TELL("You use the magnet to attract the key.\n"); // Placeholder for
-                                                        // perform call
-      obj_move(O_KEY, O_MAGNET);                        // Simplify
+    if (current_cmd.prsi == O_PLIERS) {
+      tellf("These are heavy-duty pliers, too large to reach into this narrow crack.\n");
+      return true;
+    }
+    if (current_cmd.prsi == O_MAGNET) {
+      if (!obj_in(O_MAGNET, player)) {
+        tellf("You're not holding the magnet!\n");
+        return true;
+      }
+      obj_move(O_KEY, player);
+      obj_clear_flag(O_KEY, F_INVISIBLE);
+      obj_clear_flag(O_KEY, F_TRYTAKEBIT);
       obj_set_flag(O_KEY, F_TOUCHBIT);
+      tellf("With a spray of dust and a loud clank, a piece of metal leaps from the\n"
+            "crevice and affixes itself to the magnet. It is a steel key! With a tug,\n"
+            "you remove the key from the magnet.\n");
       return true;
     }
     if (current_cmd.prsi != NOTHING) {
-      TELL("Nice try.\n");
+      tellf("Nice try.\n");
       return true;
     }
-    TELL("Either the crevice is too narrow, or your fingers are too large.\n");
+    tellf("Either the crevice is too narrow, or your fingers are too large.\n");
+    return true;
+  }
+  if (verb == V_PUT && current_cmd.prsi == O_CREVICE) {
+    tellf("And you wonder why you're still only an Ensign Seventh Class?\n");
+    return true;
+  }
+  return false;
+}
+
+ZObjectID ladder_exit_f(void) {
+  if (game_state.ladder_flag) {
+    game_state.c_elapsed = 33;
+    tellf("You slowly make your way across the swaying ladder. You can see sharp,\n"
+          "pointy rocks at the bottom of the rift, far below...\n\n");
+    if (current_room == R_ADMIN_CORRIDOR_N) {
+      return R_ADMIN_CORRIDOR;
+    } else {
+      return R_ADMIN_CORRIDOR_N;
+    }
+  } else {
+    tellf("The rift is too wide to jump across.\n");
+    return NOTHING;
+  }
+}
+
+bool rift_f(int verb) {
+  if (verb == V_LEAP) {
+    jigs_up("You get a brief (but much closer) view of the sharp and nasty rocks at\n"
+            "the bottom of the rift.");
+    return true;
+  }
+  if (verb == V_PUT && current_cmd.prsi == O_RIFT) {
+    if (current_cmd.prso_count > 0) {
+      ZObjectID prso = current_cmd.prso_list[0];
+      obj_remove(prso);
+      if (prso == O_SCRUB_BRUSH) {
+        tellf("You watch with tremendous satisfaction as the brush is lost forever.\n");
+      } else {
+        tellf("The %s sails gracefully into the rift.\n", objects[prso].description);
+      }
+    }
+    return true;
+  }
+  if (verb == V_EXAMINE || verb == V_LOOK_INSIDE) {
+    tellf("The rift is at least eight meters wide and more than thirty meters deep. The\n"
+          "bottom is covered with sharp and nasty rocks.\n");
     return true;
   }
   return false;

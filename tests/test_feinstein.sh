@@ -68,6 +68,10 @@ run_test "Test 35: STORAGE WEST Can and Ladder" "TELEPORT STORAGE\nEXAMINE CAN\n
 run_test "Test 36: DORM CORRIDOR and Long Hall" "TELEPORT DORM CORRIDOR\nEXAMINE WALKWAY\nEAST\nQUIT\nY" "featureless hallway" "Dorm corridor walkway and long hall travel work" "LONG HALL"
 run_test "Test 37: MESS HALL benches and kitchen door" "TELEPORT MESS HALL\nEXAMINE BENCH\nOPEN DOOR\nQUIT\nY" "Pleez yuuz kitcin akses kard" "Mess hall benches and door work" "MESS HALL"
 run_test "Test 38: KITCHEN dispenser and canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\nOPEN CANTEEN\nTELEPORT KITCHEN\nPUT CANTEEN IN DISPENSER\nPUSH BUTTON\nQUIT\nY" "canteen fills almost to the brim" "Kitchen dispenser canteen filling works" "KITCHEN DISPENSER"
+run_test "Test 39: ADMIN CORRIDOR SOUTH Crevice and Key" "TELEPORT ADMIN SOUTH\nEXAMINE CREVICE\nTAKE KEY\nQUIT\nY" "shiny steel key" "Crevice examine and key discovery work" "CREVICE/KEY"
+run_test "Test 40: SANFAC E" "TELEPORT ADMIN SOUTH\nEAST\nEXAMINE TOILET\nQUIT\nY" "dry and dusty" "SanFac E toilet examine works" "SANFAC E"
+run_test "Test 41: ADMIN CORRIDOR Rift jump refusal" "TELEPORT ADMIN SOUTH\nNORTH\nEXAMINE RIFT\nNORTH\nQUIT\nY" "too wide to jump across" "Rift examine and jump refusal work" "RIFT"
+run_test "Test 42: Throwing brush into rift" "TELEPORT ADMIN SOUTH\nNORTH\nPUT BRUSH IN RIFT\nQUIT\nY" "lost forever" "Putting item into rift works" "PUT IN RIFT"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

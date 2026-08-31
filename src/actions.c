@@ -902,6 +902,11 @@ void perform_walk(ZObjectID dest) {
       (current_room == R_CORRIDOR_JUNCTION && dest == R_DORM_CORRIDOR)) {
     dest = long_hall_f();
   }
+  if ((current_room == R_ADMIN_CORRIDOR && dest == R_ADMIN_CORRIDOR_N) ||
+      (current_room == R_ADMIN_CORRIDOR_N && dest == R_ADMIN_CORRIDOR)) {
+    dest = ladder_exit_f();
+    if (dest == NOTHING) return;
+  }
   if ((current_room == R_REC_AREA && dest == R_CONFERENCE_ROOM) ||
       (current_room == R_CONFERENCE_ROOM && dest == R_REC_AREA)) {
     if (!obj_has_flag(O_CONFERENCE_DOOR, F_OPENBIT)) {

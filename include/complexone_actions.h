@@ -29,6 +29,7 @@ bool kitchen_f(int arg);
 // Navigation & Water level
 ZObjectID water_level_f(void);
 ZObjectID long_hall_f(void);
+ZObjectID ladder_exit_f(void);
 
 // Object / Pseudo Actions
 bool can_f(int arg);
@@ -41,6 +42,9 @@ bool canteen_f(int arg);
 bool high_protein_f(int arg);
 bool kitchen_button_pseudo_action(int arg);
 bool spout_pseudo_action(int arg);
+bool crevice_f(int arg);
+bool key_f(int arg);
+bool rift_f(int arg);
 bool combination_dial_f(int arg);
 bool conference_door_f(int arg);
 bool storage_west_door_f(int arg);
