@@ -31,6 +31,143 @@ bool deck_nine_f(int arg) {
   return false;
 }
 
+// CRETIN-F (globals.zil): the player as an object of their own commands.
+bool cretin_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_GIVE:
+    // GIVE something to yourself is just taking it.
+    return perform(V_TAKE, current_cmd.prso_list[0], NOTHING);
+  case V_SCRUB:
+    TELL("If only you'd done that before the last inspection, you wouldn't "
+         "have\n"
+         "gotten 300 demerits.\n");
+    return true;
+  case V_DROP:
+    TELL("Huh?\n");
+    return true;
+  case V_SMELL:
+    TELL("Phew!\n");
+    return true;
+  case V_FOLLOW:
+    TELL("It would be hard not to.\n");
+    return true;
+  case V_EAT:
+    TELL("Auto-cannibalism is not the answer.\n");
+    return true;
+  case V_ATTACK:
+  case V_MUNG:
+    if (current_cmd.prso_list[0] == player) {
+      jigs_up("If you insist.... Poof, you're dead!");
+    } else {
+      TELL("What a silly idea!\n");
+    }
+    return true;
+  case V_TAKE:
+    TELL("How romantic!\n");
+    return true;
+  case V_DISEMBARK:
+    TELL("You'll have to do that on your own.\n");
+    return true;
+  case V_EXAMINE:
+    TELL("That's difficult unless your eyes are prehensile.\n");
+    return true;
+  default:
+    return false;
+  }
+}
+
+// HANDS-F (globals.zil).
+bool hands_f(int arg) {
+  (void)arg;
+  if (current_cmd.verb != V_SHAKE)
+    return false;
+
+  if (obj_in(O_AMBASSADOR, current_room)) {
+    TELL("A repulsive idea.\n");
+  } else if (obj_in(O_BLATHER, current_room)) {
+    TELL("Saluting might be a better idea.\n");
+  } else if (obj_in(O_FLOYD, current_room) &&
+             obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    TELL("You shake one of Floyd's grasping extensions.\n");
+  } else {
+    TELL("There's no one to shake hands with.\n");
+  }
+  return true;
+}
+
+// GRAFFITI-PSEUDO (globals.zil). Reading the walls of the brig takes a while.
+bool graffiti_f(int arg) {
+  (void)arg;
+  if (current_cmd.verb == V_READ || current_cmd.verb == V_EXAMINE) {
+    game_state.c_elapsed = 28;
+    TELL("All the graffiti seem to be about Blather. One of\n"
+         "the least obscene items reads:\n\n"
+         "There once was a krip, name of Blather\n"
+         "Who told a young Ensign named Smather\n"
+         "\"I'll make you inherit\n"
+         "A trotting demerit\n"
+         "And ship you off to those stinking fawg-infested tar-pools of "
+         "Krather.\"\n\n"
+         "It's not a very good limerick, is it?\n");
+    return true;
+  }
+  return false;
+}
+
+// DOOR-PSEUDO (globals.zil): the brig's cell door.
+bool brig_door_f(int arg) {
+  (void)arg;
+  if (current_cmd.verb == V_OPEN || current_cmd.verb == V_UNLOCK) {
+    TELL("No way, Jose.\n");
+    return true;
+  }
+  return false;
+}
+
+// WINDOW-F (globals.zil). Only the escape pod and the generic branches are
+// ported so far; the Bio Lock, shuttle cabins and balcony come with their
+// chapters.
+bool window_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_LOOK_INSIDE:
+    if (current_room == R_ESCAPE_POD) {
+      if (game_state.trip_counter < 2) {
+        TELL("You can see debris from the exploding Feinstein.\n");
+      } else if (game_state.trip_counter > 8) {
+        TELL("You can see a planet, hopefully a hospitable one.\n");
+      } else {
+        TELL("The viewport is polarized into a featureless black rectangle.\n");
+      }
+      return true;
+    } else if (current_room == R_HELICOPTER) {
+      TELL("You see the helipad and the ocean beyond.\n");
+      return true;
+    }
+    return false;
+  case V_OPEN:
+    TELL("This window doesn't open.\n");
+    return true;
+  case V_MUNG:
+    TELL("It's made of tough Zynoid plastic.\n");
+    return true;
+  default:
+    return false;
+  }
+}
+
+// LIGHTS-F (globals.zil).
+bool lights_f(int arg) {
+  (void)arg;
+  if (current_cmd.verb == V_EXAMINE && current_room == R_COMPUTER_ROOM) {
+    TELL("The red light would seem to indicate a malfunction in the "
+         "computer.\n");
+    return true;
+  }
+  return false;
+}
+
 // DDESC (globals.zil): renders a door's state for inline use in descriptions.
 const char *ddesc(ZObjectID door) {
   return obj_has_flag(door, F_OPENBIT) ? "open" : "closed";

@@ -39,7 +39,10 @@ void init_game_data() {
   objects[player].synonyms[0] = "me";
   objects[player].synonyms[1] = "myself";
   objects[player].synonyms[2] = "you";
+  objects[player].synonyms[3] = "self";
+  objects[player].synonyms[4] = "cretin";
   objects[player].flags = F_ACTORBIT;
+  objects[player].action = cretin_f;
 
   ZObject *o = &objects[O_ALL];
   o->id = O_ALL;
@@ -442,10 +445,6 @@ int main(int argc, char **argv) {
         tellf("%s\n", objects[O_BROCHURE].text);
       } else if (prso == O_ID_CARD) {
         tellf("%s\n", objects[O_ID_CARD].text);
-      } else if (current_room == R_BRIG) {
-        tellf("All the graffiti seem to be about Blather. One reads:\n'There "
-              "once was a krip, name of Blather...'\nIt's not a very good "
-              "limerick.\n");
       } else {
         tellf("You can't read that.\n");
       }
@@ -485,6 +484,7 @@ int main(int argc, char **argv) {
         break;
       }
       ZObjectID dest = NOTHING;
+      walk_direction = dir; // so NEXIT refusals can key off the direction
       switch (dir) {
       case O_NORTH:
         dest = objects[current_room].north;

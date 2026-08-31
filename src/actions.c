@@ -1026,6 +1026,32 @@ void perform_walk(ZObjectID dest) {
   }
 
   if (dest == NOTHING || dest <= 0) {
+    // NEXIT: a handful of rooms refuse a specific direction in their own words
+    // rather than with the stock "You can't go that way." Blather does most of
+    // the refusing aboard the Feinstein.
+    static const struct {
+      ZObjectID room, dir;
+      const char *msg;
+    } nexits[] = {
+        {R_BRIG, O_SOUTH, "The cell door is locked."},
+        {R_REACTOR_LOBBY, O_SOUTH,
+         "Ensign Blather pushes you roughly back toward your post."},
+        {R_REACTOR_LOBBY, O_EAST,
+         "Ensign Blather blocks your way, snarling angrily."},
+        {R_DECK_EIGHT, O_EAST,
+         "Blather throws you to the deck and makes you do 20 push-ups."},
+        {R_DECK_EIGHT, O_WEST,
+         "Blather throws you to the deck and makes you do 20 push-ups."},
+        {R_DECK_EIGHT, O_NORTH,
+         "Blather blocks your path, growling about extra galley duty."},
+    };
+    for (size_t i = 0; i < sizeof(nexits) / sizeof(nexits[0]); i++) {
+      if (nexits[i].room == current_room && nexits[i].dir == walk_direction) {
+        tellf("%s\n", nexits[i].msg);
+        return;
+      }
+    }
+
     if (current_room == R_HELIPAD) {
       tellf("A fence keeps you away from the edge, where you would probably be swept over the brink by the high winds.\n");
       return;
@@ -1047,6 +1073,11 @@ void perform_walk(ZObjectID dest) {
   current_room = dest;
   perform_first_look();
 }
+
+// The direction the current move was issued in, so that NEXIT-style refusals can
+// be matched per-direction. NOTHING when a routine walks the player itself
+// rather than the player naming a compass direction.
+ZObjectID walk_direction = NOTHING;
 
 // PERFORM (misc.zil): re-run the dispatcher under a different verb and objects,
 // then put the parser's view back. Object action routines read current_cmd, so a
@@ -1161,15 +1192,19 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     tellf("You can't fly that!\n");
     return true;
   case V_NORTH:
+    walk_direction = O_NORTH;
     perform_walk(objects[current_room].north);
     return true;
   case V_SOUTH:
+    walk_direction = O_SOUTH;
     perform_walk(objects[current_room].south);
     return true;
   case V_EAST:
+    walk_direction = O_EAST;
     perform_walk(objects[current_room].east);
     return true;
   case V_WEST:
+    walk_direction = O_WEST;
     perform_walk(objects[current_room].west);
     return true;
   case V_TAKE:

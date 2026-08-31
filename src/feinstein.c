@@ -15,9 +15,11 @@ void init_feinstein_act() {
   ZObject *r = &objects[R_BRIG];
   r->id = R_BRIG;
   r->description = "Brig";
-  r->long_description = "You are in the Feinstein's brig. Graffiti cover the "
-                        "walls. The cell door to the south is locked.";
+  r->long_description = "You are in the Feinstein's brig. Graffiti cover\n"
+                        "the walls. The cell door to the south is locked.";
   r->flags = F_RLANDBIT | F_ONBIT;
+  r->globals[0] = O_GRAFFITI_PSEUDO;
+  r->globals[1] = O_BRIG_DOOR_PSEUDO;
 
   // R_DECK_NINE (Already partially init, but fully setting here)
   r = &objects[R_DECK_NINE];
@@ -133,6 +135,7 @@ void init_feinstein_act() {
   o->synonyms[0] = "lights";
   o->synonyms[1] = "light";
   o->flags = F_NDESCBIT;
+  o->action = lights_f;
   obj_move(O_LIGHTS, OBJ_LOCAL_GLOBALS);
 
   o = &objects[O_WINDOW];
@@ -143,7 +146,40 @@ void init_feinstein_act() {
   o->synonyms[2] = "viewport";
   o->adjectives[0] = "view";
   o->flags = F_NDESCBIT;
+  o->action = window_f;
   obj_move(O_WINDOW, OBJ_LOCAL_GLOBALS);
+
+  // HANDS: always available, so that SHAKE HANDS has something to resolve to.
+  o = &objects[O_HANDS];
+  o->id = O_HANDS;
+  o->description = "pair of hands";
+  o->synonyms[0] = "hands";
+  o->synonyms[1] = "hand";
+  o->flags = F_NDESCBIT;
+  o->action = hands_f;
+  obj_move(O_HANDS, OBJ_GLOBAL_OBJECTS);
+
+  // BRIG scenery: PSEUDO "GRAFFITI" and "DOOR" on the BRIG room.
+  o = &objects[O_GRAFFITI_PSEUDO];
+  o->id = O_GRAFFITI_PSEUDO;
+  o->description = "graffiti";
+  o->synonyms[0] = "graffiti";
+  o->synonyms[1] = "writing";
+  o->synonyms[2] = "wall";
+  o->synonyms[3] = "walls";
+  o->flags = F_NDESCBIT | F_READBIT;
+  o->action = graffiti_f;
+  obj_move(O_GRAFFITI_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_BRIG_DOOR_PSEUDO];
+  o->id = O_BRIG_DOOR_PSEUDO;
+  o->description = "cell door";
+  o->synonyms[0] = "door";
+  o->synonyms[1] = "cell";
+  o->adjectives[0] = "cell";
+  o->flags = F_NDESCBIT;
+  o->action = brig_door_f;
+  obj_move(O_BRIG_DOOR_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // POD-DOOR
   o = &objects[O_POD_DOOR];

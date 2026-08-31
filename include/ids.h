@@ -312,4 +312,8 @@
 #define O_SPOUT_PSEUDO 649
 #define O_KITCHEN_BUTTON_PSEUDO 650
 
+// Brig scenery (BRIG's PSEUDO "GRAFFITI" / "DOOR" in globals.zil)
+#define O_GRAFFITI_PSEUDO 651
+#define O_BRIG_DOOR_PSEUDO 652
+
 #endif

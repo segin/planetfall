@@ -237,6 +237,8 @@ void perform_version();
 #define DEXITSTR 1
 
 extern const char *indents[6];
+// Direction of the move in progress, for NEXIT-style per-direction refusals.
+extern ZObjectID walk_direction;
 void use_directions();
 void perform_walk_around();
 void perform_walk_to(ZObjectID obj);

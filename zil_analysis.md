@@ -297,7 +297,7 @@
 - [x] **COURTYARD-F** (Room Action) [Obj: COURTYARD]
 - [x] **CRACKED-BOARD-F** (Object Action) [Obj: CRACKED-BOARD]
 - [x] **CRAG-F** (Room Action) [Obj: CRAG]
-- [ ] **CRETIN-F** (Object Action) [Obj: ME]
+- [x] **CRETIN-F** (Object Action) [Obj: ME]
 - [x] **CREVICE-F** (Object Action) [Obj: CREVICE]
 - [x] **CRYO-ANTEROOM-F** (Room Action) [Obj: CRYO-ANTEROOM]
 - [x] **CRYO-ELEVATOR-F** (Room Action) [Obj: CRYO-ELEVATOR]
@@ -328,7 +328,7 @@
 - [ ] **GREEN-SPOOL-F** (Object Action) [Obj: GREEN-SPOOL]
 - [x] **GROUND-F** (Object Action) [Obj: GROUND]
 - [ ] **GRUE-F** (Object Action) [Obj: GRUE]
-- [ ] **HANDS-F** (Object Action) [Obj: HANDS]
+- [x] **HANDS-F** (Object Action) [Obj: HANDS]
 - [x] **HELICOPTER-OBJECT-F** (Object Action) [Obj: HELICOPTER-OBJECT]
 - [x] **HIGH-PROTEIN-F** (Object Action) [Obj: HIGH-PROTEIN]
 - [x] **INFIRMARY-F** (Room Action) [Obj: INFIRMARY]
@@ -345,7 +345,7 @@
 - [x] **LAWANDA-PLATFORM-F** (Room Action) [Obj: LAWANDA-PLATFORM]
 - [ ] **LEVER-F** (Object Action) [Obj: LEVER]
 - [x] **LIGHT-BUTTON-F** (Object Action) [Obj: LIGHT-BUTTON]
-- [ ] **LIGHTS-F** (Object Action) [Obj: LIGHTS]
+- [x] **LIGHTS-F** (Object Action) [Obj: LIGHTS]
 - [x] **LOWER-ELEVATOR-DOOR-F** (Object Action) [Obj: LOWER-ELEVATOR-DOOR]
 - [x] **LOWER-ELEVATOR-F** (Room Action) [Obj: LOWER-ELEVATOR]
 - [x] **MACHINE-SHOP-F** (Room Action) [Obj: MACHINE-SHOP]
@@ -399,7 +399,7 @@
 - [x] **UPPER-ELEVATOR-DOOR-F** (Object Action) [Obj: UPPER-ELEVATOR-DOOR]
 - [x] **UPPER-ELEVATOR-F** (Room Action) [Obj: UPPER-ELEVATOR]
 - [x] **WINDING-STAIR-F** (Room Action) [Obj: WINDING-STAIR]
-- [ ] **WINDOW-F** (Object Action) [Obj: WINDOW]
+- [x] **WINDOW-F** (Object Action) [Obj: WINDOW]
 
 ## Verbs and Syntax
 |---|---|---|---|---|
@@ -430,9 +430,9 @@
 - [x] **CLIMB**: CLIMB IN OBJECT (FIND CLIMBBIT)(ON-GROUND IN-ROOM) -> V-BOARD (Pre: PRE-BOARD) [syntax.zil]
 - [x] **CLOSE**: CLOSE OBJECT (HELD CARRIED ON-GROUND IN-ROOM) -> V-CLOSE (Pre: -) [syntax.zil]
 - [ ] **CURSE**: CURSE -> V-CURSE (Pre: -) [syntax.zil]
-- [ ] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED) -> V-MUNG (Pre: -) [syntax.zil]
-- [ ] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED)... -> V-MUNG (Pre: -) [syntax.zil]
-- [ ] **DESTROY**: DESTROY DOWN OBJECT (ON-GROUND IN-ROOM HELD CAR... -> V-MUNG (Pre: -) [syntax.zil]
+- [x] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED) -> V-MUNG (Pre: -) [syntax.zil]
+- [x] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED)... -> V-MUNG (Pre: -) [syntax.zil]
+- [x] **DESTROY**: DESTROY DOWN OBJECT (ON-GROUND IN-ROOM HELD CAR... -> V-MUNG (Pre: -) [syntax.zil]
 - [ ] **DIAGNOSE**: DIAGNOSE -> V-DIAGNOSE (Pre: -) [syntax.zil]
 - [x] **DISEMBARK**: DISEMBARK OBJECT (FIND RMUNGBIT) (ON-GROUND IN-... -> V-DISEMBARK (Pre: -) [syntax.zil]
 - [x] **DROP**: DROP OBJECT (HELD MANY HAVE) -> V-DROP (Pre: -) [syntax.zil]
@@ -460,7 +460,7 @@
 - [ ] **FLUSH**: FLUSH OBJECT -> V-FLUSH (Pre: -) [syntax.zil]
 - [x] **FLY**: FLY -> V-FLY (Pre: -) [syntax.zil]
 - [x] **FLY**: FLY OBJECT -> V-FLY (Pre: -) [syntax.zil]
-- [ ] **FOLLOW**: FOLLOW OBJECT (FIND ACTORBIT) -> V-FOLLOW (Pre: -) [syntax.zil]
+- [x] **FOLLOW**: FOLLOW OBJECT (FIND ACTORBIT) -> V-FOLLOW (Pre: -) [syntax.zil]
 - [x] **GIVE**: GIVE OBJECT (MANY HELD HAVE) TO OBJECT (FIND AC... -> V-GIVE (Pre: PRE-GIVE) [syntax.zil]
 - [x] **GIVE**: GIVE OBJECT (FIND ACTORBIT) (ON-GROUND) 	OBJECT... -> V-SGIVE (Pre: PRE-SGIVE) [syntax.zil]
 - [x] **HELLO**: HELLO -> V-HELLO (Pre: -) [syntax.zil]
@@ -734,7 +734,7 @@
 - [ ] **CRACK-PSEUDO** (globals.zil): Args: 
 - [x] **CRACKED-BOARD-F** (compone.zil): Args: 
 - [x] **CRAG-F** (compone.zil): Args: RARG
-- [ ] **CRETIN-F** (globals.zil): Args: 
+- [x] **CRETIN-F** (globals.zil): Args: 
 - [x] **CREVICE-F** (compone.zil): Args: 
 - [x] **CRYO-ANTEROOM-F** (comptwo.zil): Args: RARG
 - [ ] **CRYO-BUTTON-PSEUDO** (globals.zil): Args: 
@@ -814,7 +814,7 @@
 - [ ] **GRUE-F** (comptwo.zil): Args: 
 - [ ] **GWIM** (parser.zil): Args: GBIT LBIT PREP "AUX" OBJ
 - [ ] **HACK-HACK** (verbs.zil): Args: STR
-- [ ] **HANDS-F** (globals.zil): Args: 
+- [x] **HANDS-F** (globals.zil): Args: 
 - [ ] **HELD?** (parser.zil): Args: CAN
 - [x] **HELICOPTER-OBJECT-F** (compone.zil): Args: 
 - [ ] **HERE?** (parser.zil): Args: CAN
@@ -883,7 +883,7 @@
 - [ ] **LEVER-F** (globals.zil): Args: 
 - [ ] **LIBRARY-TYPE** (comptwo.zil): Args: 
 - [x] **LIGHT-BUTTON-F** (comptwo.zil): Args: 
-- [ ] **LIGHTS-F** (globals.zil): Args: 
+- [x] **LIGHTS-F** (globals.zil): Args: 
 - [ ] **LIKE-SLIME** (globals.zil): Args: STRING
 - [ ] **LIT?** (parser.zil): Args: RM "AUX" OHERE (LIT <>
 - [ ] **LOCK-PSEUDO** (globals.zil): Args: 
@@ -1177,7 +1177,7 @@
 - [ ] **WEIGHT** (verbs.zil): Args: OBJ "AUX" CONT (WT 0
 - [ ] **WHICH-PRINT** (parser.zil): Args: TLEN LEN TBL "AUX" OBJ RLEN
 - [x] **WINDING-STAIR-F** (compone.zil): Args: RARG
-- [ ] **WINDOW-F** (globals.zil): Args: 
+- [x] **WINDOW-F** (globals.zil): Args: 
 - [ ] **WORD-PRINT** (parser.zil): Args: CNT BUF
 - [ ] **WORD-TYPE** (verbs.zil): Args: OBJ WORD "AUX" SYNS
 - [ ] **WORTHLESS-ACTION** (compone.zil): Args: 

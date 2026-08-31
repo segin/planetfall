@@ -58,7 +58,7 @@ run_test_absent "Test 2b: Player stays on Deck Nine when refused" "WEST\nLOOK\nQ
 run_test "Test 2c: IN is refused the same way" "IN\nQUIT\nY" "escape pod bulkhead is closed" "IN into a sealed pod is refused" "Premature pod entry via IN"
 run_test "Test 2d: Opening the bulkhead early is refused" "OPEN BULKHEAD\nQUIT\nY" "if there's no emergency" "Pod bulkhead cannot be opened early" "Pod bulkhead opened early"
 run_test "Test 2e: Deck Nine reports the bulkhead state" "LOOK\nQUIT\nY" "pod bulkhead is closed" "Deck Nine describes the sealed bulkhead" "Bulkhead state not described"
-run_test "Test 3: Examine ME" "EXAMINE ME\nQUIT\nY" "cretin|nothing special|special" "Examine ME works" "Examine ME"
+run_test "Test 3: Examine ME" "EXAMINE ME\nQUIT\nY" "eyes are prehensile" "CRETIN-F handles examining yourself" "Examine ME"
 run_test "Test 4: Look command" "LOOK\nQUIT\nY" "Deck Nine" "Look works" "Look"
 run_test "Test 5: Inventory" "INVENTORY\nQUIT\nY" "carrying|uniform|chronometer|brush" "Inventory works" "Inventory"
 # The Feinstein explodes on a 241..330 GST timer. Standing still costs 7 units a
@@ -133,6 +133,8 @@ run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST
 # a pod resting on the water.
 WAIT_38=$(printf 'WAIT\\n%.0s' $(seq 1 38))
 WAIT_12=$(printf 'WAIT\\n%.0s' $(seq 1 12))
+# The ambassador turns up on turn 14 and stays three turns.
+WAIT_14=$(printf 'WAIT\\n%.0s' $(seq 1 14))
 POD_BOARDED="${WAIT_38}WEST\n"
 POD_LANDED="${POD_BOARDED}ENTER WEB\n${WAIT_12}"
 
@@ -151,11 +153,35 @@ run_test "Test 87: Goo must be eaten from the kit" "${POD_LANDED}STAND\nOPEN KIT
 run_test "Test 87a: Goo is out of scope while the kit is shut" "${POD_LANDED}STAND\nTAKE RED GOO\nQUIT\nY" "can't see any" "Closed kit hides the goo" "Closed kit scope"
 run_test "Test 88: Reading the towel" "${POD_LANDED}STAND\nREAD TOWEL\nQUIT\nY" "Don't Panic" "Towel text works" "Towel"
 
+# --- Brig, string exits and shared scenery ----------------------------------
+# Blather puts you in the brig after three warnings off-post, which is the only
+# way to get there.
+BRIGGED="UP\nUP\nWAIT\nWAIT\nWAIT\nWAIT\n"
+
+run_test "Test 89: Brig graffiti" "${BRIGGED}READ GRAFFITI\nQUIT\nY" "fawg-infested tar-pools" "GRAFFITI-PSEUDO works" "Brig graffiti"
+run_test "Test 90: Brig cell door is locked" "${BRIGGED}SOUTH\nQUIT\nY" "cell door is locked" "Brig south is a string exit" "Brig south exit"
+run_test "Test 91: Brig cell door will not open" "${BRIGGED}OPEN DOOR\nQUIT\nY" "No way, Jose" "DOOR-PSEUDO works" "Brig door"
+run_test "Test 92: Deck Eight refusals are Blather's" "UP\nUP\nEAST\nQUIT\nY" "20 push-ups" "Deck Eight string exits work" "Deck Eight exits"
+run_test "Test 93: Deck Eight north refusal" "UP\nUP\nNORTH\nQUIT\nY" "extra galley duty" "Deck Eight north string exit works" "Deck Eight north"
+run_test "Test 94: Reactor Lobby refusals" "EAST\nSOUTH\nQUIT\nY" "back toward your post" "Reactor Lobby string exits work" "Reactor Lobby exits"
+run_test "Test 95: Unhandled directions still fall back" "${BRIGGED}NORTH\nQUIT\nY" "can't go that way" "Stock refusal still applies elsewhere" "Default refusal"
+
+run_test "Test 96: Smelling yourself" "SMELL ME\nQUIT\nY" "Phew" "CRETIN-F smell works" "Cretin smell"
+run_test "Test 97: Eating yourself" "EAT ME\nQUIT\nY" "Auto-cannibalism" "CRETIN-F eat works" "Cretin eat"
+run_test "Test 98: Taking yourself" "TAKE ME\nQUIT\nY" "How romantic" "CRETIN-F take works" "Cretin take"
+run_test "Test 99: Scrubbing yourself" "SCRUB ME\nQUIT\nY" "300 demerits" "CRETIN-F scrub works" "Cretin scrub"
+run_test "Test 100: Attacking yourself is fatal" "ATTACK ME\nQUIT\nY" "Poof, you're dead" "CRETIN-F attack kills you" "Cretin attack"
+run_test "Test 101: Shaking hands with nobody" "SHAKE HANDS\nQUIT\nY" "no one to shake hands with" "HANDS-F default works" "Hands default"
+run_test "Test 102: Shaking hands with the ambassador" "${WAIT_14}SHAKE HANDS\nQUIT\nY" "repulsive idea" "HANDS-F ambassador branch works" "Hands ambassador"
+
+run_test "Test 103: Pod window early in the trip" "${POD_BOARDED}ENTER WEB\nLOOK THROUGH WINDOW\nQUIT\nY" "debris from the exploding Feinstein" "WINDOW-F early trip branch works" "Window early"
+run_test "Test 104: Pod window on approach" "${POD_BOARDED}ENTER WEB\n${WAIT_12}LOOK THROUGH WINDOW\nQUIT\nY" "hopefully a hospitable one" "WINDOW-F late trip branch works" "Window late"
+run_test "Test 105: The window does not open" "${POD_BOARDED}OPEN WINDOW\nQUIT\nY" "doesn't open" "WINDOW-F open branch works" "Window open"
+
 # --- Blather and the alien ambassador (I-BLATHER / I-AMBASSADOR) -------------
 # Blather's off-post branch is unconditional, so leaving Deck Nine always
 # summons him; his Deck Nine visit and the ambassador's arrival are probability
 # rolls, which land on fixed turns only because rand() is never seeded.
-WAIT_14=$(printf 'WAIT\\n%.0s' $(seq 1 14))
 WAIT_30=$(printf 'WAIT\\n%.0s' $(seq 1 30))
 
 run_test "Test 62: Blather hunts you down off-post" "UP\nUP\nQUIT\nY" "notices you are away" "Blather appears when you leave your post" "Blather off-post"
