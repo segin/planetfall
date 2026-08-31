@@ -132,6 +132,22 @@ run_test "Test 59: HELIPAD fence and helicopter boarding" "TELEPORT HELIPAD\nNOR
 run_test "Test 60: COMM ROOM playback and screen" "TELEPORT COMM ROOM\nPUSH PLAYBACK BUTTON\nREAD SCREEN\nEXAMINE CABLES\nQUIT\nY" "Feinstein" "Comm room playback button and screen reading work" "COMM ROOM"
 run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST\nLOOK\nQUIT\nY" "Kalamontee Staashun" "Kalamontee platform navigation and description work" "KALAMONTEE PLATFORM"
 
+# --- Shared input fragments -------------------------------------------------
+# The first blast opens the pod bulkhead around turn 38; the ambassador turns up
+# on turn 14 and stays three turns. Both land on fixed turns only because the
+# port's rand() is unseeded.
+WAIT_12=$(printf 'WAIT\\n%.0s' $(seq 1 12))
+WAIT_14=$(printf 'WAIT\\n%.0s' $(seq 1 14))
+WAIT_30=$(printf 'WAIT\\n%.0s' $(seq 1 30))
+WAIT_38=$(printf 'WAIT\\n%.0s' $(seq 1 38))
+
+# --- V-DIAGNOSE and the hunger timer ----------------------------------------
+run_test "Test 111: DIAGNOSE reports all three" "DIAGNOSE\nQUIT\nY" "perfect health" "V-DIAGNOSE health line works" "Diagnose health"
+run_test "Test 111a: DIAGNOSE reports rest" "DIAGNOSE\nQUIT\nY" "well-rested" "V-DIAGNOSE rest line works" "Diagnose rest"
+# I-HUNGER-WARNINGS is a 2000-unit timer, not a daemon: you do not start hungry.
+run_test "Test 111b: You do not start out hungry" "DIAGNOSE\nQUIT\nY" "well-fed" "Hunger starts at zero" "Diagnose hunger"
+run_test_absent "Test 111c: No hunger warning early on" "${WAIT_38}QUIT\nY" "getting pretty hungry" "Hunger timer does not fire early" "Premature hunger"
+
 # --- Parser errors (UNKNOWN-WORD / ORPHAN / I beg your pardon) --------------
 run_test "Test 106: Unknown words are named" "XYZZY\nQUIT\nY" "don't know the word \"xyzzy\." "UNKNOWN-WORD reports the word" "Unknown word"
 run_test "Test 107: A verb with no object asks for one" "TAKE\nQUIT\nY" "What do you want to take" "ORPHAN asks for the missing object" "Orphan"
@@ -143,10 +159,6 @@ run_test "Test 110: Not-here message wording" "READ TOWEL\nQUIT\nY" "can't see a
 # The first blast opens the bulkhead around turn 38; boarding the web and riding
 # the pod down takes another dozen turns. POD_LANDED leaves the player webbed in
 # a pod resting on the water.
-WAIT_38=$(printf 'WAIT\\n%.0s' $(seq 1 38))
-WAIT_12=$(printf 'WAIT\\n%.0s' $(seq 1 12))
-# The ambassador turns up on turn 14 and stays three turns.
-WAIT_14=$(printf 'WAIT\\n%.0s' $(seq 1 14))
 POD_BOARDED="${WAIT_38}WEST\n"
 POD_LANDED="${POD_BOARDED}ENTER WEB\n${WAIT_12}"
 
@@ -194,7 +206,6 @@ run_test "Test 105: The window does not open" "${POD_BOARDED}OPEN WINDOW\nQUIT\n
 # Blather's off-post branch is unconditional, so leaving Deck Nine always
 # summons him; his Deck Nine visit and the ambassador's arrival are probability
 # rolls, which land on fixed turns only because rand() is never seeded.
-WAIT_30=$(printf 'WAIT\\n%.0s' $(seq 1 30))
 
 run_test "Test 62: Blather hunts you down off-post" "UP\nUP\nQUIT\nY" "notices you are away" "Blather appears when you leave your post" "Blather off-post"
 run_test "Test 63: Blather warns before brigging you" "UP\nUP\nWAIT\nQUIT\nY" "return to your post" "Blather issues warnings" "Blather warning"

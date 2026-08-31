@@ -778,6 +778,38 @@ int perform_score(bool ask) {
   return game_state.score;
 }
 
+// V-DIAGNOSE (verbs.zil): health, rest and hunger, in that order.
+void perform_diagnose() {
+  game_state.c_elapsed = 18;
+
+  if (game_state.sickness_level == 0) {
+    tellf("You are in perfect health.\n");
+  } else {
+    tellf("You are %s sick and feverish.\n",
+          game_state.sickness_level > 7   ? "severely"
+          : game_state.sickness_level > 5 ? "very"
+          : game_state.sickness_level > 3 ? "somewhat"
+                                          : "a bit");
+  }
+
+  if (game_state.sleepy_level == 0) {
+    tellf("You feel well-rested.\n");
+  } else {
+    tellf("You feel %s tired.\n", game_state.sleepy_level > 2 ? "phenomenally"
+                                  : game_state.sleepy_level > 1 ? "quite"
+                                                                : "sort of");
+  }
+
+  if (game_state.hunger_level == 0) {
+    tellf("You seem to be well-fed.\n");
+  } else {
+    tellf("You seem to be %s thirsty and hungry.\n",
+          game_state.hunger_level > 4   ? "awesomely phenomenally"
+          : game_state.hunger_level > 2 ? "noticeably"
+                                        : "fairly");
+  }
+}
+
 bool ask_yes() {
   printf("> ");
   fflush(stdout);
@@ -1153,6 +1185,9 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return true;
   case V_SCORE:
     perform_score(false);
+    return true;
+  case V_DIAGNOSE:
+    perform_diagnose();
     return true;
   case V_SCRIPT:
     perform_script();

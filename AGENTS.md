@@ -16,14 +16,11 @@ Release 39 -- wording drifted between them, and the sources win. Confirmed
 release differences are listed in `KNOWN_DIFFS` in `tests/compare_original.py`
 so they do not drown the real signal.
 
-Current: 15/30 probes match, 14 known release differences, 1 real finding
-(listed below). Add probes as chapters land.
+Current: 16/30 probes match, 14 known release differences, 0 real findings.
+Add probes as chapters land -- everything the existing set covers now agrees
+with the original, modulo catalogued Release 1 wording.
 
 # Current issues to address:
-
-- Findings from `make compare` that are real port bugs, not release drift:
-  - **IN PROGRESS** — `DIAGNOSE` is unimplemented; ZIL reports health, rest
-    and hunger.
 
 - Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
   just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. Run

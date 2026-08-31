@@ -221,6 +221,7 @@ void perform_brief();
 void perform_super_brief();
 void perform_look_cretin();
 int perform_score(bool ask);
+void perform_diagnose();
 bool ask_yes();
 void perform_quit();
 void finish(bool died, bool repeating);

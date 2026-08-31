@@ -377,7 +377,9 @@ void init_feinstein_act() {
   // rooms of walking or forty-some turns of standing still -- enough to look
   // around the Feinstein before it comes apart.
   queue_event(EVT_BLOWUP_FEINSTEIN, 240 + (rand() % 90) + 1);
-  queue_event(EVT_HUNGER_WARNINGS, -1);
+  // <ENABLE <QUEUE I-HUNGER-WARNINGS 2000>> in GO -- a timer, not a daemon, so
+  // you do not start the game already peckish.
+  queue_event(EVT_HUNGER_WARNINGS, 2000);
 }
 
 void routine_blowup_feinstein() {
@@ -730,19 +732,34 @@ void routine_sink_pod() {
   }
 }
 
+// I-HUNGER-WARNINGS (globals.zil). Not a daemon: each warning requeues itself
+// on a shorter fuse, so the gap between complaints closes as you get hungrier.
 void routine_hunger() {
   game_state.hunger_level++;
-  int h = game_state.hunger_level;
 
-  if (h == 200) {
-    tellf("You are beginning to feel a bit hungry.\n");
-  } else if (h == 300) {
-    tellf("You are getting pretty hungry.\n");
-  } else if (h == 400) {
-    tellf("You are famished.\n");
-  } else if (h == 500) {
-    tellf("You are starting to faint from lack of food.\n");
-  } else if (h == 600) {
-    jigs_up("\nYou have starved to death.");
+  switch (game_state.hunger_level) {
+  case 1:
+    queue_event(EVT_HUNGER_WARNINGS, 450);
+    tellf("\nA growl from your stomach warns that you're getting pretty hungry "
+          "and\n"
+          "thirsty.\n");
+    break;
+  case 2:
+    queue_event(EVT_HUNGER_WARNINGS, 150);
+    tellf("\nYou're now really ravenous and your lips are quite parched.\n");
+    break;
+  case 3:
+    queue_event(EVT_HUNGER_WARNINGS, 100);
+    tellf("\nYou're starting to feel faint from lack of food and liquid.\n");
+    break;
+  case 4:
+    queue_event(EVT_HUNGER_WARNINGS, 50);
+    tellf("\nIf you don't eat or drink something in a few millichrons, you'll "
+          "probably\n"
+          "pass out.\n");
+    break;
+  case 5:
+    jigs_up("\nYou collapse from extreme thirst and hunger.");
+    break;
   }
 }
