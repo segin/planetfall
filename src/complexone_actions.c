@@ -999,125 +999,281 @@ bool elevator_exit_f(void); // Forward decl
 
 bool elevator_lobby_f(int arg) {
   if (arg == M_LOOK) {
-    TELL("This is a wide, brightly lit lobby. A blue metal door to the north "
-         "is ");
-    if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) &&
-        !game_state.upper_elevator_up) {
-      TELL("open");
-    } else {
-      TELL("closed");
-    }
-    TELL(" and a larger red metal door to the south is ");
-    if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) &&
-        game_state.lower_elevator_up) {
-      if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) &&
-          !game_state.upper_elevator_up) {
-        TELL("also ");
+    tellf("This is a wide, brightly lit lobby. A blue metal door to the north is %s",
+          (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) && !game_state.upper_elevator_up) ? "open" : "closed");
+    tellf(" and a larger red metal door to the south is ");
+    if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) && game_state.lower_elevator_up) {
+      if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) && !game_state.upper_elevator_up) {
+        tellf("also ");
       }
-      TELL("open");
+      tellf("open");
     } else {
-      if (!obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) ||
-          game_state.upper_elevator_up) {
-        TELL("also ");
+      if (!obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) || game_state.upper_elevator_up) {
+        tellf("also ");
       }
-      TELL("closed");
+      tellf("closed");
     }
-    TELL(". Beside the blue door is a blue button, and beside the red door is\n"
-         "a red button. A corridor leads west. To the east is a small room\n"
-         "about the size of a telephone booth.\n");
+    tellf(". Beside the blue door is a blue button, and beside the red door is\n"
+          "a red button. A corridor leads west. To the east is a small room\n"
+          "about the size of a telephone booth.\n");
     return true;
   }
-
-  // Handle movement (PER ELEVATOR-ENTER-F)
-  if (arg == M_BEG && current_cmd.verb == V_WALK) {
-    if (current_cmd.prso_list[0] == O_NORTH) {
-      // Logic for entering upper elevator
-      if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) &&
-          !game_state.upper_elevator_up) {
-        TELL("You enter the elevator.\n");
-        obj_move(player, R_UPPER_ELEVATOR);
-        return true;
-      } else {
-        TELL("The door is closed.\n");
-        return true;
-      }
-    }
-    if (current_cmd.prso_list[0] == O_SOUTH) {
-      // Logic for entering lower elevator
-      if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) &&
-          game_state.lower_elevator_up) {
-        TELL("You enter the elevator.\n");
-        obj_move(player, R_LOWER_ELEVATOR);
-        return true;
-      } else {
-        TELL("The door is closed.\n");
-        return true;
-      }
-    }
-  }
-
   return false;
-}
-
-bool elevator_exit_f(void) {
-  bool open = false;
-
-  if (current_room == R_UPPER_ELEVATOR) {
-    if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) &&
-        !game_state.upper_elevator_up)
-      open = true;
-  } else if (current_room == R_LOWER_ELEVATOR) {
-    if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) &&
-        game_state.lower_elevator_up)
-      open = true;
-  }
-
-  if (open) {
-    obj_move(player, R_ELEVATOR_LOBBY);
-    TELL("You leave the elevator.\n");
-    return true;
-  } else {
-    TELL("The doors are closed.\n");
-    return true;
-  }
 }
 
 bool upper_elevator_f(int arg) {
   if (arg == M_LOOK) {
-    TELL("You are in the upper elevator. The door ");
-    if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT)) {
-      TELL("is open.\n");
-    } else {
-      TELL("is closed.\n");
-    }
+    tellf("You have entered a tiny room with a sliding door to the south which is %s.\n"
+          "A control panel contains an Up button, a Down button, and a narrow slot.\n",
+          obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) ? "open" : "closed");
     return true;
-  }
-  if (arg == M_BEG && current_cmd.verb == V_WALK) {
-    if (current_cmd.prso_list[0] == O_SOUTH ||
-        current_cmd.prso_list[0] == O_OUT) {
-      elevator_exit_f();
-      return true;
-    }
   }
   return false;
 }
 
 bool lower_elevator_f(int arg) {
   if (arg == M_LOOK) {
-    TELL("You are in the lower elevator. The door ");
-    if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT)) {
-      TELL("is open.\n");
+    tellf("This is a medium-sized room with a door to the north which is %s.\n"
+          "A control panel contains an Up button, a Down button, and a narrow slot.\n",
+          obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) ? "open" : "closed");
+    return true;
+  }
+  return false;
+}
+
+bool upper_elevator_door_f(int verb) {
+  if (verb == V_OPEN) {
+    if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT)) {
+      tellf("It is already open.\n");
     } else {
-      TELL("is closed.\n");
+      tellf("It won't budge.\n");
     }
     return true;
   }
-  if (arg == M_BEG && current_cmd.verb == V_WALK) {
-    if (current_cmd.prso_list[0] == O_NORTH ||
-        current_cmd.prso_list[0] == O_OUT) {
-      elevator_exit_f();
+  if (verb == V_CLOSE) {
+    if (obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT)) {
+      tellf("You can't close it yourself.\n");
+    } else {
+      tellf("It is already closed.\n");
+    }
+    return true;
+  }
+  return false;
+}
+
+bool lower_elevator_door_f(int verb) {
+  if (verb == V_OPEN) {
+    if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT)) {
+      tellf("It is already open.\n");
+    } else {
+      tellf("It won't budge.\n");
+    }
+    return true;
+  }
+  if (verb == V_CLOSE) {
+    if (obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT)) {
+      tellf("You can't close it yourself.\n");
+    } else {
+      tellf("It is already closed.\n");
+    }
+    return true;
+  }
+  return false;
+}
+
+bool blue_elevator_button_f(int verb) {
+  if (verb == V_PUSH) {
+    if (game_state.upper_elevator_up) {
+      if (is_event_enabled(EVT_UPPER_ELEVATOR_ARRIVE)) {
+        tellf("Patience, patience...\n");
+      } else {
+        tellf("You hear a faint whirring noise from behind the blue door.\n");
+        queue_event(EVT_UPPER_ELEVATOR_ARRIVE, (rand() % 20) + 40);
+      }
       return true;
     }
+  }
+  return false;
+}
+
+bool red_elevator_button_f(int verb) {
+  if (verb == V_PUSH) {
+    if (!game_state.lower_elevator_up) {
+      if (is_event_enabled(EVT_LOWER_ELEVATOR_ARRIVE)) {
+        tellf("Patience, patience...\n");
+      } else {
+        tellf("The red door begins vibrating a bit.\n");
+        queue_event(EVT_LOWER_ELEVATOR_ARRIVE, (rand() % 40) + 80);
+      }
+      return true;
+    }
+  }
+  return false;
+}
+
+void i_upper_elevator_arrive(void) {
+  obj_set_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT);
+  game_state.upper_elevator_up = false;
+  dequeue_event(EVT_UPPER_ELEVATOR_ARRIVE);
+  if (current_room == R_ELEVATOR_LOBBY) {
+    tellf("\nThe door at the north end of the room slides open.\n");
+  }
+}
+
+void i_lower_elevator_arrive(void) {
+  obj_set_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT);
+  game_state.lower_elevator_up = true;
+  dequeue_event(EVT_LOWER_ELEVATOR_ARRIVE);
+  if (current_room == R_ELEVATOR_LOBBY) {
+    tellf("\nThe door at the south end of the room slides open.\n");
+  }
+}
+
+void i_upper_elevator_trip(void) {
+  game_state.upper_elevator_up = !game_state.upper_elevator_up;
+  game_state.elevator_in_transit = false;
+  obj_set_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT);
+  dequeue_event(EVT_UPPER_ELEVATOR_TRIP);
+  if (current_room == R_UPPER_ELEVATOR) {
+    tellf("\nThe elevator door slides open.\n");
+  }
+}
+
+void i_lower_elevator_trip(void) {
+  game_state.lower_elevator_up = !game_state.lower_elevator_up;
+  game_state.elevator_in_transit = false;
+  obj_set_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT);
+  dequeue_event(EVT_LOWER_ELEVATOR_TRIP);
+  if (current_room == R_LOWER_ELEVATOR) {
+    tellf("\nThe elevator door slides open.\n");
+  }
+}
+
+void i_turnoff_upper_elevator(void) {
+  if (game_state.elevator_in_transit) {
+    queue_event(EVT_TURNOFF_UPPER_ELEVATOR, 120);
+  } else {
+    game_state.upper_elevator_on = false;
+    dequeue_event(EVT_TURNOFF_UPPER_ELEVATOR);
+    if (current_room == R_UPPER_ELEVATOR) {
+      tellf("\nA recording says \"Elevator no longer enabled.\"\n");
+    }
+  }
+}
+
+void i_turnoff_lower_elevator(void) {
+  if (game_state.elevator_in_transit) {
+    queue_event(EVT_TURNOFF_LOWER_ELEVATOR, 120);
+  } else {
+    game_state.lower_elevator_on = false;
+    dequeue_event(EVT_TURNOFF_LOWER_ELEVATOR);
+    if (current_room == R_LOWER_ELEVATOR) {
+      tellf("\nA recording says \"Elevator no longer enabled.\"\n");
+    }
+  }
+}
+
+bool elevator_button_f(int verb) {
+  if (verb == V_PUSH_UP) {
+    if (current_room == R_LOWER_ELEVATOR && !game_state.lower_elevator_up &&
+        game_state.lower_elevator_on && !game_state.elevator_in_transit) {
+      tellf("The elevator door slides shut. After a moment, you feel a sensation of\n"
+            "vertical movement.\n");
+      obj_clear_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT);
+      game_state.elevator_in_transit = true;
+      queue_event(EVT_LOWER_ELEVATOR_TRIP, 100);
+      return true;
+    }
+    if (current_room == R_UPPER_ELEVATOR && !game_state.upper_elevator_up &&
+        game_state.upper_elevator_on && !game_state.elevator_in_transit) {
+      tellf("The elevator door slides shut. After a moment, you feel a sensation of\n"
+            "vertical movement.\n");
+      obj_clear_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT);
+      game_state.elevator_in_transit = true;
+      queue_event(EVT_UPPER_ELEVATOR_TRIP, 50);
+      return true;
+    }
+    tellf("Nothing happens.\n");
+    return true;
+  }
+  if (verb == V_PUSH_DOWN) {
+    if (current_room == R_LOWER_ELEVATOR && game_state.lower_elevator_up &&
+        game_state.lower_elevator_on && !game_state.elevator_in_transit) {
+      tellf("The elevator door slides shut. After a moment, you feel a sensation of\n"
+            "vertical movement.\n");
+      obj_clear_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT);
+      game_state.elevator_in_transit = true;
+      queue_event(EVT_LOWER_ELEVATOR_TRIP, 100);
+      return true;
+    }
+    if (current_room == R_UPPER_ELEVATOR && game_state.upper_elevator_up &&
+        game_state.upper_elevator_on && !game_state.elevator_in_transit) {
+      tellf("The elevator door slides shut. After a moment, you feel a sensation of\n"
+            "vertical movement.\n");
+      obj_clear_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT);
+      game_state.elevator_in_transit = true;
+      queue_event(EVT_UPPER_ELEVATOR_TRIP, 50);
+      return true;
+    }
+    tellf("Nothing happens.\n");
+    return true;
+  }
+  if (verb == V_PUSH) {
+    tellf("You must specify whether you want to push the Up button or\nthe Down button.\n");
+    return true;
+  }
+  return false;
+}
+
+bool slot_f(int verb) {
+  if (verb == V_PUT && current_cmd.prsi == O_SLOT) {
+    tellf("The slot is shallow, so you can't put anything in it. It may be possible to\n"
+          "slide something through the slot, though.\n");
+    return true;
+  }
+  if (verb == V_EXAMINE) {
+    tellf("The slot is about ten centimeters wide, but only about two centimeters deep.\n"
+          "It is surrounded on its long sides by parallel ridges of metal.\n");
+    return true;
+  }
+  if (verb == V_SLIDE && current_cmd.prsi == O_SLOT) {
+    ZObjectID card = current_cmd.prso_count > 0 ? current_cmd.prso_list[0] : NOTHING;
+    obj_move(card, player);
+    if (obj_has_flag(card, F_SCRAMBLEDBIT)) {
+      tellf("A sign flashes \"Magnetik striip randumiizd...konsult Prajekt Handbuk abowt\n"
+            "propur kaar uv awtharazaashun kardz.\"\n");
+      return true;
+    }
+    if (card == O_KITCHEN_CARD) {
+      if (current_room == R_MESS_HALL) {
+        if (obj_has_flag(O_KITCHEN_DOOR, F_OPENBIT)) {
+          tellf("Nothing happens.\n");
+        } else {
+          obj_set_flag(O_KITCHEN_DOOR, F_OPENBIT);
+          tellf("The kitchen door quietly slides open.\n");
+        }
+        return true;
+      }
+    } else if (card == O_UPPER_ELEVATOR_CARD) {
+      if (current_room == R_UPPER_ELEVATOR) {
+        game_state.upper_elevator_on = true;
+        queue_event(EVT_TURNOFF_UPPER_ELEVATOR, 180);
+        tellf("A voice says \"Elivaatur inebuld.\"\n");
+        return true;
+      }
+    } else if (card == O_LOWER_ELEVATOR_CARD) {
+      if (current_room == R_LOWER_ELEVATOR) {
+        game_state.lower_elevator_on = true;
+        queue_event(EVT_TURNOFF_LOWER_ELEVATOR, 200);
+        tellf("A voice says \"Elivaatur inebuld.\"\n");
+        return true;
+      }
+    } else if (card == O_SHUTTLE_CARD) {
+      tellf("A voice says \"Shutul inebuld.\"\n");
+      return true;
+    }
+    tellf("A small red light flashes twice.\n");
+    return true;
   }
   return false;
 }

@@ -1543,6 +1543,8 @@ void init_complexone() {
   r = &objects[R_ELEVATOR_LOBBY];
   r->id = R_ELEVATOR_LOBBY;
   r->description = "Elevator Lobby";
+  r->synonyms[0] = "lobby";
+  r->adjectives[0] = "elevator";
   r->long_description =
       "This is a wide, brightly lit lobby. A blue metal door to the north is "
       "closed\n"
@@ -1552,15 +1554,15 @@ void init_complexone() {
       "west.\n"
       "To the east is a small room about the size of a telephone booth.";
   r->flags = F_RLANDBIT | F_FLOYDBIT | F_ONBIT;
-  r->north = R_UPPER_ELEVATOR; // Guarded by UPPER-ELEVATOR-DOOR
-  r->south = R_LOWER_ELEVATOR; // Guarded by LOWER-ELEVATOR-DOOR
+  r->north = R_UPPER_ELEVATOR;
+  r->south = R_LOWER_ELEVATOR;
   r->west = R_CORRIDOR_JUNCTION;
   r->east = R_BOOTH_2;
   r->in = R_BOOTH_2;
-  // Globals: UPPER-ELEVATOR-DOOR, LOWER-ELEVATOR-DOOR
   r->globals[0] = O_UPPER_ELEVATOR_DOOR;
   r->globals[1] = O_LOWER_ELEVATOR_DOOR;
-  // Pseudo: BOOTH
+  r->globals[2] = O_NEAR_BOOTH_PSEUDO;
+  r->action = elevator_lobby_f;
 
   // O_UPPER_ELEVATOR_DOOR
   o = &objects[O_UPPER_ELEVATOR_DOOR];
@@ -1570,7 +1572,8 @@ void init_complexone() {
   o->adjectives[0] = "blue";
   o->adjectives[1] = "upper";
   o->adjectives[2] = "elevator";
-  o->flags = F_NDESCBIT | F_DOORBIT; // Initially closed
+  o->flags = F_NDESCBIT | F_DOORBIT;
+  o->action = upper_elevator_door_f;
   obj_move(O_UPPER_ELEVATOR_DOOR, OBJ_LOCAL_GLOBALS);
 
   // O_LOWER_ELEVATOR_DOOR
@@ -1582,7 +1585,8 @@ void init_complexone() {
   o->adjectives[1] = "lower";
   o->adjectives[2] = "elevator";
   o->adjectives[3] = "metal";
-  o->flags = F_NDESCBIT | F_DOORBIT; // Initially closed
+  o->flags = F_NDESCBIT | F_DOORBIT;
+  o->action = lower_elevator_door_f;
   obj_move(O_LOWER_ELEVATOR_DOOR, OBJ_LOCAL_GLOBALS);
 
   // O_BLUE_ELEVATOR_BUTTON
@@ -1593,6 +1597,7 @@ void init_complexone() {
   o->adjectives[0] = "blue";
   o->adjectives[1] = "north";
   o->flags = F_NDESCBIT;
+  o->action = blue_elevator_button_f;
   obj_move(O_BLUE_ELEVATOR_BUTTON, R_ELEVATOR_LOBBY);
 
   // O_RED_ELEVATOR_BUTTON
@@ -1603,30 +1608,34 @@ void init_complexone() {
   o->adjectives[0] = "red";
   o->adjectives[1] = "south";
   o->flags = F_NDESCBIT;
+  o->action = red_elevator_button_f;
   obj_move(O_RED_ELEVATOR_BUTTON, R_ELEVATOR_LOBBY);
 
   // R_UPPER_ELEVATOR
   r = &objects[R_UPPER_ELEVATOR];
   r->id = R_UPPER_ELEVATOR;
   r->description = "Upper Elevator";
+  r->synonyms[0] = "elevator";
+  r->adjectives[0] = "upper";
   r->long_description =
       "You have entered a tiny room with a sliding door to the south which is\n"
       "closed. A control panel contains an Up button, a Down button, and a\n"
       "narrow slot.";
   r->flags = F_RLANDBIT | F_ONBIT;
-  r->south =
-      R_ELEVATOR_LOBBY; // Guarded (Exit is handled by ELEVATOR-EXIT-F usually)
+  r->south = R_ELEVATOR_LOBBY;
   r->out = R_ELEVATOR_LOBBY;
-  // Globals: LIGHTS, CONTROLS, SLOT, ELEVATOR-BUTTON, UPPER-ELEVATOR-DOOR
   r->globals[0] = O_CONTROLS;
   r->globals[1] = O_SLOT;
   r->globals[2] = O_ELEVATOR_BUTTON;
   r->globals[3] = O_UPPER_ELEVATOR_DOOR;
+  r->action = upper_elevator_f;
 
   // R_LOWER_ELEVATOR
   r = &objects[R_LOWER_ELEVATOR];
   r->id = R_LOWER_ELEVATOR;
   r->description = "Lower Elevator";
+  r->synonyms[0] = "elevator";
+  r->adjectives[0] = "lower";
   r->long_description =
       "This is a medium-sized room with a door to the north which is\n"
       "closed. A control panel contains an Up button, a Down button, and\n"
@@ -1634,18 +1643,22 @@ void init_complexone() {
   r->flags = F_RLANDBIT | F_ONBIT;
   r->north = R_ELEVATOR_LOBBY;
   r->out = R_ELEVATOR_LOBBY;
-  // Globals: LIGHTS, CONTROLS, SLOT, ELEVATOR-BUTTON, LOWER-ELEVATOR-DOOR
   r->globals[0] = O_CONTROLS;
   r->globals[1] = O_SLOT;
   r->globals[2] = O_ELEVATOR_BUTTON;
   r->globals[3] = O_LOWER_ELEVATOR_DOOR;
+  r->action = lower_elevator_f;
 
   // O_ELEVATOR_BUTTON
   o = &objects[O_ELEVATOR_BUTTON];
   o->id = O_ELEVATOR_BUTTON;
   o->description = "button";
   o->synonyms[0] = "button";
+  o->adjectives[0] = "up";
+  o->adjectives[1] = "down";
+  o->adjectives[2] = "elevator";
   o->flags = F_NDESCBIT;
+  o->action = elevator_button_f;
   obj_move(O_ELEVATOR_BUTTON, OBJ_LOCAL_GLOBALS);
 
   // R_BOOTH_2

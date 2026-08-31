@@ -119,6 +119,9 @@ typedef struct {
   ZObjectID spout_placed;
   bool upper_elevator_up;
   bool lower_elevator_up;
+  bool upper_elevator_on;
+  bool lower_elevator_on;
+  bool elevator_in_transit;
   int chemical_flag;
   bool defense_fixed;
   bool course_control_fixed;

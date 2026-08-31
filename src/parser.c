@@ -349,7 +349,10 @@ bool parse_command(char *input, Command *cmd) {
     int ptr = 1;
 
     if (!se->obj1_present && !se->obj2_present) {
-      if (num_tokens > 1)
+      int expected_tokens = 1;
+      if (se->prep1) expected_tokens++;
+      if (se->prep2) expected_tokens++;
+      if (num_tokens != expected_tokens)
         goto next_syntax;
     }
 

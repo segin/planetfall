@@ -1,4 +1,5 @@
 #include "global_objects.h"
+#include "complexone_actions.h"
 #include "ids.h"
 #include "planetfall.h"
 #include <stdio.h>
@@ -151,7 +152,9 @@ void init_global_objects() {
   o->description = "slot";
   o->synonyms[0] = "slot";
   o->adjectives[0] = "small";
+  o->adjectives[1] = "narrow";
   o->flags = F_NDESCBIT;
+  o->action = slot_f;
   obj_move(O_SLOT, OBJ_LOCAL_GLOBALS);
 
   // INTNUM

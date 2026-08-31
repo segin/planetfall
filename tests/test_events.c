@@ -18,6 +18,12 @@ void routine_sink_pod() {}
 void routine_hunger() {}
 void i_magnet() {}
 void i_reactor_door_close() {}
+void i_upper_elevator_arrive() {}
+void i_lower_elevator_arrive() {}
+void i_upper_elevator_trip() {}
+void i_lower_elevator_trip() {}
+void i_turnoff_upper_elevator() {}
+void i_turnoff_lower_elevator() {}
 
 void test_events() {
     printf("Testing Event Queue...\n");

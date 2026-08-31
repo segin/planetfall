@@ -86,6 +86,18 @@ bool partition_pseudo_action(int arg);
 bool toilet_pseudo_action(int arg);
 bool chem_spout_pseudo_action(int arg);
 bool devices_pseudo_action(int arg);
+bool upper_elevator_door_f(int arg);
+bool lower_elevator_door_f(int arg);
+bool blue_elevator_button_f(int arg);
+bool red_elevator_button_f(int arg);
+bool elevator_button_f(int arg);
+bool slot_f(int arg);
+void i_upper_elevator_arrive(void);
+void i_lower_elevator_arrive(void);
+void i_upper_elevator_trip(void);
+void i_lower_elevator_trip(void);
+void i_turnoff_upper_elevator(void);
+void i_turnoff_lower_elevator(void);
 // Add more as needed
 
 #endif

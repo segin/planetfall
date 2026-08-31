@@ -85,6 +85,9 @@ run_test "Test 52: MAGNET crevice key extraction" "TELEPORT TOOL ROOM\nTAKE MAGN
 run_test "Test 53: MACHINE SHOP dispenser and flask filling" "TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH RED BUTTON\nEXAMINE FLASK\nQUIT\nY" "milky white fluid" "Machine shop chemical dispenser and flask work" "MACHINE SHOP"
 run_test "Test 54: ROBOT SHOP devices examine" "TELEPORT ROBOT SHOP\nEXAMINE DEVICES\nQUIT\nY" "disassembled robots" "Robot shop devices examine works" "ROBOT SHOP"
 run_test "Test 55: FLOYD examine and turn on" "TELEPORT ROBOT SHOP\nEXAMINE FLOYD\nTURN ON FLOYD\nQUIT\nY" "comes to life" "Floyd examine and activation work" "FLOYD ACTIVATION"
+run_test "Test 56: ELEVATOR LOBBY call buttons" "TELEPORT ELEVATOR LOBBY\nPUSH BLUE BUTTON\nPUSH RED BUTTON\nQUIT\nY" "whirring noise" "Elevator lobby call buttons work" "ELEVATOR LOBBY BUTTONS"
+run_test "Test 57: UPPER ELEVATOR card enable" "TELEPORT SMALL OFFICE\nOPEN DESK\nTAKE UPPER ELEVATOR CARD\nTELEPORT UPPER ELEVATOR\nSLIDE UPPER ELEVATOR CARD THROUGH SLOT\nQUIT\nY" "Elivaatur inebuld" "Upper elevator card enable works" "UPPER ELEVATOR CARD"
+run_test "Test 58: UPPER ELEVATOR trip activation" "TELEPORT SMALL OFFICE\nOPEN DESK\nTAKE UPPER ELEVATOR CARD\nTELEPORT UPPER ELEVATOR\nSLIDE UPPER ELEVATOR CARD THROUGH SLOT\nPUSH DOWN BUTTON\nQUIT\nY" "vertical movement" "Upper elevator trip activation works" "UPPER ELEVATOR TRIP"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

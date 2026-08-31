@@ -935,6 +935,49 @@ void perform_walk(ZObjectID dest) {
       return;
     }
   }
+  if (current_room == R_ELEVATOR_LOBBY) {
+    if (dest == R_UPPER_ELEVATOR) {
+      if (!obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) || game_state.upper_elevator_up) {
+        tellf("The door is closed.\n");
+        return;
+      }
+    } else if (dest == R_LOWER_ELEVATOR) {
+      if (!obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) || !game_state.lower_elevator_up) {
+        tellf("The door is closed.\n");
+        return;
+      }
+    }
+  }
+  if (current_room == R_UPPER_ELEVATOR) {
+    if (dest == R_ELEVATOR_LOBBY || dest == R_TOWER_CORE) {
+      if (!obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT)) {
+        tellf("The door is closed.\n");
+        return;
+      }
+      dest = game_state.upper_elevator_up ? R_TOWER_CORE : R_ELEVATOR_LOBBY;
+    }
+  }
+  if (current_room == R_LOWER_ELEVATOR) {
+    if (dest == R_ELEVATOR_LOBBY || dest == R_WAITING_AREA) {
+      if (!obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT)) {
+        tellf("The door is closed.\n");
+        return;
+      }
+      dest = game_state.lower_elevator_up ? R_ELEVATOR_LOBBY : R_WAITING_AREA;
+    }
+  }
+  if (current_room == R_TOWER_CORE && dest == R_UPPER_ELEVATOR) {
+    if (!obj_has_flag(O_UPPER_ELEVATOR_DOOR, F_OPENBIT) || !game_state.upper_elevator_up) {
+      tellf("The door is closed.\n");
+      return;
+    }
+  }
+  if (current_room == R_WAITING_AREA && dest == R_LOWER_ELEVATOR) {
+    if (!obj_has_flag(O_LOWER_ELEVATOR_DOOR, F_OPENBIT) || game_state.lower_elevator_up) {
+      tellf("The door is closed.\n");
+      return;
+    }
+  }
 
   if (dest == NOTHING || dest <= 0) {
     if (!is_lit(current_room) && (rand() % 100) < 75) {
@@ -962,6 +1005,11 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
   // Try indirect object action (PRSI)
   if (prsi != NOTHING && objects[prsi].action) {
     if (objects[prsi].action(verb))
+      return true;
+  }
+
+  if (verb == V_PUSH_UP || verb == V_PUSH_DOWN) {
+    if (elevator_button_f(verb))
       return true;
   }
 

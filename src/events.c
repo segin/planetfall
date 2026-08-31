@@ -44,6 +44,12 @@ void routine_sink_pod();
 void routine_hunger();
 void i_magnet();
 void i_reactor_door_close();
+void i_upper_elevator_arrive();
+void i_lower_elevator_arrive();
+void i_upper_elevator_trip();
+void i_lower_elevator_trip();
+void i_turnoff_upper_elevator();
+void i_turnoff_lower_elevator();
 
 bool run_events() {
     for (int i = 0; i < MAX_EVENTS; i++) {
@@ -73,6 +79,12 @@ bool run_events() {
                 case EVT_HUNGER_WARNINGS: routine_hunger(); break;
                 case EVT_MAGNET: i_magnet(); break;
                 case EVT_REACTOR_DOOR_CLOSE: i_reactor_door_close(); break;
+                case EVT_UPPER_ELEVATOR_ARRIVE: i_upper_elevator_arrive(); break;
+                case EVT_LOWER_ELEVATOR_ARRIVE: i_lower_elevator_arrive(); break;
+                case EVT_UPPER_ELEVATOR_TRIP: i_upper_elevator_trip(); break;
+                case EVT_LOWER_ELEVATOR_TRIP: i_lower_elevator_trip(); break;
+                case EVT_TURNOFF_UPPER_ELEVATOR: i_turnoff_upper_elevator(); break;
+                case EVT_TURNOFF_LOWER_ELEVATOR: i_turnoff_lower_elevator(); break;
                 default: break;
             }
         }

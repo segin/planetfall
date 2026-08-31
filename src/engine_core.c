@@ -18,6 +18,8 @@ void init_game() {
     game_state.day = 1;
     game_state.load_allowed = 100;
     game_state.number_needed = (rand() % 1000) + 1;
+    game_state.upper_elevator_up = true;
+    game_state.lower_elevator_up = false;
 }
 
 ZObject* get_obj(ZObjectID id) {
