@@ -1143,15 +1143,21 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
       return true;
   }
 
-  // Try object specific action first (PRSO)
-  if (prso != NOTHING && objects[prso].action) {
-    if (objects[prso].action(verb))
+  // PERFORM's second step: the room gets a look at the command before any
+  // object does, which is how a room vetoes what you are trying to do in it.
+  if (objects[current_room].action && objects[current_room].action(M_BEG))
+    return true;
+
+  // PERFORM gives the indirect object first refusal, then the direct object.
+  // The order matters when both carry a routine: "PUT THE FLASK IN THE
+  // DISPENSER" is the dispenser's business before it is the flask's.
+  if (prsi != NOTHING && objects[prsi].action) {
+    if (objects[prsi].action(verb))
       return true;
   }
 
-  // Try indirect object action (PRSI)
-  if (prsi != NOTHING && objects[prsi].action) {
-    if (objects[prsi].action(verb))
+  if (prso != NOTHING && objects[prso].action) {
+    if (objects[prso].action(verb))
       return true;
   }
 

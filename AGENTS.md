@@ -22,11 +22,10 @@ with the original, modulo catalogued Release 1 wording.
 
 # Current issues to address:
 
-- `dispatch_action` still does not match ZIL's PERFORM chain. PERFORM runs
-  actor, room `M-BEG`, `PREACTIONS`, PRSI, the container's `CONTFCN`, PRSO, then
-  the verb default and room `M-END`. The port now does the actor step, but goes
-  PRSO before PRSI (ZIL is the other way round) and has no `M-BEG`, no
-  `PREACTIONS` table and no `CONTFCN`.
+- `dispatch_action` now follows ZIL's PERFORM chain for actor, room `M-BEG`,
+  PRSI, PRSO and the verb default. Still missing: the `PREACTIONS` table (the
+  port calls its `pre_*` routines ad hoc from inside the `perform_*` functions
+  instead) and the container `CONTFCN` step.
 - Floyd outstanding: `FLOYD-INTO-LAB` and the Bio Lab clauses of
   `FLOYDS-FAMOUS-DOOR-ROUTINE`, `FLUSH` (which drops the rest of a multi-clause
   order when he gets confused), `I-FLOYD`'s Alfie/Betty shuttle-cabin clauses
