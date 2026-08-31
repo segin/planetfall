@@ -433,7 +433,7 @@
 - [x] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED) -> V-MUNG (Pre: -) [syntax.zil]
 - [x] **DESTROY**: DESTROY OBJECT (ON-GROUND IN-ROOM HELD CARRIED)... -> V-MUNG (Pre: -) [syntax.zil]
 - [x] **DESTROY**: DESTROY DOWN OBJECT (ON-GROUND IN-ROOM HELD CAR... -> V-MUNG (Pre: -) [syntax.zil]
-- [ ] **DIAGNOSE**: DIAGNOSE -> V-DIAGNOSE (Pre: -) [syntax.zil]
+- [x] **DIAGNOSE**: DIAGNOSE -> V-DIAGNOSE (Pre: -) [syntax.zil]
 - [x] **DISEMBARK**: DISEMBARK OBJECT (FIND RMUNGBIT) (ON-GROUND IN-... -> V-DISEMBARK (Pre: -) [syntax.zil]
 - [x] **DROP**: DROP OBJECT (HELD MANY HAVE) -> V-DROP (Pre: -) [syntax.zil]
 - [x] **DROP**: DROP OBJECT (HELD MANY HAVE) DOWN OBJECT -> V-PUT (Pre: PRE-PUT) [syntax.zil]
@@ -1046,7 +1046,7 @@
 - [ ] **V-CLOSE** (verbs.zil): Args: 
 - [ ] **V-CRAG** (verbs.zil): Args: 
 - [ ] **V-CURSE** (verbs.zil): Args: 
-- [ ] **V-DIAGNOSE** (verbs.zil): Args: 
+- [x] **V-DIAGNOSE** (verbs.zil): Args: 
 - [ ] **V-DISEMBARK** (verbs.zil): Args: 
 - [x] **V-DROP** (verbs.zil): Args: 
 - [ ] **V-EAT** (verbs.zil): Args: 
