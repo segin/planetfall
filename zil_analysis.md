@@ -697,7 +697,7 @@
 - [ ] **BUTTON-PSEUDO** (globals.zil): Args: 
 - [ ] **CABINETS-PSEUDO** (globals.zil): Args: 
 - [ ] **CABLES-PSEUDO** (globals.zil): Args: 
-- [ ] **CALL-ME-FLOYD** (compone.zil): Args: 
+- [x] **CALL-ME-FLOYD** (compone.zil): Args: 
 - [x] **CAN-F** (compone.zil): Args: 
 - [ ] **CANT-ORPHAN** (parser.zil): Args: 
 - [ ] **CANT-USE** (parser.zil): Args: PTR "AUX" BUF
@@ -744,7 +744,7 @@
 - [x] **CUBE-F** (comptwo.zil): Args: 
 - [ ] **CUBE-SEEMS** (compone.zil): Args: 
 - [x] **DARK-BUTTON-F** (comptwo.zil): Args: 
-- [ ] **DDESC** (globals.zil): Args: DOOR
+- [x] **DDESC** (globals.zil): Args: DOOR
 - [ ] **DEAD-FLOYD-F** (compone.zil): Args: 
 - [x] **DECK-NINE-F** (globals.zil): Args: RARG
 - [x] **DESCRIBE-MONITORS** (compone.zil): Args: 
@@ -785,7 +785,7 @@
 - [x] **FLOYD-COMES-ALIVE** (compone.zil): Args: "AUX" FOO
 - [x] **FLOYD-F** (compone.zil): Args: "AUX" X N
 - [ ] **FLOYD-INTO-LAB** (compone.zil): Args: 
-- [ ] **FLOYD-NOT-HAVE** (compone.zil): Args: 
+- [x] **FLOYD-NOT-HAVE** (compone.zil): Args: 
 - [ ] **FLOYD-REVEAL-CARD-F** (globals.zil): Args: 
 - [x] **FLOYD-THROUGH-HOLE** (comptwo.zil): Args: 
 - [ ] **FLOYDS-FAMOUS-DOOR-ROUTINE** (compone.zil): Args: 
@@ -868,11 +868,11 @@
 - [x] **KEY-F** (compone.zil): Args: 
 - [ ] **KEYBOARD-PSEUDO** (globals.zil): Args: 
 - [x] **KITCHEN-DOOR-F** (compone.zil): Args: 
-- [ ] **KLUDGE** (compone.zil): Args: 
+- [x] **KLUDGE** (compone.zil): Args: 
 - [x] **LAB-DESK-F** (comptwo.zil): Args: 
 - [x] **LAB-OFFICE-F** (comptwo.zil): Args: RARG
 - [x] **LAB-UNIFORM-F** (comptwo.zil): Args: 
-- [ ] **LADDER-EXIT-F** (compone.zil): Args: 
+- [x] **LADDER-EXIT-F** (compone.zil): Args: 
 - [x] **LADDER-F** (compone.zil): Args: 
 - [x] **LAMP-F** (comptwo.zil): Args: 
 - [ ] **LASER-COOLS** (comptwo.zil): Args: STRING
@@ -884,11 +884,11 @@
 - [ ] **LIBRARY-TYPE** (comptwo.zil): Args: 
 - [x] **LIGHT-BUTTON-F** (comptwo.zil): Args: 
 - [x] **LIGHTS-F** (globals.zil): Args: 
-- [ ] **LIKE-SLIME** (globals.zil): Args: STRING
+- [x] **LIKE-SLIME** (globals.zil): Args: STRING
 - [ ] **LIT?** (parser.zil): Args: RM "AUX" OHERE (LIT <>
 - [ ] **LOCK-PSEUDO** (globals.zil): Args: 
 - [ ] **LOGO-PSEUDO** (globals.zil): Args: 
-- [ ] **LONG-HALL-F** (compone.zil): Args: 
+- [x] **LONG-HALL-F** (compone.zil): Args: 
 - [x] **LOWER-ELEVATOR-DOOR-F** (compone.zil): Args: 
 - [x] **LOWER-ELEVATOR-F** (compone.zil): Args: RARG
 - [x] **MACHINE-SHOP-F** (compone.zil): Args: RARG
@@ -1173,7 +1173,7 @@
 - [ ] **VOID-PSEUDO** (globals.zil): Args: 
 - [ ] **WAKING-UP** (globals.zil): Args: "AUX" X N
 - [ ] **WALKWAY-PSEUDO** (globals.zil): Args: 
-- [ ] **WATER-LEVEL-F** (compone.zil): Args: 
+- [x] **WATER-LEVEL-F** (compone.zil): Args: 
 - [ ] **WEIGHT** (verbs.zil): Args: OBJ "AUX" CONT (WT 0
 - [ ] **WHICH-PRINT** (parser.zil): Args: TLEN LEN TBL "AUX" OBJ RLEN
 - [x] **WINDING-STAIR-F** (compone.zil): Args: RARG

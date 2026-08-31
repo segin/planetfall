@@ -45,9 +45,15 @@ def constructed_ids(src):
 
 
 def defined_routines(src):
-    """Function names defined in the port, e.g. 'pod_door_f'."""
-    return set(re.findall(r'^(?:bool|void|int)\s+([a-z_0-9]+)\s*\(', src,
-                          re.MULTILINE))
+    """Function names defined in the port, e.g. 'pod_door_f'.
+
+    Matches any return type, not just bool/void/int -- several routines return
+    ZObjectID or const char * -- and allows a static qualifier. Anchoring at the
+    start of a line keeps call sites out of it.
+    """
+    return set(re.findall(
+        r'^(?:static\s+)?(?:const\s+)?[A-Za-z_][A-Za-z_0-9]*\s+\*?'
+        r'([a-z_][a-z_0-9]*)\s*\(', src, re.MULTILINE))
 
 
 def handled_verbs(src):
