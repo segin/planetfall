@@ -22,11 +22,14 @@ with the original, modulo catalogued Release 1 wording.
 
 # Current issues to address:
 
-- Floyd still needs the half of `FLOYD-F` that answers commands *addressed* to
-  him ("FLOYD, TAKE THE BOARD"). That needs the parser to support a WINNER other
-  than the player, which it has no concept of -- it is the single biggest missing
-  parser feature. `FLOYDS-FAMOUS-DOOR-ROUTINE`, `FLOYD-INTO-LAB` and `FLUSH`
-  belong with it. Also outstanding: `I-FLOYD`'s Alfie/Betty shuttle-cabin clauses
+- `dispatch_action` still does not match ZIL's PERFORM chain. PERFORM runs
+  actor, room `M-BEG`, `PREACTIONS`, PRSI, the container's `CONTFCN`, PRSO, then
+  the verb default and room `M-END`. The port now does the actor step, but goes
+  PRSO before PRSI (ZIL is the other way round) and has no `M-BEG`, no
+  `PREACTIONS` table and no `CONTFCN`.
+- Floyd outstanding: `FLOYD-INTO-LAB` and the Bio Lab clauses of
+  `FLOYDS-FAMOUS-DOOR-ROUTINE`, `FLUSH` (which drops the rest of a multi-clause
+  order when he gets confused), `I-FLOYD`'s Alfie/Betty shuttle-cabin clauses
   (those rooms are not built), `DEAD-FLOYD-F`, `I-FLOYD-FORAY` and
   `I-CHASE-SCENE` -- the Bio Lab sequence he is famous for.
 - `TELEPORT <room>` cannot reach rooms whose only name is their description,

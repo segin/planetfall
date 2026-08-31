@@ -11,6 +11,7 @@
 typedef struct {
   char word[MAX_WORD_LEN];
   VocabEntry *vocab;
+  bool comma_after; // "FLOYD, GO NORTH" -- marks the end of an actor clause
 } Token;
 
 Token tokens[MAX_TOKENS];
@@ -46,10 +47,15 @@ void tokenize(char *input) {
         if (num_tokens < MAX_TOKENS) {
           strncpy(tokens[num_tokens].word, buffer, MAX_WORD_LEN);
           tokens[num_tokens].vocab = lookup_vocab(buffer);
+          tokens[num_tokens].comma_after = false;
           num_tokens++;
         }
         buf_idx = 0;
       }
+      // Remember the comma: it is what separates "FLOYD" from the order you
+      // are giving him.
+      if (c == ',' && num_tokens > 0)
+        tokens[num_tokens - 1].comma_after = true;
     } else {
       if (buf_idx < MAX_WORD_LEN - 1) {
         buffer[buf_idx++] = c;
@@ -61,9 +67,38 @@ void tokenize(char *input) {
     if (num_tokens < MAX_TOKENS) {
       strncpy(tokens[num_tokens].word, buffer, MAX_WORD_LEN);
       tokens[num_tokens].vocab = lookup_vocab(buffer);
+      tokens[num_tokens].comma_after = false;
       num_tokens++;
     }
   }
+}
+
+int snarf_objects(int start, int end, unsigned int search_flags,
+                  unsigned int find_flags, ZObjectID *out_list, int max_count);
+
+// "FLOYD, GO NORTH" -- if the input opens with an actor clause followed by a
+// comma, pull it off the front and report who is being ordered about. The rest
+// of the command then parses exactly as if you had typed it yourself.
+static ZObjectID snarf_actor(void) {
+  for (int k = 0; k < num_tokens; k++) {
+    if (!tokens[k].comma_after)
+      continue;
+
+    ZObjectID candidates[4];
+    int found = snarf_objects(0, k + 1, 0, 0, candidates, 4);
+    if (found > 0 && obj_has_flag(candidates[0], F_ACTORBIT) &&
+        candidates[0] != player) {
+      ZObjectID actor = candidates[0];
+      // Shift the order itself down to the front.
+      int shift = k + 1;
+      for (int i = shift; i < num_tokens; i++)
+        tokens[i - shift] = tokens[i];
+      num_tokens -= shift;
+      return actor;
+    }
+    break; // only the first clause can name an actor
+  }
+  return NOTHING;
 }
 
 bool word_matches_object(ZObject *obj, const char *word) {
@@ -240,7 +275,18 @@ int snarf_objects(int start, int end, unsigned int search_flags,
     }
   } else {
     bool explicit_scope = (search_flags & (SEARCH_HELD | SEARCH_ROOM | SEARCH_GROUND)) != 0;
-    if (!explicit_scope || (search_flags & SEARCH_HELD) || (search_flags & PARSE_TRY_TAKE))
+    bool want_held = !explicit_scope || (search_flags & SEARCH_HELD) ||
+                     (search_flags & PARSE_TRY_TAKE);
+    // <DO-SL ,WINNER ...> -- when you are ordering someone about, what they are
+    // carrying comes into scope too, so "FLOYD, DROP THE BRUSH" finds it in his
+    // compartments. It is an extra scope rather than a replacement: FLOYD-F
+    // needs to resolve the object even when he hasn't got it, so that it can
+    // answer "Floyd does not one of those have!".
+    if (want_held && current_cmd.winner != NOTHING &&
+        current_cmd.winner != player)
+      check_list(current_cmd.winner, start, end, find_flags, is_all, out_list,
+                 max_count, &count);
+    if (want_held)
       check_list(player, start, end, find_flags, is_all, out_list, max_count, &count);
     if (!explicit_scope || (search_flags & (SEARCH_ROOM | SEARCH_GROUND)) || (search_flags & PARSE_TRY_TAKE))
       check_list(current_room, start, end, find_flags, is_all, out_list, max_count, &count);
@@ -282,6 +328,16 @@ int snarf_objects(int start, int end, unsigned int search_flags,
   return count;
 }
 
+// Name the noun rather than the article when reporting that we cannot see it.
+static const char *noun_of(int start, int end) {
+  for (int i = start; i < end; i++) {
+    if (strcasecmp(tokens[i].word, "the") && strcasecmp(tokens[i].word, "a") &&
+        strcasecmp(tokens[i].word, "an"))
+      return tokens[i].word;
+  }
+  return tokens[start].word;
+}
+
 bool parse_command(char *input, Command *cmd) {
   tokenize(input);
   if (num_tokens == 0) {
@@ -304,6 +360,11 @@ bool parse_command(char *input, Command *cmd) {
 
   cmd->prso_count = 0;
   cmd->prsi = NOTHING;
+  cmd->winner = snarf_actor();
+  if (cmd->winner != NOTHING && num_tokens == 0) {
+    tellf("\"I don't understand! What are you referring to?\"\n");
+    return false;
+  }
 
   // Implicit Verb: Direction
   for (int dir = O_NORTH; dir <= O_OUT; dir++) {
@@ -457,7 +518,7 @@ bool parse_command(char *input, Command *cmd) {
       count1 = snarf_objects(nc1_start, nc1_end, se->obj1_search, se->obj1_find,
                              cmd->prso_list, MAX_OBJECTS_PER_CMD);
       if (count1 == 0) {
-        tellf("You can't see any %s here!\n", tokens[nc1_start].word);
+        tellf("You can't see any %s here!\n", noun_of(nc1_start, nc1_end));
         return false;
       }
       cmd->prso_count = count1;
@@ -469,7 +530,7 @@ bool parse_command(char *input, Command *cmd) {
       int count2 = snarf_objects(nc2_start, nc2_end, se->obj2_search,
                                  se->obj2_find, prsi_list, 2);
       if (count2 == 0) {
-        tellf("You can't see any %s here!\n", tokens[nc2_start].word);
+        tellf("You can't see any %s here!\n", noun_of(nc2_start, nc2_end));
         return false;
       }
       cmd->prsi = prsi_list[0];

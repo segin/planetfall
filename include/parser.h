@@ -16,6 +16,10 @@ typedef struct {
   // Indirect Object (usually one)
   ZObjectID prsi;
 
+  // Who the command was addressed to. NOTHING (or the player) when you are
+  // simply acting yourself; an ACTORBIT object when you ordered someone about.
+  ZObjectID winner;
+
   // Legacy support (to be removed or mapped to prso_list[0])
   // ZObjectID direct_object;
   // ZObjectID indirect_object;

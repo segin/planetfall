@@ -1535,6 +1535,80 @@ bool floyd_f(int arg) {
   int verb = current_cmd.verb;
   ZObjectID prso = current_cmd.prso_list[0];
 
+  // --- Orders addressed to Floyd ------------------------------------------
+  if (current_cmd.winner == O_FLOYD) {
+    game_state.floyd_spoke = true;
+
+    switch (verb) {
+    case V_WALK:
+      // He is hopeless with directions, and would rather hear a story.
+      TELL("Floyd looks slightly embarrassed. \"You know me and my sense of "
+           "direction.\"\n"
+           "Then he looks up at you with wide, trusting eyes. \"Tell Floyd\n"
+           "a story?\"\n");
+      return true;
+    case V_THROUGH:
+      // FLOYDS-FAMOUS-DOOR-ROUTINE.
+      if (prso != NOTHING && obj_has_flag(prso, F_DOORBIT)) {
+        TELL("\"You go first,\" says Floyd.\n");
+      } else {
+        TELL("Floyd scratches his head and looks at you.\n");
+      }
+      return true;
+    case V_TAKE:
+      if (prso == O_GOOD_BOARD) {
+        if (!obj_in(O_GOOD_BOARD, O_ROBOT_HOLE)) {
+          TELL("Floyd looks half-bored and half-annoyed. \"Floyd already did "
+               "that.\n"
+               "How about some leap-frogger?\"\n");
+        } else if (game_state.board_reported) {
+          obj_move(O_GOOD_BOARD, player);
+          obj_clear_flag(O_GOOD_BOARD, F_NDESCBIT);
+          obj_set_flag(O_GOOD_BOARD, F_TAKEBIT);
+          game_state.c_elapsed = 22;
+          TELL("Floyd shrugs. \"If you say so.\" He vanishes for a few "
+               "minutes, and returns\n"
+               "holding the fromitz board. It seems to be in good shape. He "
+               "tosses it toward\n"
+               "you, and you just manage to catch it before it smashes.\n");
+        } else {
+          TELL("\"Huh?\" asks Floyd. \"What fromitz board?\"\n");
+        }
+        return true;
+      }
+      break;
+    case V_FOLLOW:
+      if (prso == player) {
+        TELL("\"Okay!\"\n");
+        return true;
+      }
+      break;
+    case V_HELLO:
+      TELL("\"Hi!\" Floyd grins and bounces up and down.\n");
+      return true;
+    case V_DROP:
+      if (obj_in(prso, O_FLOYD)) {
+        if (prob(50)) {
+          obj_move(prso, current_room);
+          tellf("Floyd shrugs and drops the %s.\n", objects[prso].description);
+        } else {
+          tellf("Floyd clutches the %s even more tightly. \"Floyd won't,\" he "
+                "says\n"
+                "defiantly.\n",
+                objects[prso].description);
+        }
+      } else {
+        floyd_not_have();
+      }
+      return true;
+    default:
+      break;
+    }
+
+    TELL("Floyd whines, \"Enough talking! Let's play Hider-and-Seeker.\"\n");
+    return true;
+  }
+
   if (verb == V_CLOSE) {
     TELL("Huh?\n");
     return true;

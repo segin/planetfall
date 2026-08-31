@@ -1135,6 +1135,14 @@ bool perform(int verb, ZObjectID prso, ZObjectID prsi) {
 }
 
 bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
+  // PERFORM's first step (misc.zil) is the actor's own routine, so that
+  // "FLOYD, GO NORTH" reaches Floyd rather than being carried out by you.
+  ZObjectID actor = current_cmd.winner;
+  if (actor != NOTHING && actor != player && objects[actor].action) {
+    if (objects[actor].action(verb))
+      return true;
+  }
+
   // Try object specific action first (PRSO)
   if (prso != NOTHING && objects[prso].action) {
     if (objects[prso].action(verb))

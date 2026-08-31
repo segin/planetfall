@@ -250,6 +250,17 @@ run_test "Test 117: Floyd wanders off" "${FLOYD_ON}${FLOYD_WAIT}QUIT\nY" "going 
 run_test "Test 118: Floyd on Achilles" "${FLOYD_ON}TELEPORT REPAIR ROOM\nWAIT\nWAIT\nQUIT\nY" "they named him Achilles" "KLUDGE fires in the Repair Room" "Floyd Achilles"
 run_test "Test 119: Shaking hands with Floyd" "${FLOYD_ON}SHAKE HANDS\nQUIT\nY" "grasping extensions" "HANDS-F recognises an active Floyd" "Floyd handshake"
 
+# --- Ordering NPCs about (WINNER) -------------------------------------------
+run_test "Test 120: Floyd takes orders" "${FLOYD_ON}FLOYD, HELLO\nQUIT\nY" "Floyd grins and bounces" "Commands addressed to Floyd reach him" "Floyd orders"
+run_test "Test 121: Floyd cannot follow directions" "${FLOYD_ON}FLOYD, GO NORTH\nQUIT\nY" "sense of direction" "FLOYD-F's WALK branch works" "Floyd walk order"
+run_test "Test 122: Floyd agrees to follow" "${FLOYD_ON}FLOYD, FOLLOW ME\nQUIT\nY" "Okay" "FOLLOW ME is accepted" "Floyd follow order"
+run_test "Test 123: Floyd tires of chatter" "${FLOYD_ON}FLOYD, JUMP\nQUIT\nY" "Enough talking" "Unhandled orders get the catch-all" "Floyd catch-all"
+run_test "Test 124: An order with nothing in it" "${FLOYD_ON}FLOYD,\nQUIT\nY" "What are you referring to" "CANT-ORPHAN fires" "Floyd empty order"
+# "Held" means held by whoever you are giving the order to.
+run_test "Test 125: Floyd drops what he is holding" "${FLOYD_ON}GIVE BRUSH TO FLOYD\nFLOYD, DROP BRUSH\nQUIT\nY" "drops the|clutches the" "Orders resolve objects from the actor's inventory" "Floyd drop order"
+run_test "Test 126: Floyd has nothing to drop" "${FLOYD_ON}FLOYD, DROP BRUSH\nQUIT\nY" "does not one of those have" "FLOYD-NOT-HAVE fires" "Floyd not have"
+run_test_absent "Test 127: A comma does not confuse ordinary commands" "TAKE BRUSH, DROP BRUSH\nQUIT\nY" "referring to" "Commas outside actor clauses are harmless" "Comma handling"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"
