@@ -44,6 +44,10 @@ run_test "Test 11: SUPER-BRIEF command" "SUPER\nQUIT\nY" "Super-brief descriptio
 run_test "Test 12: LOOK object (cretin check)" "LOOK BRUSH\nQUIT\nY" "primitive two-word-parser" "LOOK <OBJECT> cretin message works" "LOOK <OBJECT>"
 run_test "Test 13: EXAMINE container" "EXAMINE UNIFORM\nQUIT\nY" "Patrol uniform contains" "EXAMINE container works" "EXAMINE container"
 run_test "Test 14: PRE-EXAMINE absent object" "EXAMINE LADDER\nQUIT\nY" "can't see any" "PRE-EXAMINE absent check works" "PRE-EXAMINE"
+run_test "Test 15: SCORE command" "SCORE\nQUIT\nY" "out of 80 points" "SCORE command works" "SCORE command"
+run_test "Test 16: VERSION command" "VERSION\nQUIT\nY" "Release 37" "VERSION command works" "VERSION command"
+run_test "Test 17: AGAIN command" "LOOK\nAGAIN\nQUIT\nY" "Deck Nine" "AGAIN command works" "AGAIN command"
+run_test "Test 18: QUIT decline" "QUIT\nN\nQUIT\nY" "Ok" "QUIT decline confirmation works" "QUIT decline"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

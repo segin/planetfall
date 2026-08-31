@@ -479,30 +479,130 @@ void perform_script() { set_scripting(true); }
 
 void perform_unscript() { set_scripting(false); }
 
-void jigs_up(const char *msg) {
-  tellf("%s\n", msg);
-  tellf("**** You have died ****\n");
+int perform_score(bool ask) {
+  tellf("Your score %s%d (out of 80 points). It is Day %d of your adventure. Current Galactic Standard Time ",
+        ask ? "would be " : "is ", game_state.score, game_state.day);
+  if (obj_in(O_CHRONOMETER, player)) {
+    tellf("(adjusted to your local day-cycle) is ");
+    if (obj_has_flag(O_CHRONOMETER, F_MUNGEDBIT)) {
+      tellf("%d", game_state.munged_time);
+    } else {
+      int hour = 8 + (game_state.internal_moves / 60);
+      int minute = (game_state.internal_moves % 60);
+      tellf("%d:%02d", hour, minute);
+    }
+  } else {
+    tellf("is impossible to determine, since you're not wearing your chronometer");
+  }
+  tellf(".\n");
 
-  // Prompt loop
+  tellf("This score gives you the rank of ");
+  if (game_state.score == 80)
+    tellf("Galactic Overlord");
+  else if (game_state.score > 72)
+    tellf("Cluster Admiral");
+  else if (game_state.score > 64)
+    tellf("System Captain");
+  else if (game_state.score > 48)
+    tellf("Planetary Commodore");
+  else if (game_state.score > 36)
+    tellf("Lieutenant");
+  else if (game_state.score > 24)
+    tellf("Ensign First Class");
+  else if (game_state.score > 12)
+    tellf("Space Cadet");
+  else
+    tellf("Beginner");
+  tellf(".\n");
+
+  return game_state.score;
+}
+
+bool ask_yes() {
+  printf("> ");
+  fflush(stdout);
+  char buf[64];
+  if (!fgets(buf, sizeof(buf), stdin)) {
+    return false;
+  }
+  char *p = buf;
+  while (*p == ' ' || *p == '\t')
+    p++;
+  if (strncasecmp(p, "yes", 3) == 0 || strncasecmp(p, "y", 1) == 0) {
+    return true;
+  }
+  return false;
+}
+
+void perform_quit() {
+  perform_score(true);
+  if (obj_in(O_FLOYD, current_room) && obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    tellf("\nFloyd grins impishly. \"Giving up, huh?\"\n");
+  }
+  tellf("\nDo you wish to leave the game? (Y is affirmative): ");
+  if (ask_yes()) {
+    game_running = false;
+  } else {
+    tellf("Ok.\n");
+  }
+}
+
+void finish(bool died, bool repeating) {
+  tellf("\n");
+  if (!repeating) {
+    perform_score(true);
+    if (died) {
+      tellf("\nOh, well. According to the Treaty of Gishen IV, signed in 8747 GY, all\n"
+            "adventure game players must be given another chance after dying. In the\n"
+            "interests of interstellar peace...\n");
+    }
+  }
+
   while (1) {
-    tellf("\nWould you like to RESTART, RESTORE, or QUIT?\n> ");
+    tellf("\nWould you like to restart the game from the beginning, restore a saved game\n"
+          "position, or end this session of the game? (Type RESTART, RESTORE, or QUIT.)\n\n> ");
+    fflush(stdout);
     char buf[64];
-    if (!fgets(buf, 64, stdin))
-      exit(0);
-
-    // Simple parsing
-    if (strncasecmp(buf, "restart", 7) == 0) {
-      perform_restart();
-      return; // Continue game
-    }
-    if (strncasecmp(buf, "restore", 7) == 0) {
-      perform_restore();
-      return;
-    }
-    if (strncasecmp(buf, "quit", 4) == 0) {
+    if (!fgets(buf, sizeof(buf), stdin)) {
       game_running = false;
       return;
     }
+    char *p = buf;
+    while (*p == ' ' || *p == '\t')
+      p++;
+    if (strncasecmp(p, "restart", 7) == 0) {
+      perform_restart();
+      return;
+    } else if (strncasecmp(p, "restore", 7) == 0) {
+      if (restore_game("planetfall.sav")) {
+        tellf("Ok.\n");
+        return;
+      } else {
+        tellf("Failed.\n");
+        repeating = true;
+      }
+    } else if (strncasecmp(p, "quit", 4) == 0 || strncasecmp(p, "q", 1) == 0) {
+      game_running = false;
+      return;
+    } else {
+      repeating = true;
+    }
+  }
+}
+
+void jigs_up(const char *msg) {
+  tellf("%s\n\n    ****  You have died  ****\n", msg);
+  finish(true, false);
+}
+
+void perform_version() {
+  tellf("PLANETFALL\n"
+        "Infocom interactive fiction - a science fiction story\n"
+        "Copyright (c) 1983 by Infocom, Inc. All rights reserved.\n"
+        "PLANETFALL is a registered trademark of Infocom, Inc.\n"
+        "Release 37 / Serial number 851003\n");
+  if (obj_in(O_FLOYD, current_room) && obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    tellf("\n\"Last version was better,\" says Floyd. \"More bugs. Bugs make\ngame fun.\"\n");
   }
 }
 
@@ -546,22 +646,7 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     perform_look_cretin();
     return true;
   case V_QUIT:
-    // Assuming perform_quit() is defined elsewhere or will be added.
-    // For now, it's a placeholder based on the instruction.
-    // The original code had `game_running = false; return true;`
-    // If perform_quit is not defined, this will cause a compile error.
-    // To be faithful to the instruction, I'm adding it as requested.
-    // If perform_quit is not intended, the user should clarify.
-    // For now, I'll assume it's a new function.
-    // If it's not, the original `game_running = false; return true;`
-    // should be kept.
-    // Given the context of adding new functions, it's likely perform_quit
-    // is also a new function.
-    // If perform_quit is not defined, this will be a compile error.
-    // I will add a comment to reflect this assumption.
-    // TODO: Ensure perform_quit() is defined or revert to original logic.
-    game_running = false; // Reverting to original logic for V_QUIT as
-                          // perform_quit() is not provided.
+    perform_quit();
     return true;
   case V_RESTART:
     perform_restart();
@@ -573,17 +658,7 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     perform_save();
     return true;
   case V_SCORE:
-    // Assuming perform_score() is defined elsewhere or will be added.
-    // TODO: Ensure perform_score() is defined.
-    // For now, adding a placeholder call.
-    // If not defined, this will cause a compile error.
-    // To be faithful to the instruction, I'm adding it as requested.
-    // If perform_score is not intended, the user should clarify.
-    // For now, I'll assume it's a new function.
-    // If it's not, this will be a compile error.
-    // I will add a comment to reflect this assumption.
-    // perform_score(false);
-    tellf("Score: %d\n", game_state.score); // Placeholder for score display
+    perform_score(false);
     return true;
   case V_SCRIPT:
     perform_script();
@@ -592,18 +667,7 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     perform_unscript();
     return true;
   case V_VERSION:
-    // Assuming perform_version() is defined elsewhere or will be added.
-    // TODO: Ensure perform_version() is defined.
-    // For now, adding a placeholder call.
-    // If not defined, this will cause a compile error.
-    // To be faithful to the instruction, I'm adding it as requested.
-    // If perform_version is not intended, the user should clarify.
-    // For now, I'll assume it's a new function.
-    // If it's not, this will be a compile error.
-    // I will add a comment to reflect this assumption.
-    // perform_version();
-    tellf("Planetfall v1.0 (ZIL-like engine)\n"); // Placeholder for version
-                                                  // display
+    perform_version();
     return true;
   case V_TIME:
     // TODO: partial implementation

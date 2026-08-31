@@ -9,7 +9,5 @@
 
 - You can enter the escape pod before the explosions open the escape pod door. 
 - You do not have enough time to explore the ship before dying. Compare against original game.
-- Quit has no confirmation
-- Score message is generic and simple.
 - Status bar has time and no score. 
 

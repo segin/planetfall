@@ -108,6 +108,7 @@ typedef struct {
   int ambassador_leave_counter;
   bool verbose;
   bool super_brief;
+  int munged_time;
   int drown_counter;
   int dial_number;
   int number_needed;
@@ -194,6 +195,11 @@ void perform_verbose();
 void perform_brief();
 void perform_super_brief();
 void perform_look_cretin();
+int perform_score(bool ask);
+bool ask_yes();
+void perform_quit();
+void finish(bool died, bool repeating);
+void perform_version();
 
 // Events (Included from events.h generally, but we need forward decls if not
 // including) Actually, circular include if events.h includes planetfall.h?

@@ -250,6 +250,20 @@ int main(int argc, char **argv) {
     if (!parse_command(input, &current_cmd))
       continue;
 
+    static Command last_cmd;
+    static bool has_last_cmd = false;
+
+    if (current_cmd.verb == V_AGAIN) {
+      if (!has_last_cmd) {
+        tellf("Please say what you want to do.\n");
+        continue;
+      }
+      current_cmd = last_cmd;
+    } else {
+      last_cmd = current_cmd;
+      has_last_cmd = true;
+    }
+
     if (current_cmd.verb == V_THROUGH) {
       if (current_cmd.prso_count > 0 &&
           obj_has_flag(current_cmd.prso_list[0], F_VEHBIT)) {
@@ -284,7 +298,7 @@ int main(int argc, char **argv) {
 
     switch (current_cmd.verb) {
     case V_QUIT:
-      game_running = false;
+      perform_quit();
       break;
     case V_PUT:
       tellf("Put not fully implemented.\n");
