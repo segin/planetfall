@@ -912,6 +912,34 @@ void perform_walk(ZObjectID dest) {
       return;
     }
   }
+  // Every exit off Deck Nine is a door exit -- <WEST TO ESCAPE-POD IF POD-DOOR
+  // IS OPEN>, and likewise for the gangway and the starboard corridor -- as are
+  // their far sides. The two emergency bulkheads stand open until the second
+  // wave of explosions crashes them shut; the pod bulkhead starts sealed and is
+  // blown open by the first. Without this gate the player could walk straight
+  // through a sealed bulkhead into the escape pod on turn one.
+  static const struct {
+    ZObjectID a, b, door;
+  } feinstein_doors[] = {
+      {R_DECK_NINE, R_ESCAPE_POD, O_POD_DOOR},
+      {R_DECK_NINE, R_GANGWAY, O_GANGWAY_DOOR},
+      {R_DECK_NINE, R_REACTOR_LOBBY, O_CORRIDOR_DOOR},
+  };
+  for (size_t i = 0; i < sizeof(feinstein_doors) / sizeof(feinstein_doors[0]);
+       i++) {
+    ZObjectID a = feinstein_doors[i].a, b = feinstein_doors[i].b;
+    if ((current_room == a && dest == b) || (current_room == b && dest == a)) {
+      if (!obj_has_flag(feinstein_doors[i].door, F_OPENBIT)) {
+        // POD-EXIT-F words the refusal from inside the pod differently.
+        if (current_room == R_ESCAPE_POD)
+          tellf("The pod door is closed.\n");
+        else
+          tellf("The %s is closed.\n",
+                objects[feinstein_doors[i].door].description);
+        return;
+      }
+    }
+  }
   if ((current_room == R_MESS_CORRIDOR && dest == R_STORAGE_WEST) ||
       (current_room == R_STORAGE_WEST && dest == R_MESS_CORRIDOR)) {
     if (!obj_has_flag(O_STORAGE_WEST_DOOR, F_OPENBIT)) {

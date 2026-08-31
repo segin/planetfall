@@ -50,6 +50,14 @@ run_test_absent() {
 
 run_test "Test 1: Room navigation (UP from Deck Nine)" "UP\nQUIT\nY" "Gangway" "UP leads to Gangway" "UP navigation"
 run_test "Test 2: Port direction (should go west to pod if open)" "PORT\nQUIT\nY" "pod|closed|can't" "Port direction works" "Port direction"
+# The pod bulkhead is sealed until the first explosion blows it open. Walking
+# west, going in, and boarding must all be refused, and the player must not end
+# up inside the pod.
+run_test "Test 2a: Pod bulkhead refuses entry before the emergency" "WEST\nQUIT\nY" "escape pod bulkhead is closed" "Walking west into a sealed pod is refused" "Premature pod entry"
+run_test_absent "Test 2b: Player stays on Deck Nine when refused" "WEST\nLOOK\nQUIT\nY" "safety webbing" "Refused walk leaves player outside the pod" "Player entered sealed pod"
+run_test "Test 2c: IN is refused the same way" "IN\nQUIT\nY" "escape pod bulkhead is closed" "IN into a sealed pod is refused" "Premature pod entry via IN"
+run_test "Test 2d: Opening the bulkhead early is refused" "OPEN BULKHEAD\nQUIT\nY" "if there's no emergency" "Pod bulkhead cannot be opened early" "Pod bulkhead opened early"
+run_test "Test 2e: Deck Nine reports the bulkhead state" "LOOK\nQUIT\nY" "pod bulkhead is closed" "Deck Nine describes the sealed bulkhead" "Bulkhead state not described"
 run_test "Test 3: Examine ME" "EXAMINE ME\nQUIT\nY" "cretin|nothing special|special" "Examine ME works" "Examine ME"
 run_test "Test 4: Look command" "LOOK\nQUIT\nY" "Deck Nine" "Look works" "Look"
 run_test "Test 5: Inventory" "INVENTORY\nQUIT\nY" "carrying|uniform|chronometer|brush" "Inventory works" "Inventory"

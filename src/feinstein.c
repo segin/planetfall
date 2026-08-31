@@ -34,6 +34,11 @@ void init_feinstein_act() {
   r->in = R_ESCAPE_POD;
   r->up = R_GANGWAY;
   r->globals[0] = O_POD_DOOR;
+  r->globals[1] = O_CORRIDOR_DOOR;
+  r->globals[2] = O_GANGWAY_DOOR;
+  // DECK-NINE-F reports whether the pod bulkhead is open or closed, which the
+  // static long_description above cannot do.
+  r->action = deck_nine_f;
 
   // R_REACTOR_LOBBY
   r = &objects[R_REACTOR_LOBBY];
@@ -46,6 +51,7 @@ void init_feinstein_act() {
                         "Control Room. The corridor continues to port.";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->west = R_DECK_NINE;
+  r->globals[0] = O_CORRIDOR_DOOR;
 
   // R_GANGWAY
   r = &objects[R_GANGWAY];
@@ -56,6 +62,8 @@ void init_feinstein_act() {
   r->flags = F_RLANDBIT | F_ONBIT;
   r->up = R_DECK_EIGHT;
   r->down = R_DECK_NINE;
+  r->globals[0] = O_GANGWAY_DOOR;
+  r->action = gangway_f;
 
   // R_DECK_EIGHT
   r = &objects[R_DECK_EIGHT];
@@ -100,8 +108,34 @@ void init_feinstein_act() {
   o->description = "escape pod bulkhead";
   o->synonyms[0] = "door";
   o->synonyms[1] = "bulkhead";
-  o->flags = F_DOORBIT | F_NDESCBIT; // Initially closed
+  o->flags = F_DOORBIT | F_VOWELBIT | F_NDESCBIT; // Initially closed
+  o->action = pod_door_f;
   obj_move(O_POD_DOOR, OBJ_LOCAL_GLOBALS);
+
+  // CORRIDOR-DOOR and GANGWAY-DOOR: the emergency bulkheads sealing Deck Nine's
+  // starboard corridor and gangway. Both start open and unseen, and stay that
+  // way until the second wave of explosions crashes them shut.
+  o = &objects[O_CORRIDOR_DOOR];
+  o->id = O_CORRIDOR_DOOR;
+  o->description = "wide bulkhead";
+  o->synonyms[0] = "door";
+  o->synonyms[1] = "bulkhead";
+  o->adjectives[0] = "emergency";
+  o->adjectives[1] = "wide";
+  o->flags = F_INVISIBLE | F_DOORBIT | F_OPENBIT | F_NDESCBIT;
+  o->action = gangway_door_f;
+  obj_move(O_CORRIDOR_DOOR, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_GANGWAY_DOOR];
+  o->id = O_GANGWAY_DOOR;
+  o->description = "narrow bulkhead";
+  o->synonyms[0] = "door";
+  o->synonyms[1] = "bulkhead";
+  o->adjectives[0] = "emergency";
+  o->adjectives[1] = "narrow";
+  o->flags = F_INVISIBLE | F_DOORBIT | F_OPENBIT | F_NDESCBIT;
+  o->action = gangway_door_f;
+  obj_move(O_GANGWAY_DOOR, OBJ_LOCAL_GLOBALS);
 
   // BLATHER
   o = &objects[O_BLATHER];
@@ -222,6 +256,8 @@ void routine_blowup_feinstein() {
 
   // ZIL Parity Logic
   if (game_state.blowup_counter == 1) {
+    // <SETG BRIGS-UP 0> -- Blather has bigger problems now than your demerits.
+    game_state.brigs_up = 0;
     tellf("\nA massive explosion rocks the ship. Echoes from the explosion "
           "resound\n"
           "deafeningly down the halls.\n");
@@ -245,10 +281,39 @@ void routine_blowup_feinstein() {
       obj_set_flag(O_POD_DOOR, F_OPENBIT);
     }
   } else if (game_state.blowup_counter == 2) {
-    tellf("\nYou are deafened by more explosions and by the sound of emergency "
-          "bulkheads\n"
-          "slamming closed.\n");
-    // Close bulkheads logic if needed
+    // The emergency bulkheads crash shut, sealing Deck Nine off from the
+    // gangway and the starboard corridor. They become visible in the process.
+    obj_clear_flag(O_CORRIDOR_DOOR, F_OPENBIT);
+    obj_clear_flag(O_CORRIDOR_DOOR, F_INVISIBLE);
+    obj_clear_flag(O_GANGWAY_DOOR, F_OPENBIT);
+    obj_clear_flag(O_GANGWAY_DOOR, F_INVISIBLE);
+
+    if (current_room == R_DECK_NINE) {
+      tellf("\nMore distant explosions! A narrow emergency bulkhead at the base "
+            "of the\n"
+            "gangway and a wider one along the corridor to starboard both crash "
+            "shut!\n");
+    } else if (current_room == R_ESCAPE_POD || current_room == R_BRIG) {
+      tellf("\nThe ship shakes again. You hear, from close by, the sounds of "
+            "emergency\n"
+            "bulkheads closing.\n");
+    } else if (current_room == R_GANGWAY) {
+      tellf("\nAnother explosion. A narrow bulkhead at the base of the\n"
+            "gangway slams shut!\n");
+    } else {
+      tellf("\nYou are deafened by more explosions and by the sound of "
+            "emergency bulkheads\n"
+            "slamming closed. ");
+      if (obj_in(O_BLATHER, current_room)) {
+        tellf("Blather, foaming slightly at the mouth, screams at you to swab "
+              "the decks");
+      } else {
+        obj_move(O_BLATHER, current_room);
+        tellf("Blather enters, looking confused, and begins ranting madly at "
+              "you");
+      }
+      tellf(".\n");
+    }
   } else if (game_state.blowup_counter == 3) {
     obj_clear_flag(O_POD_DOOR, F_OPENBIT); // Close Door
     if (current_room == R_DECK_NINE) {

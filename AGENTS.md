@@ -7,7 +7,19 @@
 
 # Current issues to address:
 
-- You can enter the escape pod before the explosions open the escape pod door.
+- Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
+  just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. The
+  checklist in `zil_analysis.md` tracks this at 79 of 1171 items done. Needs to be
+  broken into per-file or per-region chunks and worked one at a time.
+- Make sure Blather and the ambassador are properly implemented. `routine_blather`
+  and `routine_ambassador` in `src/feinstein.c` are both marked "Simplified" and
+  are a fraction of the ZIL: I-BLATHER and I-AMBASSADOR in `globals.zil` around
+  lines 1443 and 2066, plus BLATHER-F, AMBASSADOR-F and the AMBASSADOR-QUOTES
+  table.
+- Some action routines are written but never attached to their objects, so they are
+  dead code. `ground_f` and `patrol_uniform_f` in `src/feinstein_actions.c` are
+  currently unattached; `deck_nine_f` and `gangway_f` were too until the bulkhead
+  work wired them up. Worth auditing the other `*_actions.c` files for the same.
 - Status bar has time and no score. The time half is now correct (it shows Galactic
   Standard Time from the MOVES global, matching ZIL). The score field is still
   missing: Planetfall is a `<VERSION ZIP>` game with no TIME flag, so the authentic

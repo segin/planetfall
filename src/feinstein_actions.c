@@ -31,6 +31,79 @@ bool deck_nine_f(int arg) {
   return false;
 }
 
+// POD-DOOR-F (globals.zil). The bulkhead is never the player's to operate: it is
+// blown open by the first explosion and clangs shut again when the pod launches.
+// Without this the generic V_OPEN handler would cheerfully unlock the escape pod
+// on turn one.
+bool pod_door_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_OPEN:
+    if (obj_has_flag(O_POD_DOOR, F_OPENBIT)) {
+      TELL("It's already open!\n");
+    } else if (game_state.trip_counter > 14) {
+      // Down on the ocean floor, opening up is a way to drown.
+      obj_set_flag(O_POD_DOOR, F_OPENBIT);
+      TELL("The bulkhead opens and cold ocean water rushes in!\n");
+    } else if (game_state.blowup_counter > 0) {
+      if (current_room == R_DECK_NINE) {
+        TELL("Too late. The pod's launching procedure has already begun.\n");
+      } else {
+        TELL("Opening the door now would be a phenomenally stupid idea.\n");
+      }
+    } else {
+      TELL("Why open the door to the emergency escape pod if there's no "
+           "emergency?\n");
+    }
+    return true;
+  case V_CLOSE:
+    if (!obj_has_flag(O_POD_DOOR, F_OPENBIT)) {
+      TELL("It is closed!\n");
+    } else {
+      TELL("You can't close it yourself.\n");
+    }
+    return true;
+  case V_THROUGH:
+    if (current_room == R_DECK_NINE) {
+      perform_walk(objects[R_DECK_NINE].west);
+    } else {
+      perform_walk(objects[current_room].out);
+    }
+    return true;
+  default:
+    return false;
+  }
+}
+
+// GANGWAY-DOOR-F (globals.zil), shared by the narrow and wide emergency
+// bulkheads. Both start open and invisible and are slammed shut by the second
+// wave of explosions; the player has no way to work them.
+bool gangway_door_f(int arg) {
+  (void)arg;
+  ZObjectID self = current_cmd.prso_list[0];
+  if (self != O_GANGWAY_DOOR && self != O_CORRIDOR_DOOR)
+    return false;
+
+  switch (current_cmd.verb) {
+  case V_OPEN:
+    if (obj_has_flag(self, F_OPENBIT)) {
+      TELL("It's already open!\n");
+    } else {
+      TELL("There doesn't seem to be any way to open it.\n");
+    }
+    return true;
+  case V_CLOSE:
+    if (obj_has_flag(self, F_OPENBIT)) {
+      TELL("You can't close it yourself.\n");
+    } else {
+      TELL("It is closed!\n");
+    }
+    return true;
+  default:
+    return false;
+  }
+}
+
 bool gangway_f(int arg) {
   if (arg == M_END) {
     // Random message about Ensign in danger
