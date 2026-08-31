@@ -98,6 +98,14 @@ void i_upper_elevator_trip(void);
 void i_lower_elevator_trip(void);
 void i_turnoff_upper_elevator(void);
 void i_turnoff_lower_elevator(void);
+bool helicopter_object_f(int arg);
+bool fence_pseudo_action(int arg);
+bool lock_pseudo_action(int arg);
+bool cables_pseudo_action(int arg);
+bool enunciator_pseudo_action(int arg);
+bool playback_button_f(int arg);
+bool chemical_fluid_f(int arg);
+void i_unenter(void);
 // Add more as needed
 
 #endif

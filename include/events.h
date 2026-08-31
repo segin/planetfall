@@ -23,6 +23,7 @@ typedef enum {
     EVT_LOWER_ELEVATOR_TRIP,
     EVT_TURNOFF_UPPER_ELEVATOR,
     EVT_TURNOFF_LOWER_ELEVATOR,
+    EVT_UNENTER,
     // Add others as needed
     MAX_EVENTS
 } EventID;

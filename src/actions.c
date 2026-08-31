@@ -980,6 +980,10 @@ void perform_walk(ZObjectID dest) {
   }
 
   if (dest == NOTHING || dest <= 0) {
+    if (current_room == R_HELIPAD) {
+      tellf("A fence keeps you away from the edge, where you would probably be swept over the brink by the high winds.\n");
+      return;
+    }
     if (!is_lit(current_room) && (rand() % 100) < 75) {
       jigs_up("Oh, no! You have walked into the slavering fangs of a lurking grue!");
       return;
@@ -1072,6 +1076,11 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return false;
   case V_TELEPORT:
     perform_teleport(prso);
+    return true;
+  case V_FLY:
+    if (helicopter_object_f(V_FLY))
+      return true;
+    tellf("You can't fly that!\n");
     return true;
   case V_NORTH:
     perform_walk(objects[current_room].north);

@@ -88,6 +88,9 @@ run_test "Test 55: FLOYD examine and turn on" "TELEPORT ROBOT SHOP\nEXAMINE FLOY
 run_test "Test 56: ELEVATOR LOBBY call buttons" "TELEPORT ELEVATOR LOBBY\nPUSH BLUE BUTTON\nPUSH RED BUTTON\nQUIT\nY" "whirring noise" "Elevator lobby call buttons work" "ELEVATOR LOBBY BUTTONS"
 run_test "Test 57: UPPER ELEVATOR card enable" "TELEPORT SMALL OFFICE\nOPEN DESK\nTAKE UPPER ELEVATOR CARD\nTELEPORT UPPER ELEVATOR\nSLIDE UPPER ELEVATOR CARD THROUGH SLOT\nQUIT\nY" "Elivaatur inebuld" "Upper elevator card enable works" "UPPER ELEVATOR CARD"
 run_test "Test 58: UPPER ELEVATOR trip activation" "TELEPORT SMALL OFFICE\nOPEN DESK\nTAKE UPPER ELEVATOR CARD\nTELEPORT UPPER ELEVATOR\nSLIDE UPPER ELEVATOR CARD THROUGH SLOT\nPUSH DOWN BUTTON\nQUIT\nY" "vertical movement" "Upper elevator trip activation works" "UPPER ELEVATOR TRIP"
+run_test "Test 59: HELIPAD fence and helicopter boarding" "TELEPORT HELIPAD\nNORTH\nBOARD VEHICLE\nFLY\nOUT\nQUIT\nY" "locked" "Helipad fence and helicopter boarding work" "HELIPAD / HELICOPTER"
+run_test "Test 60: COMM ROOM playback and screen" "TELEPORT COMM ROOM\nPUSH PLAYBACK BUTTON\nREAD SCREEN\nEXAMINE CABLES\nQUIT\nY" "Feinstein" "Comm room playback button and screen reading work" "COMM ROOM"
+run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST\nLOOK\nQUIT\nY" "Kalamontee Staashun" "Kalamontee platform navigation and description work" "KALAMONTEE PLATFORM"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

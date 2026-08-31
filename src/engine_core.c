@@ -20,6 +20,8 @@ void init_game() {
     game_state.number_needed = (rand() % 1000) + 1;
     game_state.upper_elevator_up = true;
     game_state.lower_elevator_up = false;
+    game_state.just_entered = true;
+    game_state.chemical_required = (rand() % 7) + 1;
 }
 
 ZObject* get_obj(ZObjectID id) {

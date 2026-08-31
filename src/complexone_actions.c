@@ -1561,5 +1561,179 @@ bool mess_hall_f(int arg) {
   return false;
 }
 
-bool kalamontee_platform_f(int arg) { return false; }
-bool comm_room_f(int arg) { return false; }
+bool helicopter_object_f(int verb) {
+  if (verb == V_THROUGH || verb == V_BOARD || verb == V_WALK_TO) {
+    if (current_room == R_HELIPAD) {
+      obj_move(player, R_HELICOPTER);
+      current_room = R_HELICOPTER;
+      perform_first_look();
+      return true;
+    } else {
+      tellf("You're in it!\n");
+      return true;
+    }
+  }
+  if (verb == V_EXIT || verb == V_DROP || verb == V_DISEMBARK) {
+    if (current_room == R_HELICOPTER) {
+      obj_move(player, R_HELIPAD);
+      current_room = R_HELIPAD;
+      perform_first_look();
+      return true;
+    } else {
+      tellf("You're not in it!\n");
+      return true;
+    }
+  }
+  if (verb == V_FLY) {
+    if (current_room == R_HELICOPTER) {
+      tellf("The controls seem to be locked.\n");
+    } else {
+      tellf("You're not even in it!\n");
+    }
+    return true;
+  }
+  return false;
+}
+
+bool fence_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("The fence is about chest-high and completely surrounds the helipad.\n");
+    return true;
+  }
+  if (verb == V_CLIMB_UP || verb == V_CLIMB_ON || verb == V_CLIMB_FOO) {
+    tellf("The wind is far too strong to attempt that.\n");
+    return true;
+  }
+  return false;
+}
+
+bool lock_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("The lock is built into the control panel.\n");
+    return true;
+  }
+  return false;
+}
+
+bool cables_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("Thick cables snake up from the consoles into the ceiling above.\n");
+    return true;
+  }
+  return false;
+}
+
+bool enunciator_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    if (game_state.comm_fixed || game_state.comm_shutdown) {
+      tellf("All the lights on the enunciator panel are dark.\n");
+    } else {
+      const char *color = get_color_name(game_state.chemical_required);
+      tellf("A %s light is flashing on the enunciator panel.\n", color);
+    }
+    return true;
+  }
+  return false;
+}
+
+bool playback_button_f(int verb) {
+  if (verb == V_PUSH) {
+    tellf("A voice fills the room ... the voice of the Feinstein's communications\n"
+          "officer! \"Stellar Patrol Ship Feinstein to planetside ... Please respond\n"
+          "on frequency 48.5 ... SPS Feinstein to planetside ... Please come in ...\"\n"
+          "After a pause you hear the officer, in a quieter voice, say \"Admiral, no\n"
+          "response on any of the standard frequen...\" The sentence is cut short by the\n"
+          "sound of an explosion and a loud burst of static, followed by silence.\n");
+    return true;
+  }
+  return false;
+}
+
+bool chemical_fluid_f(int verb) {
+  if (verb == V_EAT) {
+    jigs_up("Mmmmm....that tasted just like delicious poisonous chemicals!");
+    return true;
+  }
+  if (verb == V_PUT || verb == V_POUR) {
+    if (!obj_in(O_FLASK, player)) {
+      tellf("You're not holding the flask.\n");
+      return true;
+    }
+    ZObjectID prsi = current_cmd.prsi;
+    obj_remove(O_CHEMICAL_FLUID);
+    if (prsi == O_FUNNEL_HOLE) {
+      if (game_state.chemical_flag == game_state.chemical_required) {
+        game_state.comm_fixed = true;
+        game_state.score += 6;
+        game_state.chemical_required = 10;
+        tellf("The liquid disappears into the hole. The lights on the enunciator\n"
+              "panel blink rapidly and then go dark. The coolant system warning light goes off, and another\n"
+              "flashes, indicating that the help message is now being sent.\n");
+      } else {
+        game_state.comm_shutdown = true;
+        tellf("An alarm sounds briefly, and a sign flashes \"Kuulint Sistum Imbalins Kritikul -- Shuteeng Down Awl Sistumz.\"\n"
+              "A moment later, the lights in the room dim and the send console shuts down.\n");
+      }
+      return true;
+    } else {
+      tellf("The chemical pours all over the %s, making quite a mess.\n",
+            (prsi != NOTHING) ? objects[prsi].description : "floor");
+      return true;
+    }
+  }
+  return false;
+}
+
+void i_unenter(void) {
+  if (current_room != R_COMM_ROOM) {
+    game_state.just_entered = true;
+    dequeue_event(EVT_UNENTER);
+  }
+}
+
+bool comm_room_f(int arg) {
+  if (arg == M_LOOK) {
+    tellf("This is a small room with no windows. The sole exit is southwest. Two wide\n"
+          "consoles fill either end of the room; thick cables lead up into the ceiling.\n\n"
+          "The console on the left side of the room is labelled \"Reeseev Staashun.\" A\n"
+          "bright red light, labelled \"Tranzmishun Reeseevd\", is blinking rapidly.\n"
+          "Next to the light is a glowing button marked \"Mesij Plaabak.\"\n\n"
+          "The console on the right side of the room is labelled \"Send Staashun.\" A\n"
+          "screen on the console displays a message. Next to the screen is a flashing\n"
+          "sign which says ");
+    if (game_state.comm_shutdown) {
+      tellf("\"Kuulint Sistum Imbalins Kritikul -- Shuteeng Down Awl Sistumz.\"");
+    } else if (game_state.comm_fixed) {
+      tellf("\"Tranzmishun in pragres.\"");
+    } else {
+      tellf("\"Malfunkshun in Sendeeng Kuulint Sistum.\"");
+    }
+    tellf(" Next to this console is an enunciator");
+    if (game_state.comm_fixed || game_state.comm_shutdown) {
+      tellf(" whose lights are all dark");
+    }
+    tellf(".\nOn the console next to the enunciator panel is a funnel-shaped hole\n"
+          "labelled \"Kuulint Sistum Manyuuwul Oovuriid.\"\n");
+    return true;
+  }
+  if (arg == M_END) {
+    if (!game_state.comm_fixed && !game_state.comm_shutdown && game_state.just_entered) {
+      queue_event(EVT_UNENTER, -1);
+      game_state.just_entered = false;
+      const char *color = get_color_name(game_state.chemical_required);
+      tellf("A %s colored light is flashing on the enunciator panel.\n", color);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool kalamontee_platform_f(int arg) {
+  if (arg == M_LOOK) {
+    tellf("This is a wide, flat strip of concrete which continues westward. "
+          "Open shuttle cars lie on the north and south sides of the platform. "
+          "A faded sign on the wall reads \"Shutul Platform -- Kalamontee Staashun.\"\n");
+    return true;
+  }
+  return false;
+}

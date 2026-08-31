@@ -123,6 +123,9 @@ typedef struct {
   bool lower_elevator_on;
   bool elevator_in_transit;
   int chemical_flag;
+  int chemical_required;
+  bool comm_shutdown;
+  bool just_entered;
   bool defense_fixed;
   bool course_control_fixed;
   bool comm_fixed;

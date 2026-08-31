@@ -1679,6 +1679,9 @@ void init_complexone() {
   r = &objects[R_TOWER_CORE];
   r->id = R_TOWER_CORE;
   r->description = "Tower Core";
+  r->synonyms[0] = "core";
+  r->synonyms[1] = "tower";
+  r->adjectives[0] = "tower";
   r->long_description = "This is a small, circular room. A sliding door leads "
                         "north, and a spiral\n"
                         "staircase heads upwards. Other exits lie to the "
@@ -1697,20 +1700,27 @@ void init_complexone() {
   r = &objects[R_HELIPAD];
   r->id = R_HELIPAD;
   r->description = "Helipad";
+  r->synonyms[0] = "helipad";
   r->long_description =
       "You are at the center of a wide, flat area atop the tower. A fence\n"
-      "prevents you from approaching the perimeter, so your view is limited "
-      "to\n"
-      "cloud-filled sky. A large vehicle, severely weathered and topped with "
-      "rotor\n"
-      "blades, lies nearby. A spiral staircase leads down into the tower.";
+      "prevents you from approaching the perimeter, so your view is limited to\n"
+      "cloud-filled sky. A large vehicle, severely weathered and topped with\n"
+      "rotor blades, lies nearby. A spiral staircase leads down into the tower.";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->down = R_TOWER_CORE;
   r->in = R_HELICOPTER;
-  // Globals: STAIRS, HELICOPTER-OBJECT
   r->globals[0] = O_STAIRS;
   r->globals[1] = O_HELICOPTER_OBJECT;
+  r->globals[2] = O_FENCE_PSEUDO;
+
   // Pseudo: FENCE
+  o = &objects[O_FENCE_PSEUDO];
+  o->id = O_FENCE_PSEUDO;
+  o->description = "fence";
+  o->synonyms[0] = "fence";
+  o->flags = F_NDESCBIT;
+  o->action = fence_pseudo_action;
+  obj_move(O_FENCE_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // O_HELICOPTER_OBJECT
   o = &objects[O_HELICOPTER_OBJECT];
@@ -1720,67 +1730,87 @@ void init_complexone() {
   o->synonyms[1] = "helicopter";
   o->adjectives[0] = "large";
   o->flags = F_VEHBIT | F_NDESCBIT;
+  o->action = helicopter_object_f;
   obj_move(O_HELICOPTER_OBJECT, OBJ_LOCAL_GLOBALS);
 
   // R_HELICOPTER
   r = &objects[R_HELICOPTER];
   r->id = R_HELICOPTER;
   r->description = "Helicopter";
+  r->synonyms[0] = "helicopter";
+  r->synonyms[1] = "vehicle";
   r->long_description =
-      "This is a large vehicle with a lot of cargo space. A complex control "
-      "panel\n"
-      "is closed and locked. Everything is covered with a thick layer of "
-      "rust.\n"
-      "Through the windows of the vehicle you can see a wide Helipad, and "
-      "beyond\n"
+      "This is a large vehicle with a lot of cargo space. A complex control panel\n"
+      "is closed and locked. Everything is covered with a thick layer of rust.\n"
+      "Through the windows of the vehicle you can see a wide Helipad, and beyond\n"
       "that, endless ocean far below. Several doors lead out to the Helipad.";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->out = R_HELIPAD;
-  // Globals: OCEAN, CONTROLS, WINDOW, HELICOPTER-OBJECT
   r->globals[0] = O_OCEAN;
   r->globals[1] = O_CONTROLS;
   r->globals[2] = O_WINDOW;
   r->globals[3] = O_HELICOPTER_OBJECT;
+  r->globals[4] = O_LOCK_PSEUDO;
+
   // Pseudo: LOCK
+  o = &objects[O_LOCK_PSEUDO];
+  o->id = O_LOCK_PSEUDO;
+  o->description = "lock";
+  o->synonyms[0] = "lock";
+  o->flags = F_NDESCBIT;
+  o->action = lock_pseudo_action;
+  obj_move(O_LOCK_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // R_COMM_ROOM
   r = &objects[R_COMM_ROOM];
   r->id = R_COMM_ROOM;
   r->description = "Comm Room";
+  r->synonyms[0] = "room";
+  r->adjectives[0] = "comm";
   r->long_description =
-      "This is a small room with no windows. The sole exit is southwest. Two "
-      "wide\n"
-      "consoles fill either end of the room; thick cables lead up into the "
-      "ceiling.\n"
-      "\n"
-      "The console on the left side of the room is labelled \"Reeseev "
-      "Staashun.\" A\n"
-      "bright red light, labelled \"Tranzmishun Reeseevd\", is blinking "
-      "rapidly.\n"
-      "Next to the light is a glowing button marked \"Mesij Plaabak.\"\n"
-      "\n"
-      "The console on the right side of the room is labelled \"Send "
-      "Staashun.\" "
-      "A\n"
-      "screen on the console displays a message. Next to the screen is a "
-      "flashing\n"
-      "sign which says \"Malfunkshun in Sendeeng Kuulint Sistum.\" Next to "
-      "this console is an enunciator\n"
-      "whose lights are all dark. On the console next to the enunciator panel "
-      "is a funnel-shaped hole\n"
+      "This is a small room with no windows. The sole exit is southwest. Two wide\n"
+      "consoles fill either end of the room; thick cables lead up into the ceiling.\n\n"
+      "The console on the left side of the room is labelled \"Reeseev Staashun.\" A\n"
+      "bright red light, labelled \"Tranzmishun Reeseevd\", is blinking rapidly.\n"
+      "Next to the light is a glowing button marked \"Mesij Plaabak.\"\n\n"
+      "The console on the right side of the room is labelled \"Send Staashun.\" A\n"
+      "screen on the console displays a message. Next to the screen is a flashing\n"
+      "sign which says \"Malfunkshun in Sendeeng Kuulint Sistum.\" Next to this console is an enunciator\n"
+      "whose lights are all dark. On the console next to the enunciator panel is a funnel-shaped hole\n"
       "labelled \"Kuulint Sistum Manyuuwul Oovuriid.\"";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->sw = R_TOWER_CORE;
-  // Globals: LIGHTS
   r->globals[0] = O_LIGHTS;
-  // Pseudo: CABLES, ENUNCIATOR
+  r->globals[1] = O_CABLES_PSEUDO;
+  r->globals[2] = O_ENUNCIATOR_PSEUDO;
+  r->action = comm_room_f;
+
+  // Pseudo: CABLES
+  o = &objects[O_CABLES_PSEUDO];
+  o->id = O_CABLES_PSEUDO;
+  o->description = "cables";
+  o->synonyms[0] = "cables";
+  o->synonyms[1] = "cable";
+  o->flags = F_NDESCBIT;
+  o->action = cables_pseudo_action;
+  obj_move(O_CABLES_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  // Pseudo: ENUNCIATOR
+  o = &objects[O_ENUNCIATOR_PSEUDO];
+  o->id = O_ENUNCIATOR_PSEUDO;
+  o->description = "enunciator panel";
+  o->synonyms[0] = "panel";
+  o->synonyms[1] = "enunciator";
+  o->flags = F_NDESCBIT;
+  o->action = enunciator_pseudo_action;
+  obj_move(O_ENUNCIATOR_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // O_RECEIVE_CONSOLE
   o = &objects[O_RECEIVE_CONSOLE];
   o->id = O_RECEIVE_CONSOLE;
   o->description = "communications receive console";
   o->synonyms[0] = "console";
-  o->synonyms[1] = "control"; // "CONTRO"
+  o->synonyms[1] = "control";
   o->adjectives[0] = "communications";
   o->adjectives[1] = "receive";
   o->adjectives[2] = "left";
@@ -1794,8 +1824,9 @@ void init_complexone() {
   o->description = "glowing button";
   o->synonyms[0] = "button";
   o->adjectives[0] = "glowing";
-  o->adjectives[1] = "playback"; // "PLAYBA"
+  o->adjectives[1] = "playback";
   o->flags = F_NDESCBIT;
+  o->action = playback_button_f;
   obj_move(O_PLAYBACK_BUTTON, R_COMM_ROOM);
 
   // O_SEND_CONSOLE
@@ -1819,10 +1850,8 @@ void init_complexone() {
   o->synonyms[1] = "communications";
   o->synonyms[2] = "message";
   o->flags = F_NDESCBIT | F_READBIT;
-  o->text = "\"Tuu enee ship uv xe Sekund Galaktik Yuunyun: Planitwiid plaag "
-            "haz struk\n"
-            "entiir popyuulaashun. Tiim iz kritikul. Eemurjensee asistins "
-            "reekwestid.\n"
+  o->text = "\"Tuu enee ship uv xe Sekund Galaktik Yuunyun: Planitwiid plaag has struk\n"
+            "entiir popyuulaashun. Tiim iz kritikul. Eemurjensee asistins reekwestid.\n"
             "<reepeet mesij>\"";
   obj_move(O_COMM_SCREEN, R_COMM_ROOM);
 
@@ -1847,23 +1876,20 @@ void init_complexone() {
   o->adjectives[0] = "milky";
   o->adjectives[1] = "white";
   o->adjectives[2] = "chemical";
-  // Location undefined initially (~ NIL)
+  o->action = chemical_fluid_f;
 
   // R_OBSERVATION_DECK
   r = &objects[R_OBSERVATION_DECK];
   r->id = R_OBSERVATION_DECK;
   r->description = "Observation Deck";
+  r->synonyms[0] = "deck";
+  r->adjectives[0] = "observation";
   r->long_description =
-      "This is a balcony girdling the tower. The view is breathtaking; the "
-      "tower\n"
-      "must be half a kilometer tall. From here it is clear that you are on "
-      "an\n"
-      "island. The dormitory section of the complex is visible on the other "
-      "side\n"
-      "of the island, and the rest of the complex sprawls out directly below. "
-      "In\n"
-      "the distance, about 20 kilometers to the east, you can spot another "
-      "island\n"
+      "This is a balcony girdling the tower. The view is breathtaking; the tower\n"
+      "must be half a kilometer tall. From here it is clear that you are on an\n"
+      "island. The dormitory section of the complex is visible on the other side\n"
+      "of the island, and the rest of the complex sprawls out directly below. In\n"
+      "the distance, about 20 kilometers to the east, you can spot another island\n"
       "similar to this one. The only exit is a doorway leading northeast.";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->ne = R_TOWER_CORE;
@@ -1873,26 +1899,29 @@ void init_complexone() {
   r = &objects[R_WAITING_AREA];
   r->id = R_WAITING_AREA;
   r->description = "Waiting Area";
+  r->synonyms[0] = "area";
+  r->adjectives[0] = "waiting";
   r->long_description =
-      "This is a concrete platform sparsely furnished with benches. The "
-      "platform\n"
+      "This is a concrete platform sparsely furnished with benches. The platform\n"
       "continues to the east, and to the south is a metal door.";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->east = R_KALAMONTEE_PLATFORM;
-  r->south = R_LOWER_ELEVATOR; // Guarded by OTHER-ELEVATOR-ENTER-F
+  r->south = R_LOWER_ELEVATOR;
   r->in = R_LOWER_ELEVATOR;
   r->globals[0] = O_LOWER_ELEVATOR_DOOR;
-  // Pseudo: BENCH
+  r->globals[1] = O_BENCH_PSEUDO;
 
   // R_KALAMONTEE_PLATFORM
   r = &objects[R_KALAMONTEE_PLATFORM];
   r->id = R_KALAMONTEE_PLATFORM;
   r->description = "Kalamontee Platform";
-  r->long_description = "This is a wide, flat strip of concrete which "
-                        "continues westward."; // Dynamic
+  r->synonyms[0] = "platform";
+  r->adjectives[0] = "kalamontee";
+  r->long_description =
+      "This is a wide, flat strip of concrete which continues westward.";
   r->flags = F_RLANDBIT | F_ONBIT;
   r->value = 4;
   r->west = R_WAITING_AREA;
-  // South/North -> Shuttle Enter
   r->globals[0] = O_GLOBAL_SHUTTLE;
+  r->action = kalamontee_platform_f;
 }

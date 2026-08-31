@@ -24,6 +24,7 @@ void i_upper_elevator_trip() {}
 void i_lower_elevator_trip() {}
 void i_turnoff_upper_elevator() {}
 void i_turnoff_lower_elevator() {}
+void i_unenter() {}
 
 void test_events() {
     printf("Testing Event Queue...\n");

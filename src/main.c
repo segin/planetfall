@@ -535,8 +535,7 @@ int main(int argc, char **argv) {
         tellf("You can't walk there.\n");
         break;
       }
-      if (dest != NOTHING)
-        perform_walk_dir(dest);
+      perform_walk_dir(dest);
       break;
     }
     case V_INVENTORY:
