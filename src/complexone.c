@@ -1,4 +1,5 @@
 #include "complexone.h"
+#include "complexone_actions.h"
 #include "feinstein.h"
 #include "planetfall.h"
 #include <stdio.h>
@@ -15,6 +16,7 @@ void init_complexone() {
   r = &objects[R_UNDERWATER];
   r->id = R_UNDERWATER;
   r->description = "Underwater";
+  r->synonyms[0] = "underwater";
   r->long_description =
       "You are momentarily disoriented as you enter the turbulent waters.\n"
       "Currents buffet you against the sharp rocks of an underwater\n"
@@ -26,9 +28,14 @@ void init_complexone() {
   r->west = R_UNDERWATER;
   r->north = R_UNDERWATER;
   r->south = R_UNDERWATER;
+  r->action = underwater_f;
 
   // R_CRAG (Update)
   r = &objects[R_CRAG];
+  r->id = R_CRAG;
+  r->description = "Crag";
+  r->synonyms[0] = "crag";
+  r->flags = F_ONBIT | F_RLANDBIT;
   r->long_description = "You have reached a cleft in the cliff wall where the "
                         "island rises from the\n"
                         "water. The edge of the cleft displays recently "
@@ -41,7 +48,8 @@ void init_complexone() {
                         "Ensign Seventh Class could\n"
                         "probably climb up to it.";
   r->down = R_UNDERWATER;
-  // Up is Balcony (already set in feinstein.c)
+  r->up = R_BALCONY;
+  r->action = crag_f;
   // In is Escape Pod (already set)
 
   // Pseudo Objects for Crag
@@ -50,6 +58,7 @@ void init_complexone() {
   o->description = "structure";
   o->synonyms[0] = "structure";
   o->flags = F_NDESCBIT;
+  o->action = structure_pseudo_action;
   obj_move(O_STRUCTURE_PSEUDO, R_CRAG);
 
   o = &objects[O_CLEFT_PSEUDO];
@@ -57,11 +66,15 @@ void init_complexone() {
   o->description = "cleft";
   o->synonyms[0] = "cleft";
   o->flags = F_NDESCBIT;
+  o->action = cleft_pseudo_action;
   obj_move(O_CLEFT_PSEUDO, R_CRAG);
 
   // R_BALCONY (Update)
   r = &objects[R_BALCONY];
-  // Description logic handled in look routine, here default long desc
+  r->id = R_BALCONY;
+  r->description = "Balcony";
+  r->synonyms[0] = "balcony";
+  r->flags = F_ONBIT | F_RLANDBIT;
   r->long_description =
       "This is an octagonal room, half carved into and half built out from the "
       "cliff\n"
@@ -73,8 +86,9 @@ void init_complexone() {
       "Galalingua. A steep stairway, roughly cut into the face of the cliff, "
       "leads\n"
       "upward.";
-  // Dynamic Down: Need logic. For now default to Crag (Day 1).
   r->down = R_CRAG;
+  r->up = R_WINDING_STAIR;
+  r->action = balcony_f;
 
   // Pseudo Objects for Balcony
   o = &objects[O_PLAQUE_PSEUDO];
@@ -82,6 +96,7 @@ void init_complexone() {
   o->description = "metal plaque";
   o->synonyms[0] = "plaque";
   o->flags = F_NDESCBIT | F_READBIT;
+  o->action = plaque_pseudo_action;
   o->text = "\nSEENIK VISTA\n\n"
             "Xis stuneeng vuu uf xee Kalamontee Valee kuvurz oovur fortee "
             "skwaar miilz\n"
@@ -92,13 +107,23 @@ void init_complexone() {
 
   // R_WINDING_STAIR (Update)
   r = &objects[R_WINDING_STAIR];
+  r->id = R_WINDING_STAIR;
+  r->description = "Winding Stair";
+  r->synonyms[0] = "stair";
+  r->synonyms[1] = "stairway";
+  r->flags = F_ONBIT | F_RLANDBIT;
   r->long_description =
       "The middle of a long, steep stairway carved into the face of a cliff.";
-  // Up to Courtyard (already set)
-  // Down to Balcony (already set)
+  r->down = R_BALCONY;
+  r->up = R_COURTYARD;
+  r->action = winding_stair_f;
 
   // R_COURTYARD (Update)
   r = &objects[R_COURTYARD];
+  r->id = R_COURTYARD;
+  r->description = "Courtyard";
+  r->synonyms[0] = "courtyard";
+  r->flags = F_ONBIT | F_RLANDBIT | F_FLOYDBIT;
   r->long_description =
       "You are in the courtyard of an ancient stone edifice, vaguely "
       "reminiscent of\n"
@@ -110,6 +135,7 @@ void init_complexone() {
   r->down = R_WINDING_STAIR;
   r->west = R_WEST_WING;
   r->north = R_PLAIN_HALL;
+  r->action = courtyard_f;
 
   // Pseudo Objects for Courtyard
   o = &objects[O_CASTLE_PSEUDO];
@@ -120,6 +146,7 @@ void init_complexone() {
   o->synonyms[1] = "edifice";
   o->synonyms[2] = "ruin";
   o->flags = F_NDESCBIT;
+  o->action = castle_pseudo_action;
   obj_move(O_CASTLE_PSEUDO, R_COURTYARD);
 
   o = &objects[O_RUBBLE_PSEUDO];
@@ -128,12 +155,15 @@ void init_complexone() {
   o->long_description = "Don't be silly.";
   o->synonyms[0] = "rubble";
   o->flags = F_NDESCBIT;
+  o->action = rubble_pseudo_action;
   obj_move(O_RUBBLE_PSEUDO, R_COURTYARD);
 
   // R_WEST_WING
   r = &objects[R_WEST_WING];
   r->id = R_WEST_WING;
   r->description = "West Wing";
+  r->synonyms[0] = "wing";
+  r->adjectives[0] = "west";
   r->long_description = "This was once the west wing of the castle, but the "
                         "walls are now mostly\n"
                         "rubble, allowing a view of the cliff and ocean below. "
@@ -167,6 +197,8 @@ void init_complexone() {
   r = &objects[R_PLAIN_HALL];
   r->id = R_PLAIN_HALL;
   r->description = "Plain Hall";
+  r->synonyms[0] = "hall";
+  r->adjectives[0] = "plain";
   r->long_description =
       "This is a featureless hall leading north and south. Although the "
       "hallway is\n"

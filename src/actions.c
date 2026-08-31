@@ -1,4 +1,5 @@
 #include "actions.h"
+#include "complexone_actions.h"
 #include "events.h"
 #include "output.h"
 #include "parser.h"
@@ -417,6 +418,28 @@ void perform_examine(ZObjectID obj) {
   } else {
     tellf("I see nothing special about the %s.\n", objects[obj].description);
   }
+}
+
+bool pre_read(ZObjectID prso) {
+  if (!is_lit(current_room)) {
+    tellf("It is impossible to read in the dark.\n");
+    return false;
+  }
+  return true;
+}
+
+void perform_read(ZObjectID obj) {
+  if (!pre_read(obj))
+    return;
+  if (obj != NOTHING && objects[obj].action && objects[obj].action(V_READ))
+    return;
+  if (!obj_has_flag(obj, F_READBIT) || objects[obj].text == NULL) {
+    const char *art = obj_has_flag(obj, F_VOWELBIT) ? "an" : "a";
+    tellf("How can I read %s %s?\n", art, objects[obj].description);
+    return;
+  }
+  game_state.c_elapsed = 18;
+  tellf("%s\n", objects[obj].text);
 }
 
 bool is_lit(ZObjectID room) {
@@ -862,6 +885,20 @@ void perform_walk_to(ZObjectID obj) {
 }
 
 void perform_walk(ZObjectID dest) {
+  if (current_room == R_WEST_WING && dest == R_CERTAIN_DEATH_MSG) {
+    tellf("Certain death.\n");
+    return;
+  }
+  if (current_room == R_BALCONY && dest == R_CRAG) {
+    dest = water_level_f();
+  } else if (current_room == R_WINDING_STAIR && dest == R_BALCONY) {
+    dest = water_level_f();
+  } else if (current_room == R_COURTYARD && dest == R_WINDING_STAIR) {
+    if (game_state.day >= 6) {
+      dest = water_level_f();
+    }
+  }
+
   if (dest == NOTHING || dest <= 0) {
     if (!is_lit(current_room) && (rand() % 100) < 75) {
       jigs_up("Oh, no! You have walked into the slavering fangs of a lurking grue!");
@@ -869,6 +906,9 @@ void perform_walk(ZObjectID dest) {
     }
     tellf("You can't go that way.\n");
     return;
+  }
+  if (objects[dest].action) {
+    objects[dest].action(M_ENTER);
   }
   obj_move(player, dest);
   current_room = dest;
@@ -980,6 +1020,9 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return true;
   case V_EXAMINE:
     perform_examine(prso);
+    return true;
+  case V_READ:
+    perform_read(prso);
     return true;
   default:
     break;

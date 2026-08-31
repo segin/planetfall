@@ -24,10 +24,18 @@ bool kalamontee_platform_f(int arg);
 bool comm_room_f(int arg);
 bool systems_monitors_f(int arg);
 
-// Object Actions
+// Navigation & Water level
+ZObjectID water_level_f(void);
+
+// Object / Pseudo Actions
 bool chemical_dispenser_f(int arg);
 bool chem_button_f(int arg);
 bool floyd_f(int arg);
+bool structure_pseudo_action(int arg);
+bool cleft_pseudo_action(int arg);
+bool plaque_pseudo_action(int arg);
+bool castle_pseudo_action(int arg);
+bool rubble_pseudo_action(int arg);
 // Add more as needed
 
 #endif

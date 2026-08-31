@@ -188,6 +188,8 @@ bool describe_room(bool look);
 bool describe_objects(bool look);
 bool pre_examine(ZObjectID obj);
 void perform_examine(ZObjectID obj);
+bool pre_read(ZObjectID obj);
+void perform_read(ZObjectID obj);
 void perform_look_inside(ZObjectID obj);
 void perform_look();
 void perform_first_look();

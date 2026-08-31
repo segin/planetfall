@@ -55,6 +55,11 @@ run_test "Test 22: DROP and TAKE" "DROP BRUSH\nTAKE BRUSH\nQUIT\nY" "Dropped.*Ta
 run_test "Test 23: PUT" "PUT BRUSH IN UNIFORM\nQUIT\nY" "Done" "PUT works" "PUT"
 run_test "Test 24: THROW" "THROW BRUSH\nQUIT\nY" "Thrown" "THROW works" "THROW"
 run_test "Test 25: SLIDE" "SLIDE BRUSH WITH UNIFORM\nQUIT\nY" "Fat chance|valiant attempt|can't be serious|bloody likely|interesting idea|concept" "SLIDE works" "SLIDE"
+run_test "Test 26: CRAG and STRUCTURE pseudo" "TELEPORT CRAG\nEXAMINE STRUCTURE\nQUIT\nY" "climbed up to it" "Structure pseudo examine works" "STRUCTURE pseudo"
+run_test "Test 27: BALCONY and PLAQUE" "TELEPORT BALCONY\nREAD PLAQUE\nQUIT\nY" "SEENIK VISTA" "Plaque reading works" "PLAQUE pseudo"
+run_test "Test 28: COURTYARD and CASTLE" "TELEPORT COURTYARD\nEXAMINE CASTLE\nQUIT\nY" "ancient and crumbling" "Castle pseudo examine works" "CASTLE pseudo"
+run_test "Test 29: WEST WING and refusal" "TELEPORT WING\nDOWN\nQUIT\nY" "Certain death" "West Wing down refusal works" "WEST WING DOWN"
+run_test "Test 30: UNDERWATER drowning" "TELEPORT UNDERWATER\nWAIT\nWAIT\nQUIT\n" "mighty undertow" "Underwater drowning works" "UNDERWATER drowning"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

@@ -563,11 +563,12 @@ int main(int argc, char **argv) {
       break;
     }
 
-    if (current_room == R_UNDERWATER) {
-      tellf("\nA mighty undertow drags you across some underwater "
-            "obstructions.\n");
-      tellf("**** You have died ****\n");
-      game_running = false;
+    if (objects[current_room].action) {
+      objects[current_room].action(M_END);
+    }
+
+    if (!game_running) {
+      break;
     }
 
     update_status_bar();

@@ -103,6 +103,70 @@ bool courtyard_f(int arg) {
   return false;
 }
 
+ZObjectID water_level_f(void) {
+  if (current_room == R_BALCONY) {
+    return (game_state.day == 1) ? R_CRAG : R_UNDERWATER;
+  }
+  if (current_room == R_WINDING_STAIR) {
+    return (game_state.day < 4) ? R_BALCONY : R_UNDERWATER;
+  }
+  if (current_room == R_COURTYARD) {
+    return (game_state.day < 6) ? R_WINDING_STAIR : R_UNDERWATER;
+  }
+  return NOTHING;
+}
+
+bool structure_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("You'd be able to tell more about it if you climbed up to it.\n");
+    return true;
+  }
+  if (verb == V_CLIMB_UP || verb == V_CLIMB_FOO || verb == V_CLIMB_ON) {
+    perform_walk(objects[current_room].up);
+    return true;
+  }
+  return false;
+}
+
+bool cleft_pseudo_action(int verb) {
+  if (verb == V_CLIMB_UP || verb == V_CLIMB_FOO || verb == V_CLIMB_ON) {
+    perform_walk(objects[current_room].up);
+    return true;
+  }
+  return false;
+}
+
+bool plaque_pseudo_action(int verb) {
+  if (verb == V_READ || verb == V_EXAMINE) {
+    tellf("\nSEENIK VISTA\n\n"
+          "Xis stuneeng vuu uf xee Kalamontee Valee kuvurz oovur fortee skwaar miilz\n"
+          "uf xat faamus tuurist spot. Xee larj bildeeng at xee bend in xee Gulmaan Rivur\n"
+          "iz xee formur pravincul kapitul bildeeng.\n");
+    return true;
+  }
+  return false;
+}
+
+bool castle_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("The castle is ancient and crumbling.\n");
+    return true;
+  }
+  return false;
+}
+
+bool rubble_pseudo_action(int verb) {
+  if (verb == V_MOVE) {
+    perform_slide();
+    return true;
+  }
+  if (verb == V_EXAMINE) {
+    tellf("Don't be silly.\n");
+    return true;
+  }
+  return false;
+}
+
 #include "parser.h"
 
 // Helper macros

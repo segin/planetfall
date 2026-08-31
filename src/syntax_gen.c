@@ -273,7 +273,7 @@ VocabEntry vocab_table[] = {
     {"teleport", VOCAB_VERB, NULL},
     {"scold", VOCAB_VERB, NULL},
 };
-int vocab_table_size = 271;
+int vocab_table_size = sizeof(vocab_table) / sizeof(vocab_table[0]);
 
 SyntaxEntry syntax_table[] = {
     {"brief", NULL, NULL, 0, 0, 0, 0, 0, 0, 0, 0, V_BRIEF},
@@ -478,7 +478,7 @@ SyntaxEntry syntax_table[] = {
     {"rape", NULL, NULL, 1, 0, 0, 0, 0, 0, F_ACTORBIT, 0, V_RAPE},
     {"reach", "in", NULL, 1, 0, 1, 0, 0, 0, F_CONTBIT, 0, V_REACH},
     {"reach", "for", NULL, 1, 0, 1, 0, 0, 0, 0, 0, V_REACH_FOR},
-    {"read", NULL, NULL, 1, 0, 0, 0, PARSE_TRY_TAKE, 0, F_READBIT, 0, V_READ},
+    {"read", NULL, NULL, 1, 0, 0, 0, SEARCH_HELD | SEARCH_GROUND | SEARCH_ROOM, 0, F_READBIT, 0, V_READ},
     {"rub", NULL, NULL, 1, 0, 0, 0, 0, 0, 0, 0, V_RUB},
     {"rub", "with", NULL, 1, 1, 2, 0, 0, PARSE_TRY_TAKE, 0, 0, V_ZATTRACT},
     {"rub", "to", NULL, 1, 1, 2, 0, PARSE_TRY_TAKE, 0, 0, 0, V_ATTRACT},
@@ -630,4 +630,4 @@ SyntaxEntry syntax_table[] = {
     {"teleport", NULL, NULL, 1, 0, 0, 0, SEARCH_ALL, 0, 0, 0, V_TELEPORT},
     {"scold", NULL, NULL, 1, 0, 0, 0, 0, 0, F_ACTORBIT, 0, V_SCOLD},
 };
-int syntax_table_size = 254;
+int syntax_table_size = sizeof(syntax_table) / sizeof(syntax_table[0]);
