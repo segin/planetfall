@@ -156,6 +156,11 @@ typedef struct {
   bool lab_flooded;
   int nuked_counter;
   bool uniform_opened;
+  bool floyd_follow;      // is Floyd currently tagging along?
+  bool floyd_introduced;  // has he introduced himself yet?
+  bool floyd_spoke;       // did he already say something this turn?
+  bool floyd_reactivated; // has he ever been switched on?
+  bool achilles_flag;     // has he told you about Achilles?
   bool floyd_waiting;
   int waiting_counter;
   bool floyd_gave_up;

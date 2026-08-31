@@ -51,6 +51,7 @@ void i_lower_elevator_trip();
 void i_turnoff_upper_elevator();
 void i_turnoff_lower_elevator();
 void i_unenter();
+void i_floyd(void);
 
 bool run_events() {
     for (int i = 0; i < MAX_EVENTS; i++) {
@@ -92,6 +93,7 @@ bool run_events() {
                 case EVT_TURNOFF_UPPER_ELEVATOR: i_turnoff_upper_elevator(); break;
                 case EVT_TURNOFF_LOWER_ELEVATOR: i_turnoff_lower_elevator(); break;
                 case EVT_UNENTER: i_unenter(); break;
+                case EVT_FLOYD: i_floyd(); break;
                 default: break;
             }
         }

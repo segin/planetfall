@@ -24,6 +24,7 @@ typedef enum {
     EVT_TURNOFF_UPPER_ELEVATOR,
     EVT_TURNOFF_LOWER_ELEVATOR,
     EVT_UNENTER,
+    EVT_FLOYD,
     // Add others as needed
     MAX_EVENTS
 } EventID;

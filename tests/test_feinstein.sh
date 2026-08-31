@@ -225,6 +225,19 @@ run_test "Test 75: Celery cannot be taken" "${WAIT_14}TAKE CELERY\nQUIT\nY" "lac
 run_test "Test 76: Eating the celery is fatal" "${WAIT_14}EAT CELERY\nQUIT\nY" "convulsions" "Eating celery kills you" "Celery eat"
 run_test "Test 77: Slime responds to the senses" "${WAIT_14}EXAMINE SLIME\nQUIT\nY" "didn't step in it" "Slime pseudo-object works" "Slime"
 
+# --- Floyd (I-FLOYD / FLOYD-COMES-ALIVE / KLUDGE) ---------------------------
+FLOYD_ON="TELEPORT ROBOT SHOP\nTURN ON FLOYD\n"
+FLOYD_WAIT=$(printf 'WAIT\\n%.0s' $(seq 1 40))
+
+run_test "Test 112: Floyd comes alive" "${FLOYD_ON}QUIT\nY" "I'm B-19-7" "FLOYD-COMES-ALIVE works" "Floyd activation"
+run_test "Test 113: Floyd notices what you carry" "${FLOYD_ON}QUIT\nY" "That's a nice .* you are having there" "Floyd remarks on a carried object" "Floyd carried object"
+run_test "Test 114: Turning Floyd on twice" "${FLOYD_ON}TURN ON FLOYD\nQUIT\nY" "already been activated" "Second activation is refused" "Floyd reactivation"
+run_test "Test 115: Floyd follows you" "${FLOYD_ON}WEST\nWAIT\nQUIT\nY" "Floyd follows you" "Floyd follows between rooms" "Floyd follow"
+run_test "Test 116: Floyd chatters" "${FLOYD_ON}${FLOYD_WAIT}QUIT\nY" "paces impatiently|digits of pi|Dr. Fizpick|bruised his knee|Hucka-Bucka-Beanstalk|signs of rust|totally out of key|batteries failing|whistles tunelessly|looks bored" "FLOYDISMS fire" "Floyd chatter"
+run_test "Test 117: Floyd wanders off" "${FLOYD_ON}${FLOYD_WAIT}QUIT\nY" "going exploring" "Floyd leaves FLOYDBIT rooms" "Floyd exploring"
+run_test "Test 118: Floyd on Achilles" "${FLOYD_ON}TELEPORT REPAIR ROOM\nWAIT\nWAIT\nQUIT\nY" "they named him Achilles" "KLUDGE fires in the Repair Room" "Floyd Achilles"
+run_test "Test 119: Shaking hands with Floyd" "${FLOYD_ON}SHAKE HANDS\nQUIT\nY" "grasping extensions" "HANDS-F recognises an active Floyd" "Floyd handshake"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"

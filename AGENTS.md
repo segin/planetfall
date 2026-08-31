@@ -22,6 +22,16 @@ with the original, modulo catalogued Release 1 wording.
 
 # Current issues to address:
 
+- Floyd is alive but not complete. `I-FLOYD` covers following, wandering off,
+  chatter and the Repair Room / Computer Room reactions. Still missing:
+  `FLOYD-F`'s full verb set (he only answers EXAMINE and TURN ON), `I-FLOYD`'s
+  Alfie/Betty shuttle-cabin clauses (those rooms are not built), `DEAD-FLOYD-F`,
+  `I-FLOYD-FORAY` and `I-CHASE-SCENE` -- the Bio Lab sequence he is famous for.
+- `TELEPORT <room>` cannot reach rooms whose only name is their description,
+  e.g. "computer room" -- rooms mostly lack synonyms. It is a debug verb, but it
+  is the only practical way to test the planet chapters, so it is worth giving
+  rooms their ZIL synonyms as each chapter lands.
+
 - Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
   just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. Run
   `python3 mark_progress.py` for the current state; it derives the checklist in

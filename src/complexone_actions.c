@@ -1280,6 +1280,244 @@ bool slot_f(int verb) {
 
 // --- Floyd ---
 
+// FLOYDISMS (compone.zil): what Floyd gets up to when he has nothing better to
+// do, which is most of the time.
+static const char *floydisms[] = {
+    "paces impatiently",
+    "absent-mindedly recites the first six hundred digits of pi",
+    "lowers his voice and tells you the latest rumors about Dr. Fizpick",
+    "recalls the time he bruised his knee",
+    "chants the death scene from \"Carmen\"",
+    "cranes his neck to see what you are doing",
+    "rubs his head affectionately against your shoulder",
+    "asks if you want to play Hucka-Bucka-Beanstalk",
+    "examines himself for signs of rust",
+    "absent-mindedly oils one of his joints",
+    "wanders restlessly around the room",
+    "notices a mouse scurrying by and tries to hide behind you",
+    "sings an ancient ballad, totally out of key",
+    "frets about the possibility of his batteries failing",
+    "reminisces about his friend Lazarus, a medical robot",
+    "relates some fond memories about his robotic friend Lazarus",
+    "whistles tunelessly",
+    "tells you about the time he helped someone sharpen a pencil",
+    "yawns and looks bored",
+    "produces a crayon from one of his compartments and scrawls\n"
+    "his name on the wall",
+};
+#define NUM_FLOYDISMS (sizeof(floydisms) / sizeof(floydisms[0]))
+
+// FLOYD-COMES-ALIVE (compone.zil).
+void floyd_comes_alive(void) {
+  if (obj_in(O_FLOYD, current_room)) {
+    if (game_state.floyd_reactivated) {
+      game_state.floyd_spoke = true;
+      TELL("Floyd jumps to his feet, hopping mad. \"Why you turn Floyd off?\" "
+           "he\n"
+           "asks accusingly.\n");
+    } else {
+      game_state.floyd_introduced = true;
+      game_state.floyd_spoke = true;
+      TELL("Suddenly, the robot comes to life and its head starts swivelling "
+           "about.\n"
+           "It notices you and bounds over. \"Hi! I'm B-19-7, but to "
+           "everyperson I'm\n"
+           "called Floyd. Are you a doctor-person or a planner-person? ");
+      ZObjectID carried = obj_first_child(player);
+      if (carried != NOTHING) {
+        tellf("That's a nice %s you are having there. ",
+              objects[carried].description);
+      }
+      TELL("Let's play Hider-and-Seeker you with me.\"\n");
+    }
+  }
+  obj_set_flag(O_FLOYD, F_RLANDBIT);
+  obj_set_flag(O_FLOYD, F_ACTORBIT);
+  obj_set_flag(O_FLOYD, F_TOUCHBIT);
+  game_state.floyd_reactivated = true;
+}
+
+// CALL-ME-FLOYD (compone.zil): how he introduces himself when he catches you up
+// somewhere other than the Robot Shop.
+static void call_me_floyd(void) {
+  game_state.floyd_introduced = true;
+  TELL("The robot you were fiddling with in the Robot Shop bounds into the "
+       "room.\n"
+       "\"Hi!\" he says, with a wide and friendly smile. \"You turn Floyd on?\n"
+       "Be Floyd's friend, yes?\"\n");
+}
+
+// COMPUTER-ACTION (compone.zil): Floyd works out that the Project's computer is
+// broken, which is the first real hint of what is wrong with this place.
+void computer_action(void) {
+  game_state.computer_flag = true;
+  game_state.floyd_spoke = true;
+  tellf("Floyd examines the %s. With a concerned frown, he says, \"Uh oh. "
+        "Computer is\n"
+        "broken. A Doctor-person once told Floyd that Computer is the most "
+        "important\n"
+        "part of the Project.\"\n",
+        current_room == R_COMPUTER_ROOM ? "glowing light"
+                                        : "computer printout");
+}
+
+// KLUDGE (compone.zil): the two rooms Floyd has something to say about the
+// first time he follows you into them.
+static void kludge(void) {
+  if (current_room == R_REPAIR_ROOM && !game_state.achilles_flag) {
+    game_state.achilles_flag = true;
+    game_state.floyd_spoke = true;
+    TELL("Floyd points at the fallen robot. \"That's Achilles. He was in "
+         "charge of\n"
+         "repairing machinery. He repaired Floyd once. I never liked him much; "
+         "he\n"
+         "wasn't friendly like other robots. Looks like he fell down the "
+         "stairs.\n"
+         "He always had trouble with one of his feet working right. A "
+         "Planner-person\n"
+         "once told me that's why they named him Achilles.\"\n");
+  } else if (current_room == R_COMPUTER_ROOM && !game_state.computer_flag) {
+    computer_action();
+  }
+}
+
+static bool prob(int percent) { return (rand() % 100) < percent; }
+
+// I-FLOYD (compone.zil). Runs every turn once he is switched on: he follows you
+// about, lets himself into places he should not, occasionally goes exploring on
+// his own, and otherwise fills the silence.
+void i_floyd(void) {
+  queue_event(EVT_FLOYD, -1);
+
+  if (!obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    obj_set_flag(O_FLOYD, F_ACTORBIT);
+    TELL("\n");
+    floyd_comes_alive();
+    game_state.floyd_spoke = false;
+    return;
+  }
+
+  if (obj_in(O_FLOYD, current_room)) {
+    if (!game_state.floyd_introduced) {
+      game_state.floyd_introduced = true;
+      TELL("\nThe robot, now apparently active, notices you enter. \"Hi,\"\n"
+           "he says. \"I'm Floyd!\"\n");
+    } else if (game_state.floyd_follow &&
+               obj_has_flag(current_room, F_FLOYDBIT) && prob(6)) {
+      obj_remove(O_FLOYD);
+      game_state.floyd_follow = false;
+      TELL("\nFloyd says \"Floyd going exploring. See you later.\"\n"
+           "He glides out of the room.\n");
+    } else {
+      game_state.floyd_follow = true;
+      if (prob(40) && !game_state.floyd_spoke) {
+        tellf("Floyd %s.\n", floydisms[rand() % NUM_FLOYDISMS]);
+        game_state.floyd_spoke = false;
+        return;
+      }
+    }
+    game_state.floyd_spoke = false;
+    return;
+  }
+
+  // Floyd is active but somewhere else -- does he catch you up?
+  if (game_state.floyd_follow && prob(80)) {
+    if (obj_in(O_LAZARUS_PART, current_room)) {
+      game_state.floyd_follow = false;
+      TELL("\nFloyd starts to follow you but notices the Lazarus breast "
+           "plate.\n"
+           "He sniffs and leaves the room.\n");
+      game_state.floyd_spoke = false;
+      return;
+    }
+    obj_move(O_FLOYD, current_room);
+    TELL("Floyd follows you.\n");
+    kludge();
+    game_state.floyd_spoke = false;
+    return;
+  }
+
+  game_state.floyd_follow = false;
+
+  if (current_room == R_BOOTH_1 || current_room == R_BOOTH_2 ||
+      current_room == R_BOOTH_3) {
+    obj_move(O_FLOYD, current_room);
+    if (!game_state.floyd_introduced) {
+      TELL("\n");
+      call_me_floyd();
+      return;
+    }
+    TELL("\nFloyd scampers into the booth. \"Oooo,\n"
+         "this is a tiny room,\" he remarks.\n");
+  } else if ((!game_state.floyd_gave_up &&
+              (current_room == R_BIO_LOCK_EAST ||
+               current_room == R_BIO_LOCK_WEST)) ||
+             current_room == R_RADIATION_LOCK_EAST ||
+             current_room == R_RADIATION_LOCK_WEST) {
+    obj_move(O_FLOYD, current_room);
+    if (!game_state.floyd_introduced) {
+      TELL("\n");
+      call_me_floyd();
+      return;
+    }
+    TELL("\nFloyd glides after you. \"Is this...is this a squash court?\" he "
+         "asks.\n");
+    // ZIL also lets him into the Alfie and Betty shuttle control cabins here;
+    // those rooms are not ported yet, so their clauses are missing.
+  } else if (current_room == R_UPPER_ELEVATOR ||
+             current_room == R_LOWER_ELEVATOR ||
+             current_room == R_REACTOR_ELEVATOR ||
+             (current_room == R_MESS_HALL && obj_in(O_FLOYD, R_KITCHEN))) {
+    obj_move(O_FLOYD, current_room);
+    if (!game_state.floyd_introduced) {
+      TELL("\n");
+      call_me_floyd();
+      return;
+    }
+    TELL("\nFloyd bounces into the ");
+    if (current_room == R_UPPER_ELEVATOR || current_room == R_LOWER_ELEVATOR ||
+        current_room == R_REACTOR_ELEVATOR) {
+      TELL("elevator");
+    } else if (current_room == R_MESS_HALL) {
+      TELL("room");
+    } else {
+      TELL("cabin");
+    }
+    TELL(". \"Hey, wait for Floyd!\" he yells, smiling broadly.\n");
+  } else if (current_room == R_MINI_BOOTH) {
+    obj_move(O_FLOYD, current_room);
+    if (!game_state.floyd_introduced) {
+      TELL("\n");
+      call_me_floyd();
+      return;
+    }
+    TELL("\n\"Hi,\" whispers Floyd, tiptoeing in. \"Are we going to teleport "
+         "into\n"
+         "the computer like Achilles always used to do?\"\n");
+  } else if (prob(30)) {
+    if (current_room == R_INFIRMARY && game_state.lazarus_flag) {
+      game_state.floyd_spoke = false;
+      return;
+    }
+    obj_move(O_FLOYD, current_room);
+    if (game_state.floyd_introduced) {
+      if (prob(15) && !obj_in(player, O_BED)) {
+        TELL("\nFloyd rushes into the room and barrels into you. \"Oops, "
+             "sorry,\" he says.\n"
+             "\"Floyd not looking at where he was going to.\"\n");
+      } else {
+        TELL("\nFloyd bounds into the room. \"Floyd here now!\" he cries.\n");
+      }
+      kludge();
+    } else {
+      TELL("\n");
+      call_me_floyd();
+    }
+  }
+
+  game_state.floyd_spoke = false;
+}
+
 bool floyd_f(int arg) {
   if (current_cmd.verb == V_EXAMINE) {
     TELL("From its design, the robot seems to be of the multi-purpose sort. It "
@@ -1290,21 +1528,10 @@ bool floyd_f(int arg) {
     return true;
   }
   if (current_cmd.verb == V_LAMP_ON) { // Activate Floyd
-    // if not already active
-    if (!obj_has_flag(O_FLOYD, F_ACTORBIT)) {
-      obj_set_flag(O_FLOYD, F_ACTORBIT);
-      obj_set_flag(O_FLOYD,
-                   F_RLANDBIT); // Uses RLANDBIT as generic 'on'? ZIL says FLAGS
-                                // RLANDBIT means active here?
-      // ZIL: <ROUTINE FLOYD-COMES-ALIVE ... <FSET ,FLOYD ,RLANDBIT> ...>
-      TELL("Suddenly, the robot comes to life and its head starts swivelling "
-           "about.\n"
-           "It notices you and bounds over. \"Hi! I'm B-19-7, but to "
-           "everyperson I'm\n"
-           "called Floyd. Are you a doctor-person or a planner-person? Let's "
-           "play\n"
-           "Hider-and-Seeker you with me.\"\n");
-      // Add event I-FLOYD
+    if (!obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+      floyd_comes_alive();
+      // From here he has a life of his own.
+      queue_event(EVT_FLOYD, -1);
     } else {
       TELL("He's already been activated.\n");
     }

@@ -31,6 +31,7 @@ void i_lower_elevator_trip() {}
 void i_turnoff_upper_elevator() {}
 void i_turnoff_lower_elevator() {}
 void i_unenter() {}
+void i_floyd(void) {}
 
 // Ticks are Galactic Standard Time units, not turns. A timer queued for T fires
 // on the first pass where T minus the accumulated action costs drops to 1 or
