@@ -21,7 +21,7 @@ run_test() {
     local fail_msg="$5"
 
     echo "$name"
-    OUTPUT=$(echo -e "$input" | ./planetfall 2>/dev/null | strip_ansi)
+    OUTPUT=$(echo -e "$input" | ./planetfall --seed 1 2>/dev/null | strip_ansi)
     if echo "$OUTPUT" | grep -qiE "$pattern"; then
         echo "PASS: $pass_msg"
     else
@@ -39,7 +39,7 @@ run_test_absent() {
     local fail_msg="$5"
 
     echo "$name"
-    OUTPUT=$(echo -e "$input" | ./planetfall 2>/dev/null | strip_ansi)
+    OUTPUT=$(echo -e "$input" | ./planetfall --seed 1 2>/dev/null | strip_ansi)
     if echo "$OUTPUT" | grep -qiE "$pattern"; then
         echo "FAIL: $fail_msg"
         FAILED=$((FAILED + 1))
@@ -137,20 +137,20 @@ run_test "Test 60: COMM ROOM playback and screen" "TELEPORT COMM ROOM\nPUSH PLAY
 run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST\nLOOK\nQUIT\nY" "Kalamontee Staashun" "Kalamontee platform navigation and description work" "KALAMONTEE PLATFORM"
 
 # --- Shared input fragments -------------------------------------------------
-# The first blast opens the pod bulkhead around turn 38; the ambassador turns up
-# on turn 14 and stays three turns. Both land on fixed turns only because the
-# port's rand() is unseeded.
+# Every test runs with --seed 1, so these turn numbers are stable: the first
+# blast opens the pod bulkhead at the end of turn 39, and the ambassador ambles
+# up after turn 10 and stays three turns.
 WAIT_12=$(printf 'WAIT\\n%.0s' $(seq 1 12))
-WAIT_14=$(printf 'WAIT\\n%.0s' $(seq 1 14))
+WAIT_10=$(printf 'WAIT\\n%.0s' $(seq 1 10))
 WAIT_30=$(printf 'WAIT\\n%.0s' $(seq 1 30))
-WAIT_38=$(printf 'WAIT\\n%.0s' $(seq 1 38))
+WAIT_39=$(printf 'WAIT\\n%.0s' $(seq 1 39))
 
 # --- V-DIAGNOSE and the hunger timer ----------------------------------------
 run_test "Test 111: DIAGNOSE reports all three" "DIAGNOSE\nQUIT\nY" "perfect health" "V-DIAGNOSE health line works" "Diagnose health"
 run_test "Test 111a: DIAGNOSE reports rest" "DIAGNOSE\nQUIT\nY" "well-rested" "V-DIAGNOSE rest line works" "Diagnose rest"
 # I-HUNGER-WARNINGS is a 2000-unit timer, not a daemon: you do not start hungry.
 run_test "Test 111b: You do not start out hungry" "DIAGNOSE\nQUIT\nY" "well-fed" "Hunger starts at zero" "Diagnose hunger"
-run_test_absent "Test 111c: No hunger warning early on" "${WAIT_38}QUIT\nY" "getting pretty hungry" "Hunger timer does not fire early" "Premature hunger"
+run_test_absent "Test 111c: No hunger warning early on" "${WAIT_39}QUIT\nY" "getting pretty hungry" "Hunger timer does not fire early" "Premature hunger"
 
 # --- Parser errors (UNKNOWN-WORD / ORPHAN / I beg your pardon) --------------
 run_test "Test 106: Unknown words are named" "XYZZY\nQUIT\nY" "don't know the word \"xyzzy\." "UNKNOWN-WORD reports the word" "Unknown word"
@@ -163,7 +163,7 @@ run_test "Test 110: Not-here message wording" "READ TOWEL\nQUIT\nY" "can't see a
 # The first blast opens the bulkhead around turn 38; boarding the web and riding
 # the pod down takes another dozen turns. POD_LANDED leaves the player webbed in
 # a pod resting on the water.
-POD_BOARDED="${WAIT_38}WEST\n"
+POD_BOARDED="${WAIT_39}WEST\n"
 POD_LANDED="${POD_BOARDED}ENTER WEB\n${WAIT_12}"
 
 run_test "Test 78: Pod describes its own bulkhead" "${POD_BOARDED}LOOK\nQUIT\nY" "bulkhead leading out is open" "ESCAPE-POD-F reports bulkhead state" "Pod description"
@@ -200,7 +200,7 @@ run_test "Test 98: Taking yourself" "TAKE ME\nQUIT\nY" "How romantic" "CRETIN-F 
 run_test "Test 99: Scrubbing yourself" "SCRUB ME\nQUIT\nY" "300 demerits" "CRETIN-F scrub works" "Cretin scrub"
 run_test "Test 100: Attacking yourself is fatal" "ATTACK ME\nQUIT\nY" "Poof, you're dead" "CRETIN-F attack kills you" "Cretin attack"
 run_test "Test 101: Shaking hands with nobody" "SHAKE HANDS\nQUIT\nY" "no one to shake hands with" "HANDS-F default works" "Hands default"
-run_test "Test 102: Shaking hands with the ambassador" "${WAIT_14}SHAKE HANDS\nQUIT\nY" "repulsive idea" "HANDS-F ambassador branch works" "Hands ambassador"
+run_test "Test 102: Shaking hands with the ambassador" "${WAIT_10}SHAKE HANDS\nQUIT\nY" "repulsive idea" "HANDS-F ambassador branch works" "Hands ambassador"
 
 run_test "Test 103: Pod window early in the trip" "${POD_BOARDED}ENTER WEB\nLOOK THROUGH WINDOW\nQUIT\nY" "debris from the exploding Feinstein" "WINDOW-F early trip branch works" "Window early"
 run_test "Test 104: Pod window on approach" "${POD_BOARDED}ENTER WEB\n${WAIT_12}LOOK THROUGH WINDOW\nQUIT\nY" "hopefully a hospitable one" "WINDOW-F late trip branch works" "Window late"
@@ -223,11 +223,11 @@ run_test "Test 69: Attacking Blather is fatal" "UP\nUP\nATTACK BLATHER\nQUIT\nY"
 run_test "Test 70: Ambassador arrives on Deck Nine" "${WAIT_30}QUIT\nY" "Blow'k-bibben-Gordo ambles toward you" "Ambassador arrives" "Ambassador arrival"
 run_test "Test 71: Ambassador makes small talk" "${WAIT_30}QUIT\nY" "The ambassador (introduces|asks|inquires|recites|remarks|offers)" "Ambassador quotes fire" "Ambassador quotes"
 run_test "Test 72: Ambassador leaves for good" "${WAIT_30}QUIT\nY" "grunts a polite farewell" "Ambassador departs" "Ambassador departure"
-run_test "Test 73: Ambassador hands over the brochure" "${WAIT_14}READ BROCHURE\nQUIT\nY" "S. Eric Meretzky" "Brochure text is the full ZIL text" "Brochure text"
-run_test "Test 74: Examining the ambassador" "${WAIT_14}EXAMINE AMBASSADOR\nQUIT\nY" "twenty eyes" "Ambassador description works" "Ambassador examine"
-run_test "Test 75: Celery cannot be taken" "${WAIT_14}TAKE CELERY\nQUIT\nY" "lack of normal protocol" "Celery refuses to be taken" "Celery take"
-run_test "Test 76: Eating the celery is fatal" "${WAIT_14}EAT CELERY\nQUIT\nY" "convulsions" "Eating celery kills you" "Celery eat"
-run_test "Test 77: Slime responds to the senses" "${WAIT_14}EXAMINE SLIME\nQUIT\nY" "didn't step in it" "Slime pseudo-object works" "Slime"
+run_test "Test 73: Ambassador hands over the brochure" "${WAIT_10}READ BROCHURE\nQUIT\nY" "S. Eric Meretzky" "Brochure text is the full ZIL text" "Brochure text"
+run_test "Test 74: Examining the ambassador" "${WAIT_10}EXAMINE AMBASSADOR\nQUIT\nY" "twenty eyes" "Ambassador description works" "Ambassador examine"
+run_test "Test 75: Celery cannot be taken" "${WAIT_10}TAKE CELERY\nQUIT\nY" "lack of normal protocol" "Celery refuses to be taken" "Celery take"
+run_test "Test 76: Eating the celery is fatal" "${WAIT_10}EAT CELERY\nQUIT\nY" "convulsions" "Eating celery kills you" "Celery eat"
+run_test "Test 77: Slime responds to the senses" "${WAIT_10}EXAMINE SLIME\nQUIT\nY" "didn't step in it" "Slime pseudo-object works" "Slime"
 
 # --- Floyd (I-FLOYD / FLOYD-COMES-ALIVE / KLUDGE) ---------------------------
 # Switching him on only queues his awakening 25 GST units out, so give him four

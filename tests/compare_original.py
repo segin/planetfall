@@ -12,8 +12,9 @@ Two caveats worth keeping in mind before treating a difference as a bug:
     "total of 80 points" where the source says "out of 80 points" -- and the
     ZIL sources are what this project is translating, so the source wins.
   * Several things are random (Blather and the ambassador turning up, the
-    explosion delay, the dream you get). Probes should avoid depending on them,
-    and the port's rand() is unseeded besides.
+    explosion delay, the dream you get). Probes should avoid depending on them.
+    The port is run with --seed 1 so its own rolls are at least reproducible,
+    but the two sides still roll independently.
 
 So this reports differences rather than asserting; it is a research tool for
 finding wording and behaviour drift, not a pass/fail gate. Exit status is 0
@@ -191,7 +192,7 @@ def main():
     for name, commands in probes:
         script = '\n'.join(commands + ['quit', 'y']) + '\n'
 
-        port_raw = run([PORT, '--no-status'], script)
+        port_raw = run([PORT, '--no-status', '--seed', '1'], script)
         orig_raw = run([DFROTZ, '-w', '200', '-p', STORY], script)
 
         # The port prints a banner then the first room; dfrotz prints a status

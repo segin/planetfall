@@ -1,6 +1,7 @@
 #include "actions.h"
 
 #include "complexone.h"
+#include "complexone_actions.h"
 #include "complextwo.h"
 #include "events.h"
 #include "feinstein.h"
@@ -12,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
@@ -68,6 +70,10 @@ void init_game_data() {
   init_feinstein_act();
   init_complexone();
   init_complextwo();
+
+  // COMM-SETUP (compone.zil): picks the laser charges and the coolant
+  // sequence. ZIL runs it from I-RANDOM-INTERRUPTS on the first turn.
+  comm_setup();
 
   current_room = R_DECK_NINE;
 
@@ -199,8 +205,6 @@ void update_status_bar() {
   // holds Galactic Standard Time as a bare count -- there is no hours:minutes
   // rendering anywhere in the ZIL; TELL-TIME prints <TELL N ,INTERNAL-MOVES>.
   // Verified against the real game, whose bar reads "Score: 0  Moves: 4495".
-  // The interpreter renders "Score: 0        Moves: 4495" from the SCORE and
-  // MOVES globals; MOVES carries Galactic Standard Time.
   char right_text[48];
   snprintf(right_text, sizeof(right_text), "Score: %d        Moves: %d",
            game_state.score, game_state.moves);
@@ -229,11 +233,20 @@ int main(int argc, char **argv) {
   sa.sa_handler = handle_winch;
   sigaction(SIGWINCH, &sa, NULL);
 
+  // Planetfall randomizes the explosion delay, the coolant sequence, the safe
+  // combination and every probability roll, so an unseeded run plays out
+  // identically every time. Seed from the clock for real play, but allow a
+  // fixed seed so the test suite can pin turn numbers. C defines the unseeded
+  // sequence as srand(1), so --seed 1 reproduces the old behaviour exactly.
+  unsigned seed = (unsigned)time(NULL);
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "--no-status") == 0) {
       show_status = false;
+    } else if (strcmp(argv[i], "--seed") == 0 && i + 1 < argc) {
+      seed = (unsigned)strtoul(argv[++i], NULL, 10);
     }
   }
+  srand(seed);
 
   init_game_data();
 

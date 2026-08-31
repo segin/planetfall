@@ -82,10 +82,4 @@ with the original, modulo catalogued Release 1 wording.
   handlers -- the pod bulkhead bug lived there. The Blather/ambassador work removed
   its ATTACK/KICK/TALK/celery branches; the rest should follow as the verbs get
   proper handlers.
-- `rand()` is never seeded -- there is no `srand()` call anywhere in `src/`. Every
-  playthrough therefore draws exactly the same "random" numbers, so the explosion
-  delay, `number_needed`, `chemical_required`, and the Blather/ambassador
-  appearance rolls are all fixed constants in practice. Seeding fixes that but
-  makes the 61 scripted tests non-deterministic, so the test harness likely needs
-  a fixed-seed switch at the same time. 
 

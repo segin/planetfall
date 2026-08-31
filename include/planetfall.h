@@ -138,6 +138,12 @@ typedef struct {
   bool elevator_in_transit;
   int chemical_flag;
   int chemical_required;
+  // The comm-repair puzzle. ORDER-LTBL is a random permutation of the seven
+  // coolant colours; you have to pour STEPS_TO_GO of them in the right order.
+  int order_ltbl[8]; // 1-indexed, as in ZIL
+  int steps_to_go;
+  int old_shots;     // laser charge values, also set by COMM-SETUP
+  int new_shots;
   bool comm_shutdown;
   bool just_entered;
   bool defense_fixed;

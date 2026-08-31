@@ -55,6 +55,7 @@ bool floyd_f(int arg);
 void floyd_comes_alive(void);
 void computer_action(void);
 void i_floyd(void);
+void comm_setup(void);
 bool structure_pseudo_action(int arg);
 bool cleft_pseudo_action(int arg);
 bool plaque_pseudo_action(int arg);

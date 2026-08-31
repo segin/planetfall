@@ -769,6 +769,30 @@ bool devices_pseudo_action(int verb) {
   return false;
 }
 
+// RANDOMIZE-ORDER (compone.zil): fill ORDER-LTBL[1..7] with a permutation of
+// the seven coolant colours. ZIL draws with rejection; a shuffle is equivalent
+// and does not loop.
+static void randomize_order(void) {
+  for (int i = 1; i <= 7; i++)
+    game_state.order_ltbl[i] = i;
+  for (int i = 7; i > 1; i--) {
+    int j = 1 + rand() % i;
+    int t = game_state.order_ltbl[i];
+    game_state.order_ltbl[i] = game_state.order_ltbl[j];
+    game_state.order_ltbl[j] = t;
+  }
+}
+
+// COMM-SETUP (compone.zil). Called once at the start of play to pick the laser
+// charge values and the coolant sequence the comm system needs.
+void comm_setup(void) {
+  game_state.old_shots = 2 + (rand() % 3) + 1;
+  game_state.new_shots = 20 + (rand() % 10) + 1;
+  randomize_order();
+  game_state.steps_to_go = 1 + (rand() % 2) + 1;
+  game_state.chemical_required = game_state.order_ltbl[game_state.steps_to_go + 1];
+}
+
 const char *get_color_name(int color_idx) {
   switch (color_idx) {
   case 1:
@@ -2158,16 +2182,36 @@ bool chemical_fluid_f(int verb) {
     obj_remove(O_CHEMICAL_FLUID);
     if (prsi == O_FUNNEL_HOLE) {
       if (game_state.chemical_flag == game_state.chemical_required) {
-        game_state.comm_fixed = true;
-        game_state.score += 6;
-        game_state.chemical_required = 10;
-        tellf("The liquid disappears into the hole. The lights on the enunciator\n"
-              "panel blink rapidly and then go dark. The coolant system warning light goes off, and another\n"
-              "flashes, indicating that the help message is now being sent.\n");
+        // Right colour: advance one step down the sequence. Only when the last
+        // one goes in does the comm system come back up.
+        game_state.chemical_required =
+            game_state.order_ltbl[game_state.steps_to_go];
+        game_state.steps_to_go--;
+        tellf("The liquid disappears into the hole. The lights on the "
+              "enunciator\n"
+              "panel blink rapidly ");
+        if (game_state.steps_to_go == 0) {
+          game_state.comm_fixed = true;
+          game_state.score += 6;
+          game_state.chemical_required = 10;
+          tellf("and then go dark. The coolant system warning light goes off, "
+                "and another\n"
+                "flashes, indicating that the help message is now being "
+                "sent.\n");
+        } else {
+          tellf("and all go off except one, a %s light.\n",
+                get_color_name(game_state.chemical_required));
+        }
       } else {
         game_state.comm_shutdown = true;
-        tellf("An alarm sounds briefly, and a sign flashes \"Kuulint Sistum Imbalins Kritikul -- Shuteeng Down Awl Sistumz.\"\n"
-              "A moment later, the lights in the room dim and the send console shuts down.\n");
+        if (game_state.comm_fixed) {
+          game_state.score -= 6;
+          game_state.comm_fixed = false;
+        }
+        tellf("An alarm sounds briefly, and a sign flashes \"Kuulint Sistum "
+              "Imbalins Kritikul -- Shuteeng Down Awl Sistumz.\"\n"
+              "A moment later, the lights in the room dim and the send console "
+              "shuts down.\n");
       }
       return true;
     } else {
