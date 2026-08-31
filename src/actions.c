@@ -974,6 +974,9 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
   case V_LOOK_CRETIN:
     perform_look_cretin();
     return true;
+  case V_LOOK_INSIDE:
+    perform_look_inside(prso);
+    return true;
   case V_QUIT:
     perform_quit();
     return true;

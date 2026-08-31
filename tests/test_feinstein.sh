@@ -72,6 +72,10 @@ run_test "Test 39: ADMIN CORRIDOR SOUTH Crevice and Key" "TELEPORT ADMIN SOUTH\n
 run_test "Test 40: SANFAC E" "TELEPORT ADMIN SOUTH\nEAST\nEXAMINE TOILET\nQUIT\nY" "dry and dusty" "SanFac E toilet examine works" "SANFAC E"
 run_test "Test 41: ADMIN CORRIDOR Rift jump refusal" "TELEPORT ADMIN SOUTH\nNORTH\nEXAMINE RIFT\nNORTH\nQUIT\nY" "too wide to jump across" "Rift examine and jump refusal work" "RIFT"
 run_test "Test 42: Throwing brush into rift" "TELEPORT ADMIN SOUTH\nNORTH\nPUT BRUSH IN RIFT\nQUIT\nY" "lost forever" "Putting item into rift works" "PUT IN RIFT"
+run_test "Test 43: SYSTEMS MONITORS and equipment" "TELEPORT SYSTEMS MONITORS\nEXAMINE MONITORS\nEXAMINE EQUIPMENT\nQUIT\nY" "LIIBREREE, REEAKTURZ" "Systems monitors describe and equipment examine work" "SYSTEMS MONITORS"
+run_test "Test 44: PLAN ROOM cubbyholes and maps" "TELEPORT PLAN ROOM\nEXAMINE CUBBYHOLES\nEXAMINE MAPS\nQUIT\nY" "used to hold maps" "Plan room cubbyholes and maps examine work" "PLAN ROOM"
+run_test "Test 45: SMALL OFFICE desk and access cards" "TELEPORT SMALL OFFICE\nOPEN DESK\nLOOK IN DESK\nREAD KITCHEN CARD\nQUIT\nY" "kitcin akses kard" "Small office desk and kitchen card work" "SMALL OFFICE"
+run_test "Test 46: LARGE OFFICE desk and access cards" "TELEPORT LARGE OFFICE\nOPEN DESK\nLOOK IN DESK\nREAD SHUTTLE CARD\nQUIT\nY" "shutul akses kard" "Large office desk and shuttle card work" "LARGE OFFICE"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

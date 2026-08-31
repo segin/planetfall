@@ -858,6 +858,205 @@ void init_complexone() {
   o->flags = F_NDESCBIT;
   o->action = rift_f;
   obj_move(O_RIFT, OBJ_LOCAL_GLOBALS);
+
+  // R_SYSTEMS_MONITORS
+  r = &objects[R_SYSTEMS_MONITORS];
+  r->id = R_SYSTEMS_MONITORS;
+  r->description = "Systems Monitors";
+  r->synonyms[0] = "monitors";
+  r->synonyms[1] = "room";
+  r->adjectives[0] = "systems";
+  r->long_description = "This is a large room filled with tables full of strange equipment.";
+  r->flags = F_FLOYDBIT | F_RLANDBIT | F_ONBIT;
+  r->east = R_ADMIN_CORRIDOR;
+  r->out = R_ADMIN_CORRIDOR;
+  r->action = systems_monitors_f;
+  r->globals[0] = O_TABLES;
+  r->globals[1] = O_MONITORS_PSEUDO;
+  r->globals[2] = O_EQUIPMENT_PSEUDO;
+
+  // Pseudo Objects for Systems Monitors
+  o = &objects[O_MONITORS_PSEUDO];
+  o->id = O_MONITORS_PSEUDO;
+  o->description = "monitors";
+  o->synonyms[0] = "monitors";
+  o->synonyms[1] = "monitor";
+  o->flags = F_NDESCBIT;
+  o->action = monitors_pseudo_action;
+  obj_move(O_MONITORS_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_EQUIPMENT_PSEUDO];
+  o->id = O_EQUIPMENT_PSEUDO;
+  o->description = "equipment";
+  o->synonyms[0] = "equipment";
+  o->synonyms[1] = "machines";
+  o->flags = F_NDESCBIT;
+  o->action = equipment_pseudo_action;
+  obj_move(O_EQUIPMENT_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  // R_PLAN_ROOM
+  r = &objects[R_PLAN_ROOM];
+  r->id = R_PLAN_ROOM;
+  r->description = "Plan Room";
+  r->synonyms[0] = "room";
+  r->adjectives[0] = "plan";
+  r->long_description =
+      "This is a small room whose far wall is covered with many small cubbyholes,\n"
+      "all empty. The left wall is covered with an enormous map, labelled\n"
+      "\"Kalamontee Kompleks\", showing two installations connected by a long\n"
+      "hallway. Near the upper part of this map is a red arrow saying \"Yuu ar\n"
+      "heer.\" The right wall is covered with a similar map, labelled \"Lawanda\n"
+      "Kompleks\", showing two installations, one apparently buried deep\n"
+      "underground.";
+  r->flags = F_RLANDBIT | F_ONBIT | F_FLOYDBIT;
+  r->west = R_ADMIN_CORRIDOR_N;
+  r->out = R_ADMIN_CORRIDOR_N;
+  r->globals[0] = O_CUBBYHOLE_PSEUDO;
+  r->globals[1] = O_MAPS_PSEUDO;
+
+  // Pseudo Objects for Plan Room
+  o = &objects[O_CUBBYHOLE_PSEUDO];
+  o->id = O_CUBBYHOLE_PSEUDO;
+  o->description = "cubbyhole";
+  o->synonyms[0] = "cubbyhole";
+  o->synonyms[1] = "cubbyholes";
+  o->flags = F_NDESCBIT;
+  o->action = cubbyhole_pseudo_action;
+  obj_move(O_CUBBYHOLE_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_MAPS_PSEUDO];
+  o->id = O_MAPS_PSEUDO;
+  o->description = "map";
+  o->synonyms[0] = "map";
+  o->synonyms[1] = "maps";
+  o->flags = F_NDESCBIT;
+  o->action = maps_pseudo_action;
+  obj_move(O_MAPS_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  // R_TRANSPORTATION_SUPPLY
+  r = &objects[R_TRANSPORTATION_SUPPLY];
+  r->id = R_TRANSPORTATION_SUPPLY;
+  r->description = "Transportation Supply";
+  r->synonyms[0] = "supply";
+  r->synonyms[1] = "room";
+  r->adjectives[0] = "transportation";
+  r->long_description =
+      "This is a large room with exits in all directions. Unfortunately, the room\n"
+      "is completely empty.";
+  r->flags = F_RLANDBIT;
+  r->south = R_ADMIN_CORRIDOR_N;
+  r->out = R_ADMIN_CORRIDOR_N;
+
+  // R_SMALL_OFFICE
+  r = &objects[R_SMALL_OFFICE];
+  r->id = R_SMALL_OFFICE;
+  r->description = "Small Office";
+  r->synonyms[0] = "office";
+  r->adjectives[0] = "small";
+  r->long_description =
+      "You have entered a small office of some sort. A small desk faces the main\n"
+      "doorway which lies to the east. Another exit leads west.";
+  r->flags = F_RLANDBIT | F_FLOYDBIT | F_ONBIT;
+  r->east = R_ADMIN_CORRIDOR_N;
+  r->west = R_LARGE_OFFICE;
+
+  // O_SMALL_DESK
+  o = &objects[O_SMALL_DESK];
+  o->id = O_SMALL_DESK;
+  o->description = "small desk";
+  o->synonyms[0] = "desk";
+  o->synonyms[1] = "drawer";
+  o->adjectives[0] = "small";
+  o->flags = F_NDESCBIT | F_CONTBIT | F_SEARCHBIT;
+  o->capacity = 10;
+  o->action = desk_f;
+  obj_move(O_SMALL_DESK, R_SMALL_OFFICE);
+
+  // O_KITCHEN_CARD
+  o = &objects[O_KITCHEN_CARD];
+  o->id = O_KITCHEN_CARD;
+  o->description = "kitchen access card";
+  o->synonyms[0] = "card";
+  o->synonyms[1] = "cards";
+  o->adjectives[0] = "kitchen";
+  o->adjectives[1] = "access";
+  o->flags = F_TAKEBIT | F_READBIT;
+  o->text = "The card is embossed \"kitcin akses kard.\"";
+  o->value = 1;
+  o->size = 3;
+  obj_move(O_KITCHEN_CARD, O_SMALL_DESK);
+
+  // O_UPPER_ELEVATOR_CARD
+  o = &objects[O_UPPER_ELEVATOR_CARD];
+  o->id = O_UPPER_ELEVATOR_CARD;
+  o->description = "upper elevator access card";
+  o->synonyms[0] = "card";
+  o->synonyms[1] = "cards";
+  o->adjectives[0] = "upper";
+  o->adjectives[1] = "elevator";
+  o->adjectives[2] = "access";
+  o->flags = F_TAKEBIT | F_READBIT | F_VOWELBIT;
+  o->text = "The card is embossed \"upur elivaatur akses kard.\"";
+  o->value = 1;
+  o->size = 3;
+  obj_move(O_UPPER_ELEVATOR_CARD, O_SMALL_DESK);
+
+  // R_LARGE_OFFICE
+  r = &objects[R_LARGE_OFFICE];
+  r->id = R_LARGE_OFFICE;
+  r->description = "Large Office";
+  r->synonyms[0] = "office";
+  r->adjectives[0] = "large";
+  r->long_description =
+      "This is a large, plush office. The far wall is one large picture window,\n"
+      "scratched but unbroken, offering a view of this installation and the ocean\n"
+      "beyond. In front of the window is a wide wooden desk. The only exit is east.";
+  r->flags = F_FLOYDBIT | F_RLANDBIT | F_ONBIT;
+  r->east = R_SMALL_OFFICE;
+  r->out = R_SMALL_OFFICE;
+
+  // O_LARGE_DESK
+  o = &objects[O_LARGE_DESK];
+  o->id = O_LARGE_DESK;
+  o->description = "large desk";
+  o->synonyms[0] = "desk";
+  o->synonyms[1] = "drawer";
+  o->adjectives[0] = "large";
+  o->adjectives[1] = "wide";
+  o->adjectives[2] = "wooden";
+  o->flags = F_NDESCBIT | F_CONTBIT | F_SEARCHBIT;
+  o->capacity = 20;
+  o->action = desk_f;
+  obj_move(O_LARGE_DESK, R_LARGE_OFFICE);
+
+  // O_SHUTTLE_CARD
+  o = &objects[O_SHUTTLE_CARD];
+  o->id = O_SHUTTLE_CARD;
+  o->description = "shuttle access card";
+  o->synonyms[0] = "card";
+  o->synonyms[1] = "cards";
+  o->adjectives[0] = "shuttle";
+  o->adjectives[1] = "access";
+  o->flags = F_TAKEBIT | F_READBIT;
+  o->text = "The card is embossed \"shutul akses kard.\"";
+  o->value = 1;
+  o->size = 3;
+  obj_move(O_SHUTTLE_CARD, O_LARGE_DESK);
+
+  // O_LOWER_ELEVATOR_CARD
+  o = &objects[O_LOWER_ELEVATOR_CARD];
+  o->id = O_LOWER_ELEVATOR_CARD;
+  o->description = "lower elevator access card";
+  o->synonyms[0] = "card";
+  o->synonyms[1] = "cards";
+  o->adjectives[0] = "lower";
+  o->adjectives[1] = "elevator";
+  o->adjectives[2] = "access";
+  o->flags = F_TAKEBIT | F_READBIT;
+  o->text = "The card is embossed \"loowur elivaatur akses kard.\"";
+  o->value = 1;
+  o->size = 3;
+  obj_move(O_LOWER_ELEVATOR_CARD, O_LARGE_DESK);
   // R_MACHINE_SHOP
   r = &objects[R_MACHINE_SHOP];
   r->id = R_MACHINE_SHOP;

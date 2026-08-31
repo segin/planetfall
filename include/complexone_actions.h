@@ -61,6 +61,12 @@ bool games_pseudo_action(int arg);
 bool tapes_pseudo_action(int arg);
 bool near_booth_pseudo_action(int arg);
 bool in_booth_pseudo_action(int arg);
+void describe_monitors(void);
+bool monitors_pseudo_action(int arg);
+bool equipment_pseudo_action(int arg);
+bool cubbyhole_pseudo_action(int arg);
+bool maps_pseudo_action(int arg);
+bool desk_f(int arg);
 bool partition_pseudo_action(int arg);
 bool toilet_pseudo_action(int arg);
 // Add more as needed

@@ -1180,6 +1180,50 @@ void describe_monitors() {
   TELL(" a malfunctioning condition.\n");
 }
 
+bool monitors_pseudo_action(int verb) {
+  if (verb == V_EXAMINE || verb == V_READ) {
+    describe_monitors();
+    return true;
+  }
+  return false;
+}
+
+bool equipment_pseudo_action(int verb) {
+  if (verb == V_EXAMINE || verb == V_RUB || verb == V_LAMP_ON || verb == V_LAMP_OFF) {
+    tellf("The equipment here is so complicated that you couldn't even begin to\n"
+          "figure out how to operate it.\n");
+    return true;
+  }
+  return false;
+}
+
+bool cubbyhole_pseudo_action(int verb) {
+  if (verb == V_EXAMINE || verb == V_LOOK_INSIDE) {
+    tellf("The cubbyholes look like the kind that are used to hold maps or\n"
+          "blueprints. They are all empty now.\n");
+    return true;
+  }
+  return false;
+}
+
+bool maps_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("Examining the maps reveals no new information.\n");
+    return true;
+  }
+  return false;
+}
+
+bool desk_f(int verb) {
+  if (verb == V_SEARCH || verb == V_EXAMINE) {
+    ZObjectID prso = current_cmd.prso_count > 0 ? current_cmd.prso_list[0] : NOTHING;
+    tellf("The desk has a drawer which is currently %s.\n",
+          obj_has_flag(prso, F_OPENBIT) ? "open" : "closed");
+    return true;
+  }
+  return false;
+}
+
 bool systems_monitors_f(int arg) {
   if (arg == M_LOOK) {
     TELL("This is a large room filled with tables full of strange equipment. ");
