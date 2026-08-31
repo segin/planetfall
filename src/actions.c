@@ -35,17 +35,77 @@ int count_contents(ZObjectID obj) {
 
 
 
+static const char *yuks[] = {
+    "Fat chance.",
+    "A valiant attempt.",
+    "You can't be serious.",
+    "Not bloody likely.",
+    "An interesting idea...",
+    "What a concept!"
+};
+#define NUM_YUKS (sizeof(yuks) / sizeof(yuks[0]))
+
+static const char *pick_one_yuk() {
+  return yuks[rand() % NUM_YUKS];
+}
+
+bool is_held(ZObjectID obj) {
+  if (obj <= 0 || obj >= MAX_OBJECTS)
+    return false;
+  ZObjectID p = objects[obj].parent;
+  while (p != NOTHING) {
+    if (p == player)
+      return true;
+    p = objects[p].parent;
+  }
+  return false;
+}
+
+bool pre_take(ZObjectID obj, ZObjectID prsi) {
+  if (obj_in(obj, player)) {
+    tellf("You already have it.\n");
+    return false;
+  }
+  if (obj == game_state.spout_placed && obj_has_flag(obj, F_NDESCBIT)) {
+    return true;
+  }
+  ZObjectID loc = objects[obj].parent;
+  if (loc != NOTHING && obj_has_flag(loc, F_CONTBIT) &&
+      !obj_has_flag(loc, F_OPENBIT)) {
+    tellf("You can't reach into a closed container.\n");
+    return false;
+  }
+  if (prsi != NOTHING) {
+    if (prsi != loc) {
+      if (obj == O_CELERY && prsi == O_AMBASSADOR) {
+        // Celery on ambassador special case
+      } else {
+        tellf("It's not in that!\n");
+        return false;
+      }
+    }
+  }
+  if (obj == objects[player].parent) {
+    tellf("You are in it, asteroid-brain!\n");
+    return false;
+  }
+  return true;
+}
+
+#define FUMBLE_NUMBER 7
+#define FUMBLE_PROB 8
+
 bool itake(ZObjectID obj, bool verbose) {
   if (!obj_has_flag(obj, F_TAKEBIT)) {
     if (verbose)
-      tellf("You can't take that.\n");
+      tellf("%s\n", pick_one_yuk());
     return false;
   }
 
   int player_load = get_weight(player);
   int obj_weight = get_weight(obj);
 
-  if (!obj_in(obj_parent(obj), player)) {
+  if (!obj_in(objects[obj].parent, player)) {
     if (player_load + obj_weight > game_state.load_allowed) {
       if (verbose)
         tellf("Your load is too heavy.\n");
@@ -54,40 +114,185 @@ bool itake(ZObjectID obj, bool verbose) {
   }
 
   int cnt = count_contents(player);
-  if (cnt > 7 && (rand() % 100) < (cnt * 8)) {
-    tellf("Oh, no. You fumble and drop it.\n");
-    return false;
+  if (cnt > FUMBLE_NUMBER && (rand() % 100) < (cnt * FUMBLE_PROB)) {
+    ZObjectID drop_obj = objects[player].child;
+    while (drop_obj != NOTHING && obj_has_flag(drop_obj, F_WORNBIT)) {
+      drop_obj = objects[drop_obj].sibling;
+    }
+    if (drop_obj != NOTHING) {
+      tellf("Oh, no. The %s slips from your arms while taking the %s and both tumble to the ground.\n",
+            objects[drop_obj].description, objects[obj].description);
+      if ((drop_obj == O_FLASK || obj == O_FLASK) &&
+          obj_in(O_CHEMICAL_FLUID, O_FLASK)) {
+        obj_remove(O_CHEMICAL_FLUID);
+        tellf("Unfortunately, the chemical spills out of the flask and evaporates.\n");
+      }
+      if ((drop_obj == O_CANTEEN || obj == O_CANTEEN) &&
+          obj_in(O_HIGH_PROTEIN, O_CANTEEN) &&
+          obj_has_flag(O_CANTEEN, F_OPENBIT)) {
+        obj_remove(O_HIGH_PROTEIN);
+        tellf("To make matters worse, the high-protein liquid spills all over the place and then evaporates.\n");
+      }
+      obj_move(drop_obj, current_room);
+      obj_move(obj, current_room);
+      return false;
+    }
   }
 
   obj_move(obj, player);
   obj_clear_flag(obj, F_NDESCBIT);
   score_obj(obj);
   obj_set_flag(obj, F_TOUCHBIT);
+  if (obj == game_state.spout_placed && game_state.spout_placed != NOTHING) {
+    game_state.spout_placed = NOTHING;
+  }
   return true;
 }
 
-void perform_take(ZObjectID obj) {
-  if (obj == player) {
-    tellf("How romantic.\n");
-    return;
+bool trytake(ZObjectID obj) {
+  if (obj_in(obj, player))
+    return true;
+  if (obj_has_flag(obj, F_TRYTAKEBIT) && objects[obj].action) {
+    if (objects[obj].action(V_TAKE))
+      return true;
   }
-  if (obj_in(obj, player)) {
-    tellf("You already have it.\n");
-    return;
-  }
+  return itake(obj, true);
+}
 
+void perform_take(ZObjectID obj) {
+  if (!pre_take(obj, NOTHING)) {
+    return;
+  }
+  if (objects[obj].action && objects[obj].action(V_TAKE)) {
+    return;
+  }
   if (itake(obj, true)) {
     tellf("Taken.\n");
   }
 }
 
+bool pre_put(ZObjectID prso, ZObjectID prsi) {
+  if (prso == NOTHING)
+    return true;
+  if (obj_has_flag(prso, F_WORNBIT)) {
+    tellf("You can't while you're wearing it.\n");
+    return false;
+  }
+  if (obj_in(prso, OBJ_GLOBAL_OBJECTS) || !obj_has_flag(prso, F_TAKEBIT)) {
+    tellf("Nice try.\n");
+    return false;
+  }
+  return true;
+}
+
+void perform_put(ZObjectID prso, ZObjectID prsi) {
+  if (!pre_put(prso, prsi))
+    return;
+
+  if (prsi == NOTHING) {
+    tellf("You can't do that.\n");
+    return;
+  }
+
+  if (objects[prsi].action && objects[prsi].action(V_PUT)) {
+    return;
+  }
+
+  if (!obj_has_flag(prsi, F_OPENBIT) &&
+      !obj_has_flag(prsi, F_DOORBIT) &&
+      !obj_has_flag(prsi, F_CONTBIT) &&
+      !obj_has_flag(prsi, F_VEHBIT)) {
+    tellf("You can't do that.\n");
+    return;
+  }
+
+  if (!obj_has_flag(prsi, F_OPENBIT)) {
+    tellf("The %s isn't open.\n", objects[prsi].description);
+    return;
+  }
+
+  if (prsi == prso) {
+    tellf("How can you do that?\n");
+    return;
+  }
+
+  if (obj_in(prso, prsi)) {
+    tellf("The %s is already in the %s.\n", objects[prso].description,
+          objects[prsi].description);
+    return;
+  }
+
+  if (obj_in(prsi, prso)) {
+    tellf("How can you put the %s in the %s when the %s is already in the %s?\n",
+          objects[prso].description, objects[prsi].description,
+          objects[prsi].description, objects[prso].description);
+    return;
+  }
+
+  int prsi_weight = get_weight(prsi);
+  int prso_weight = get_weight(prso);
+  if (prsi_weight + prso_weight - objects[prsi].size > objects[prsi].capacity &&
+      objects[prsi].capacity > 0) {
+    tellf("There's no room.\n");
+    return;
+  }
+
+  if (!obj_in(prso, player) && !trytake(prso)) {
+    return;
+  }
+
+  score_obj(prso);
+  obj_move(prso, prsi);
+  obj_set_flag(prso, F_TOUCHBIT);
+  tellf("Done.\n");
+}
+
+void perform_slide() {
+  tellf("%s\n", pick_one_yuk());
+}
+
+bool pre_give(ZObjectID prso, ZObjectID prsi) {
+  if (!is_held(prso)) {
+    tellf("You're not holding the %s.\n", objects[prso].description);
+    return false;
+  }
+  return true;
+}
+
+void perform_give(ZObjectID prso, ZObjectID prsi) {
+  if (!pre_give(prso, prsi))
+    return;
+
+  if (prsi != NOTHING && objects[prsi].action && objects[prsi].action(V_GIVE))
+    return;
+  if (prso != NOTHING && objects[prso].action && objects[prso].action(V_GIVE))
+    return;
+
+  if (!obj_has_flag(prsi, F_ACTORBIT)) {
+    const char *art1 = obj_has_flag(prso, F_VOWELBIT) ? "an" : "a";
+    const char *art2 = obj_has_flag(prsi, F_VOWELBIT) ? "an" : "a";
+    tellf("You can't give %s %s to %s %s!\n", art1, objects[prso].description,
+          art2, objects[prsi].description);
+    return;
+  }
+  tellf("The %s declines your offer.\n", objects[prsi].description);
+}
+
+void perform_sgive(ZObjectID prso, ZObjectID prsi) {
+  perform_give(prsi, prso);
+}
+
 bool idrop(ZObjectID obj) {
-  if (!obj_in(obj, player)) {
+  if (!is_held(obj)) {
     tellf("You're not carrying the %s.\n", objects[obj].description);
     return false;
   }
   if (obj_has_flag(obj, F_WORNBIT)) {
     tellf("You'll have to take it off, first.\n");
+    return false;
+  }
+  if (!obj_in(obj, player) && !obj_has_flag(objects[obj].parent, F_OPENBIT)) {
+    tellf("The %s is closed.\n", objects[objects[obj].parent].description);
     return false;
   }
 
@@ -96,8 +301,18 @@ bool idrop(ZObjectID obj) {
 }
 
 void perform_drop(ZObjectID obj) {
+  if (objects[obj].action && objects[obj].action(V_DROP))
+    return;
   if (idrop(obj)) {
     tellf("Dropped.\n");
+  }
+}
+
+void perform_throw(ZObjectID obj, ZObjectID prsi) {
+  if (objects[obj].action && objects[obj].action(V_THROW))
+    return;
+  if (idrop(obj)) {
+    tellf("Thrown.\n");
   }
 }
 
@@ -747,6 +962,21 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return true;
   case V_DROP:
     perform_drop(prso);
+    return true;
+  case V_THROW:
+    perform_throw(prso, prsi);
+    return true;
+  case V_PUT:
+    perform_put(prso, prsi);
+    return true;
+  case V_SLIDE:
+    perform_slide();
+    return true;
+  case V_GIVE:
+    perform_give(prso, prsi);
+    return true;
+  case V_SGIVE:
+    perform_sgive(prso, prsi);
     return true;
   case V_EXAMINE:
     perform_examine(prso);

@@ -223,6 +223,22 @@ void perform_save();
 void perform_restore();
 void perform_restart();
 
+// Object Manipulation Verbs
+bool is_held(ZObjectID obj);
+bool pre_take(ZObjectID obj, ZObjectID prsi);
+bool trytake(ZObjectID obj);
+bool itake(ZObjectID obj, bool verbose);
+void perform_take(ZObjectID obj);
+bool pre_put(ZObjectID prso, ZObjectID prsi);
+void perform_put(ZObjectID prso, ZObjectID prsi);
+void perform_slide();
+bool pre_give(ZObjectID prso, ZObjectID prsi);
+void perform_give(ZObjectID prso, ZObjectID prsi);
+void perform_sgive(ZObjectID prso, ZObjectID prsi);
+bool idrop(ZObjectID obj);
+void perform_drop(ZObjectID obj);
+void perform_throw(ZObjectID obj, ZObjectID prsi);
+
 // Events (Included from events.h generally, but we need forward decls if not
 // including) Actually, circular include if events.h includes planetfall.h?
 // events.h doesn't seem to include planetfall.h (it just includes stdbool).

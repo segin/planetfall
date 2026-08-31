@@ -91,11 +91,11 @@
 #define R_WAITING_AREA 159
 #define R_KALAMONTEE_PLATFORM 160
 
-// Feinstein Objects (200-406)
-#define O_SCRUB_BRUSH 200
-#define O_PATROL_UNIFORM 201
-#define O_CHRONOMETER 202
-#define O_ID_CARD 203
+// Feinstein Objects (300-406)
+#define O_SCRUB_BRUSH 309
+#define O_PATROL_UNIFORM 310
+#define O_CHRONOMETER 311
+#define O_ID_CARD 312
 #define O_POD_DOOR 300
 #define O_CORRIDOR_DOOR 301
 #define O_GANGWAY_DOOR 302

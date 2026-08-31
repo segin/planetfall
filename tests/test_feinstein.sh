@@ -51,6 +51,10 @@ run_test "Test 18: QUIT decline" "QUIT\nN\nQUIT\nY" "Ok" "QUIT decline confirmat
 run_test "Test 19: SAVE and RESTORE" "SAVE\nRESTORE\nQUIT\nY" "Game saved.*Game restored" "SAVE and RESTORE work" "SAVE/RESTORE"
 run_test "Test 20: WALK AROUND" "WALK AROUND BRUSH\nQUIT\nY" "Use compass directions" "WALK AROUND works" "WALK AROUND"
 run_test "Test 21: WALK TO" "WALK TO POD\nQUIT\nY" "It's here" "WALK TO works" "WALK TO"
+run_test "Test 22: DROP and TAKE" "DROP BRUSH\nTAKE BRUSH\nQUIT\nY" "Dropped.*Taken" "DROP and TAKE work" "DROP/TAKE"
+run_test "Test 23: PUT" "PUT BRUSH IN UNIFORM\nQUIT\nY" "Done" "PUT works" "PUT"
+run_test "Test 24: THROW" "THROW BRUSH\nQUIT\nY" "Thrown" "THROW works" "THROW"
+run_test "Test 25: SLIDE" "SLIDE BRUSH WITH UNIFORM\nQUIT\nY" "Fat chance|valiant attempt|can't be serious|bloody likely|interesting idea|concept" "SLIDE works" "SLIDE"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

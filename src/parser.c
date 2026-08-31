@@ -266,11 +266,16 @@ bool parse_command(char *input, Command *cmd) {
     int input_prep2_idx = -1;
 
     for (int k = 1; k < num_tokens; k++) {
-      if (tokens[k].vocab && tokens[k].vocab->type == VOCAB_PREP) {
-        if (input_prep1_idx == -1)
-          input_prep1_idx = k;
-        else if (input_prep2_idx == -1)
-          input_prep2_idx = k;
+      if (tokens[k].vocab) {
+        if (tokens[k].vocab->type == VOCAB_PREP ||
+            (tokens[k].vocab->type == VOCAB_SYNONYM &&
+             lookup_vocab(tokens[k].vocab->target) &&
+             lookup_vocab(tokens[k].vocab->target)->type == VOCAB_PREP)) {
+          if (input_prep1_idx == -1)
+            input_prep1_idx = k;
+          else if (input_prep2_idx == -1)
+            input_prep2_idx = k;
+        }
       }
     }
 
@@ -279,9 +284,16 @@ bool parse_command(char *input, Command *cmd) {
       if (input_prep1_idx == -1)
         p1_match = true;
     } else {
-      if (input_prep1_idx != -1 &&
-          strcasecmp(tokens[input_prep1_idx].word, se->prep1) == 0) {
-        p1_match = true;
+      if (input_prep1_idx != -1) {
+        const char *prep1_word = tokens[input_prep1_idx].word;
+        if (tokens[input_prep1_idx].vocab &&
+            tokens[input_prep1_idx].vocab->type == VOCAB_SYNONYM) {
+          prep1_word = tokens[input_prep1_idx].vocab->target;
+        }
+        if (strcasecmp(tokens[input_prep1_idx].word, se->prep1) == 0 ||
+            strcasecmp(prep1_word, se->prep1) == 0) {
+          p1_match = true;
+        }
       }
     }
 
@@ -290,9 +302,16 @@ bool parse_command(char *input, Command *cmd) {
       if (input_prep2_idx == -1)
         p2_match = true;
     } else {
-      if (input_prep2_idx != -1 &&
-          strcasecmp(tokens[input_prep2_idx].word, se->prep2) == 0) {
-        p2_match = true;
+      if (input_prep2_idx != -1) {
+        const char *prep2_word = tokens[input_prep2_idx].word;
+        if (tokens[input_prep2_idx].vocab &&
+            tokens[input_prep2_idx].vocab->type == VOCAB_SYNONYM) {
+          prep2_word = tokens[input_prep2_idx].vocab->target;
+        }
+        if (strcasecmp(tokens[input_prep2_idx].word, se->prep2) == 0 ||
+            strcasecmp(prep2_word, se->prep2) == 0) {
+          p2_match = true;
+        }
       }
     }
 
