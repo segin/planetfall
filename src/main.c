@@ -113,7 +113,7 @@ void perform_walk_dir(ZObjectID direction_field) {
   }
   obj_move(player, direction_field);
   current_room = direction_field;
-  perform_look();
+  perform_first_look();
 }
 
 bool show_status = true;
@@ -221,7 +221,7 @@ int main(int argc, char **argv) {
   tellf("Copyright (c) 1983 Infocom, Inc. All rights reserved.\n\n");
 
   update_status_bar();
-  perform_look();
+  perform_first_look();
 
   char input[256];
 
@@ -307,7 +307,7 @@ int main(int argc, char **argv) {
           } else {
             obj_move(player, R_ESCAPE_POD);
             current_room = R_ESCAPE_POD;
-            perform_look();
+            perform_first_look();
           }
         } else {
           tellf("You can't get in that.\n");
@@ -324,7 +324,7 @@ int main(int argc, char **argv) {
         ZObjectID dest = objects[current_room].out;
         obj_move(player, dest);
         current_room = dest;
-        perform_look();
+        perform_first_look();
       } else {
         tellf("You aren't in anything you can get out of here.\n");
       }

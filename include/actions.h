@@ -24,12 +24,13 @@ void perform_teleport(ZObjectID dest);
 // Action Context Types (RARG)
 typedef enum {
   M_NONE = 0,
-  M_ENTER,
-  M_LOOK,
-  M_BEG,     // Beginning of action (pre-action)
-  M_END,     // End of action (post-action)
-  M_OBJDESC, // Object description
-  M_CONT     // Container?
+  M_BEG = 1,     // Beginning of action (pre-action)
+  M_ENTER = 2,
+  M_LOOK = 3,
+  M_FLASH = 4,   // Brief room flash
+  M_OBJDESC = 5, // Object description
+  M_END = 6,     // End of action (post-action)
+  M_CONT         // Container?
 } ActionType;
 
 void jigs_up(const char *msg);

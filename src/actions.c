@@ -138,19 +138,124 @@ void perform_examine(ZObjectID obj) {
   }
 }
 
-void perform_look() {
-  ZObject *r = &objects[current_room];
-  tellf("%s\n", r->description);
-  tellf("%s\n", r->long_description);
+bool is_lit(ZObjectID room) {
+  if (obj_has_flag(room, F_ONBIT) || obj_has_flag(room, F_LIGHTBIT))
+    return true;
 
-  ZObjectID child = r->child;
+  ZObjectID child = objects[player].child;
+  while (child != NOTHING) {
+    if (obj_has_flag(child, F_ONBIT) || obj_has_flag(child, F_LIGHTBIT))
+      return true;
+    child = objects[child].sibling;
+  }
+
+  child = objects[room].child;
+  while (child != NOTHING) {
+    if (obj_has_flag(child, F_ONBIT) || obj_has_flag(child, F_LIGHTBIT))
+      return true;
+    child = objects[child].sibling;
+  }
+
+  return false;
+}
+
+bool describe_room(bool look) {
+  bool v = look || game_state.verbose;
+
+  if (!is_lit(current_room)) {
+    tellf("It is pitch black. You might be eaten by a grue.\n");
+    if (current_room == R_TRANSPORTATION_SUPPLY) {
+      tellf("There is light to the south.\n");
+    }
+    return false;
+  }
+
+  if (!obj_has_flag(current_room, F_TOUCHBIT)) {
+    obj_set_flag(current_room, F_TOUCHBIT);
+    v = true;
+  }
+
+  tellf("%s\n", objects[current_room].description);
+
+  if (look || !game_state.super_brief) {
+    if (v) {
+      if (objects[current_room].action && objects[current_room].action(M_LOOK)) {
+        return true;
+      }
+      if (objects[current_room].long_description) {
+        tellf("%s\n", objects[current_room].long_description);
+      }
+    } else {
+      if (objects[current_room].action) {
+        objects[current_room].action(M_FLASH);
+      }
+    }
+  }
+
+  return true;
+}
+
+bool describe_objects(bool look) {
+  if (!is_lit(current_room)) {
+    tellf("You can't see anything in the dark.\n");
+    return false;
+  }
+
+  ZObjectID child = objects[current_room].child;
   while (child != NOTHING) {
     if (child != player && !obj_has_flag(child, F_NDESCBIT) &&
         !obj_has_flag(child, F_INVISIBLE)) {
-      tellf("There is a %s here.\n", objects[child].description);
+      if (objects[child].action && objects[child].action(M_OBJDESC)) {
+        // Handled by object action callback
+      } else if (!obj_has_flag(child, F_TOUCHBIT) &&
+                 objects[child].long_description) {
+        tellf("%s\n", objects[child].long_description);
+      } else {
+        const char *art = obj_has_flag(child, F_VOWELBIT) ? "an" : "a";
+        tellf("There is %s %s here.\n", art, objects[child].description);
+      }
     }
     child = objects[child].sibling;
   }
+  return true;
+}
+
+void perform_look() {
+  game_state.c_elapsed = 9;
+  if (describe_room(true)) {
+    describe_objects(true);
+  }
+}
+
+void perform_first_look() {
+  if (describe_room(false)) {
+    if (!game_state.super_brief) {
+      describe_objects(false);
+    }
+  }
+}
+
+void perform_verbose() {
+  game_state.verbose = true;
+  game_state.super_brief = false;
+  tellf("Maximum verbosity.\n\n");
+  perform_look();
+}
+
+void perform_brief() {
+  game_state.verbose = false;
+  game_state.super_brief = false;
+  tellf("Brief descriptions.\n");
+}
+
+void perform_super_brief() {
+  game_state.super_brief = true;
+  tellf("Super-brief descriptions.\n");
+}
+
+void perform_look_cretin() {
+  tellf("This isn't a primitive two-word-parser adventure game. If you want\n"
+        "to look AT that object, please say so.\n");
 }
 
 void perform_inventory() {
@@ -184,14 +289,14 @@ void perform_save() { save_game("planetfall.sav"); }
 
 void perform_restore() {
   if (restore_game("planetfall.sav")) {
-    perform_look();
+    perform_first_look();
   }
 }
 
 void perform_restart() {
   tellf("Restarting.\n");
   init_game_data();
-  perform_look();
+  perform_first_look();
 }
 
 void perform_script() { set_scripting(true); }
@@ -232,7 +337,7 @@ void perform_walk(ZObjectID dest) {
   }
   obj_move(player, dest);
   current_room = dest;
-  perform_look();
+  perform_first_look();
 }
 
 bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
@@ -250,18 +355,19 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
 
   switch (verb) {
   case V_VERBOSE:
-    game_state.verbose = true;
-    tellf("Maximum verbosity.\n");
+    perform_verbose();
     return true;
   case V_BRIEF:
-    game_state.verbose = false;
-    tellf("Brief descriptions.\n");
+    perform_brief();
     return true;
   case V_SUPER_BRIEF:
-    tellf("Superbrief descriptions.\n");
+    perform_super_brief();
     return true;
   case V_LOOK:
     perform_look();
+    return true;
+  case V_LOOK_CRETIN:
+    perform_look_cretin();
     return true;
   case V_QUIT:
     // Assuming perform_quit() is defined elsewhere or will be added.

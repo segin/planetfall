@@ -293,6 +293,11 @@ bool parse_command(char *input, Command *cmd) {
     int nc2_start = -1, nc2_end = -1;
     int ptr = 1;
 
+    if (!se->obj1_present && !se->obj2_present) {
+      if (num_tokens > 1)
+        goto next_syntax;
+    }
+
     if (se->obj1_present) {
       if (se->prep1_loc == PREP_LOC_BEFORE_OBJ1) {
         if (input_prep1_idx != ptr)

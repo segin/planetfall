@@ -107,6 +107,7 @@ typedef struct {
   int blather_leave_counter;
   int ambassador_leave_counter;
   bool verbose;
+  bool super_brief;
   int drown_counter;
   int dial_number;
   int number_needed;
@@ -174,7 +175,15 @@ void obj_rob(ZObjectID victim, ZObjectID dest);
 #include "output.h"
 
 // Parser/Output
+bool is_lit(ZObjectID room);
+bool describe_room(bool look);
+bool describe_objects(bool look);
 void perform_look();
+void perform_first_look();
+void perform_verbose();
+void perform_brief();
+void perform_super_brief();
+void perform_look_cretin();
 
 // Events (Included from events.h generally, but we need forward decls if not
 // including) Actually, circular include if events.h includes planetfall.h?
