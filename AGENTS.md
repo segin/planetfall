@@ -8,9 +8,32 @@
 # Current issues to address:
 
 - Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
-  just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. The
-  checklist in `zil_analysis.md` tracks this at 79 of 1171 items done. Needs to be
-  broken into per-file or per-region chunks and worked one at a time.
+  just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. Run
+  `python3 mark_progress.py` for the current state; it derives the checklist in
+  `zil_analysis.md` from the C sources, so it does not go stale. As of the
+  Blather/ambassador work:
+
+  | Section            | Done     |
+  |--------------------|----------|
+  | Rooms              |  96/105  |
+  | Objects            | 120/150  |
+  | Action Routines    |  92/136  |
+  | Verbs and Syntax   |  89/251  |
+  | Routines / Systems | 167/505  |
+  | **Total**          | **564/1147** |
+
+  The weakest areas by far are Verbs/Syntax and Routines/Systems -- the world is
+  largely built but the verb layer behind it is thin. Suggested order: finish the
+  verb handlers in `verbs.zil` (which retires `legacy_dispatch`), then the parser
+  gaps below, then sweep the remaining per-room action routines chapter by chapter.
+- Parser gaps in `src/parser.c`: "IT" is a stub that always fails to resolve
+  (`snarf_objects` bails early) though ZIL tracks P-IT-OBJECT from GO onward;
+  disambiguation prints a debug line and silently takes the first match; container
+  recursion only descends one level.
+- `tools/gen_syntax.py` regenerates `src/syntax_gen.c` and `include/syntax_gen.h`
+  from `zil/syntax.zil`, but is not wired into the Makefile, so the generated files
+  can drift. It has also leaked a parse artifact into the vocabulary table:
+  `{"<synonym", VOCAB_BUZZ, NULL}`.
 - Some action routines are written but never attached to their objects, so they are
   dead code. `ground_f` and `patrol_uniform_f` in `src/feinstein_actions.c` are
   currently unattached; `deck_nine_f` and `gangway_f` were too until the bulkhead
