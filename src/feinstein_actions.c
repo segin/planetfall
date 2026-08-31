@@ -172,6 +172,105 @@ bool patrol_uniform_f(void) {
   return false;
 }
 
+// BLATHER-F (globals.zil).
+bool blather_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_TALK:
+  case V_HELLO:
+    TELL("Blather shouts \"Speak when you're spoken to, Ensign Seventh "
+         "Class!\" He\n"
+         "breaks three pencil points in a frenzied rush to give you more "
+         "demerits.\n");
+    return true;
+  case V_ATTACK:
+  case V_KICK:
+    jigs_up("Blather removes several of your appendages and internal organs.");
+    return true;
+  case V_SALUTE:
+    TELL("Blather's sneer softens a bit. \"First right thing you've done "
+         "today. Only\n"
+         "five demerits.\"\n");
+    return true;
+  case V_THROW:
+    // Only when Blather is what you threw the thing AT.
+    if (current_cmd.prsi == O_BLATHER) {
+      ZObjectID missile = current_cmd.prso_list[0];
+      obj_move(missile, current_room);
+      tellf("The %s bounces off Blather's bulbous nose. He becomes livid, "
+            "orders\n"
+            "you to do five hundred push-ups, gives you ten thousand demerits, "
+            "and assigns\n"
+            "you five years of extra galley duty.\n",
+            objects[missile].description);
+      return true;
+    }
+    return false;
+  case V_EXAMINE:
+    TELL("Ensign Blather is a tall, beefy officer with a tremendous, "
+         "misshapen nose.\n"
+         "His uniform is perfect in every respect, and the crease in his "
+         "trousers\n"
+         "could probably slice diamonds in half.\n");
+    return true;
+  case V_TAKE:
+    TELL("Blather brushes you away, muttering about suspended shore leave.\n");
+    return true;
+  default:
+    return false;
+  }
+}
+
+// CELERY-F (globals.zil). The ambassador's snack is lethal to humans.
+bool celery_f(int arg) {
+  (void)arg;
+  switch (current_cmd.verb) {
+  case V_EAT:
+    jigs_up("Oops. Looks like Blow'k-Bibben-Gordoan metabolism is not\n"
+            "compatible with our own. You die of all sorts of convulsions.");
+    return true;
+  case V_TAKE:
+    TELL("The ambassador seems perturbed by your lack of normal protocol.\n");
+    return true;
+  default:
+    return false;
+  }
+}
+
+// LIKE-SLIME (globals.zil).
+static void like_slime(const char *verbed) {
+  tellf("It %s like slime. Aren't you glad you didn't step in it?\n", verbed);
+}
+
+// SLIME-PSEUDO (globals.zil). The trail only exists once the ambassador has
+// come through; before that there is nothing on the deck to poke at.
+bool slime_f(int arg) {
+  (void)arg;
+  if (!obj_in(O_AMBASSADOR, current_room) &&
+      game_state.ambassador_leave_counter == 0) {
+    return false;
+  }
+
+  switch (current_cmd.verb) {
+  case V_EAT:
+  case V_TASTE:
+    like_slime("tastes");
+    return true;
+  case V_TAKE:
+  case V_RUB:
+    like_slime("feels");
+    return true;
+  case V_EXAMINE:
+    like_slime("looks");
+    return true;
+  case V_SMELL:
+    like_slime("smells");
+    return true;
+  default:
+    return false;
+  }
+}
+
 bool ambassador_f(int arg) {
   (void)arg; // Unused for now
   // TALK, HELLO, or interaction

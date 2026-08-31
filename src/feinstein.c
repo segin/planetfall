@@ -140,35 +140,62 @@ void init_feinstein_act() {
   // BLATHER
   o = &objects[O_BLATHER];
   o->id = O_BLATHER;
-  o->description = "Ensign First Class Blather";
-  o->synonyms[0] = "blather";
-  o->synonyms[1] = "ensign";
-  o->flags = F_ACTORBIT;
+  o->description = "Ensign First Class";
+  o->long_description =
+      "Ensign First Class Blather is standing before you, furiously scribbling\n"
+      "demerits onto an oversized clipboard.";
+  o->synonyms[0] = "ensign";
+  o->synonyms[1] = "blather";
+  o->adjectives[0] = "ensign";
+  o->adjectives[1] = "first";
+  o->adjectives[2] = "class";
+  o->size = 150;
+  o->flags = F_VOWELBIT | F_ACTORBIT;
+  o->action = blather_f;
 
   // AMBASSADOR
   o = &objects[O_AMBASSADOR];
   o->id = O_AMBASSADOR;
   o->description = "alien ambassador";
+  o->long_description =
+      "A high-ranking ambassador from a newly-contacted alien race is standing\n"
+      "here on three of his legs, and watching you with seven of his eyes.";
   o->synonyms[0] = "ambassador";
-  o->synonyms[1] = "alien";
-  o->flags = F_ACTORBIT;
+  o->adjectives[0] = "alien";
+  o->adjectives[1] = "high-ranking";
+  o->adjectives[2] = "important";
+  o->adjectives[3] = "very";
+  o->size = 150;
+  o->flags = F_VOWELBIT | F_ACTORBIT;
   o->action = ambassador_f;
 
-  // CELERY
+  // CELERY -- deliberately not takeable; CELERY-F rebuffs the attempt.
   o = &objects[O_CELERY];
   o->id = O_CELERY;
   o->description = "piece of celery";
   o->synonyms[0] = "celery";
-  o->flags = F_FOODBIT | F_TAKEBIT;
+  o->synonyms[1] = "piece";
+  o->synonyms[2] = "stalk";
+  o->flags = F_NDESCBIT | F_FOODBIT;
+  o->action = celery_f;
 
   // BROCHURE
   o = &objects[O_BROCHURE];
   o->id = O_BROCHURE;
   o->description = "brochure";
+  o->long_description =
+      "Unfortunately, one of those stupid Blow'k-bibben-Gordo brochures is "
+      "here.";
   o->synonyms[0] = "brochure";
-  o->flags = F_TAKEBIT | F_READBIT;
-  o->text = "\"The leading export of Blow'k-bibben-Gordo is the adventure game "
-            "PLANETFALL.\"";
+  o->synonyms[1] = "pamphlet";
+  o->synonyms[2] = "leaflet";
+  o->size = 4;
+  o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
+  o->text = "\"The leading export of Blow'k-bibben-Gordo is the adventure "
+            "game\n\n"
+            "          *** PLANETFALL ***\n\n"
+            "written by S. Eric Meretzky.\n"
+            "Buy one today. Better yet, buy a thousand.\"";
 
   // SAFETY-WEB
   o = &objects[O_SAFETY_WEB];
@@ -208,7 +235,9 @@ void init_feinstein_act() {
   o->id = O_SLIME;
   o->description = "slime";
   o->synonyms[0] = "slime";
+  o->adjectives[0] = "green";
   o->flags = F_NDESCBIT | F_TRYTAKEBIT;
+  o->action = slime_f;
   // Don't place yet, place when ambassador appears.
 
   // FOOD-KIT
@@ -366,42 +395,118 @@ void routine_blowup_feinstein() {
   }
 }
 
+// I-BLATHER (globals.zil). Blather patrols two beats: he hunts you down if you
+// wander off Deck Nine, and he drops by to sneer while you are working.
 void routine_blather() {
-  // Simplified Blather
-  if (current_room == R_DECK_NINE && game_state.blather_leave_counter == 0) {
-    // 20% prob he appears if not already here
-    if (!obj_in(O_BLATHER, current_room) && (rand() % 100) < 20) {
+  if (current_room == R_DECK_EIGHT || current_room == R_REACTOR_LOBBY) {
+    if (obj_in(O_BLATHER, current_room)) {
+      game_state.brigs_up++;
+      if (game_state.brigs_up > 3) {
+        tellf("\nBlather loses his last vestige of patience and drags you to "
+              "the Feinstein's\n"
+              "brig. He throws you in, and the door clangs shut behind you.\n\n");
+        obj_move(player, R_BRIG);
+        current_room = R_BRIG;
+        // Your belongings do not come with you; they turn up much later.
+        obj_rob(player, R_CRAG);
+        obj_move(O_PADLOCK, current_room);
+        obj_clear_flag(O_PADLOCK, F_TAKEBIT);
+        perform_look();
+      } else {
+        tellf("\n\"I said to return to your post, Ensign Seventh Class!\" "
+              "bellows Blather,\n"
+              "turning a deepening shade of crimson.\n");
+      }
+    } else if (game_state.blowup_counter == 0) {
       obj_move(O_BLATHER, current_room);
-      tellf("\nEnsign Blather swaggers in. 'You call this polishing? 30 "
-            "demerits!'\n");
+      tellf("\nEnsign Blather, his uniform immaculate, enters and notices you "
+            "are away\n"
+            "from your post. \"Twenty demerits, Ensign Seventh Class!\" bellows "
+            "Blather.\n"
+            "\"Forty if you're not back on Deck Nine in five seconds!\" He "
+            "curls his face\n"
+            "into a hideous mask of disgust at your unbelievable negligence.\n");
     }
-  }
-
-  if (game_state.brigs_up > 3) {
-    tellf("\nBlather loses his patience. 'That's it, Ensign! To the Brig!'\n");
-    tellf(
-        "He drags you to the brig and throws you in. The door clangs shut.\n");
-    obj_move(player, R_BRIG);
-    current_room = R_BRIG;
-    obj_rob(player, R_DECK_NINE);
-    game_state.brigs_up = 0;
-    perform_look();
+  } else if (current_room == R_DECK_NINE) {
+    if (game_state.blather_leave_counter == 3 &&
+        obj_in(O_BLATHER, current_room)) {
+      game_state.blather_leave_counter = 0;
+      obj_remove(O_BLATHER);
+      tellf("\nBlather, adding fifty more demerits for good measure, moves off "
+            "in search\n"
+            "of more young ensigns to terrorize.\n");
+    } else if (obj_in(O_BLATHER, R_DECK_NINE)) {
+      game_state.blather_leave_counter++;
+    } else if (!obj_in(O_AMBASSADOR, current_room) &&
+               game_state.blowup_counter == 0 && (rand() % 100) < 5) {
+      obj_move(O_BLATHER, current_room);
+      tellf("\nEnsign First Class Blather swaggers in. He studies your work "
+            "with half-closed\n"
+            "eyes. \"You call this polishing, Ensign Seventh Class?\" he "
+            "sneers. \"We have\n"
+            "a position for an Ensign Ninth Class in the toilet-scrubbing "
+            "division,\n"
+            "you know. Thirty demerits.");
+      if (!obj_has_flag(O_PATROL_UNIFORM, F_WORNBIT)) {
+        tellf(" And another sixty for improper dress!");
+      }
+      tellf("\" He glares at you, his arms crossed.\n");
+    }
   }
 }
 
+// AMBASSADOR-QUOTES (globals.zil), picked at random each turn he lingers.
+static const char *ambassador_quotes[] = {
+    "introduces himself as Br'gun-te'elkner-ipg'nun.",
+    "asks if you are performing some sort of religious ceremony.",
+    "inquires whether you are interested in a game of Bocci.",
+    "recites a plea for coexistence between your races.",
+    "asks where Admiral Smithers can be found.",
+    "remarks that all humans look alike to him.",
+    "offers you a bit of celery.",
+};
+#define NUM_AMBASSADOR_QUOTES                                                  \
+  (sizeof(ambassador_quotes) / sizeof(ambassador_quotes[0]))
+
+// I-AMBASSADOR (globals.zil). He shows up once, small-talks for three turns,
+// then leaves for good -- the interrupt disables itself on his way out.
 void routine_ambassador() {
-  if (current_room == R_DECK_NINE && game_state.ambassador_leave_counter == 0) {
+  if (game_state.ambassador_leave_counter > 2 &&
+      obj_in(O_AMBASSADOR, current_room)) {
+    obj_remove(O_AMBASSADOR);
+    obj_remove(O_CELERY);
+    if (current_room == R_DECK_NINE) {
+      tellf("\nThe ambassador grunts a polite farewell, and disappears up the "
+            "gangway,\n"
+            "leaving a trail of dripping slime.\n");
+    }
+    dequeue_event(EVT_AMBASSADOR);
+  } else if (obj_in(O_AMBASSADOR, R_DECK_NINE)) {
+    game_state.ambassador_leave_counter++;
+    if (current_room == R_DECK_NINE) {
+      tellf("\nThe ambassador %s\n",
+            ambassador_quotes[rand() % NUM_AMBASSADOR_QUOTES]);
+    }
+  } else if (current_room == R_DECK_NINE) {
     if (!obj_in(O_AMBASSADOR, current_room) &&
-        (rand() % 100) < 15) { // Forced for test
+        !obj_in(O_BLATHER, current_room) && game_state.blowup_counter == 0 &&
+        (rand() % 100) < 15) {
       obj_move(O_AMBASSADOR, current_room);
-      obj_move(O_CELERY, O_AMBASSADOR);
-
-      tellf("\nThe alien ambassador ambles toward you. He drops a brochure.\n");
-      obj_move(O_BROCHURE, current_room);
-
-      // Leave slime
+      obj_move(O_CELERY, current_room);
       obj_move(O_SLIME, current_room);
-      tellf("He leaves a trail of green slime on the deck.\n");
+      // He hands the brochure straight to you.
+      obj_move(O_BROCHURE, player);
+      tellf("\nThe alien ambassador from the planet Blow'k-bibben-Gordo ambles "
+            "toward you\n"
+            "from down the corridor. He is munching on something resembling an "
+            "enormous\n"
+            "stalk of celery, and he leaves a trail of green slime on the deck. "
+            "He stops\n"
+            "nearby, and you wince as a pool of slime begins forming beneath "
+            "him on your\n"
+            "newly-polished deck. The ambassador wheezes loudly and hands you a "
+            "brochure\n"
+            "outlining his planet's major exports.\n");
     }
   }
 }

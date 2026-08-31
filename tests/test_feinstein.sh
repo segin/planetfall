@@ -124,6 +124,31 @@ run_test "Test 59: HELIPAD fence and helicopter boarding" "TELEPORT HELIPAD\nNOR
 run_test "Test 60: COMM ROOM playback and screen" "TELEPORT COMM ROOM\nPUSH PLAYBACK BUTTON\nREAD SCREEN\nEXAMINE CABLES\nQUIT\nY" "Feinstein" "Comm room playback button and screen reading work" "COMM ROOM"
 run_test "Test 61: KALAMONTEE PLATFORM description" "TELEPORT WAITING AREA\nEAST\nLOOK\nQUIT\nY" "Kalamontee Staashun" "Kalamontee platform navigation and description work" "KALAMONTEE PLATFORM"
 
+# --- Blather and the alien ambassador (I-BLATHER / I-AMBASSADOR) -------------
+# Blather's off-post branch is unconditional, so leaving Deck Nine always
+# summons him; his Deck Nine visit and the ambassador's arrival are probability
+# rolls, which land on fixed turns only because rand() is never seeded.
+WAIT_14=$(printf 'WAIT\\n%.0s' $(seq 1 14))
+WAIT_30=$(printf 'WAIT\\n%.0s' $(seq 1 30))
+
+run_test "Test 62: Blather hunts you down off-post" "UP\nUP\nQUIT\nY" "notices you are away" "Blather appears when you leave your post" "Blather off-post"
+run_test "Test 63: Blather warns before brigging you" "UP\nUP\nWAIT\nQUIT\nY" "return to your post" "Blather issues warnings" "Blather warning"
+run_test "Test 64: Blather brigs you after three warnings" "UP\nUP\nWAIT\nWAIT\nWAIT\nWAIT\nQUIT\nY" "drags you to the Feinstein" "Blather brigs the player" "Blather brig"
+run_test "Test 65: Saluting Blather" "UP\nUP\nSALUTE BLATHER\nQUIT\nY" "sneer softens" "Salute is acknowledged" "Blather salute"
+run_test "Test 66: Examining Blather" "UP\nUP\nEXAMINE BLATHER\nQUIT\nY" "misshapen nose" "Blather description works" "Blather examine"
+run_test "Test 67: Taking Blather" "UP\nUP\nTAKE BLATHER\nQUIT\nY" "suspended shore leave" "Blather rebuffs being taken" "Blather take"
+run_test "Test 68: Throwing something at Blather" "UP\nUP\nTHROW BRUSH AT BLATHER\nQUIT\nY" "bulbous nose" "Throwing at Blather works" "Blather throw"
+run_test "Test 69: Attacking Blather is fatal" "UP\nUP\nATTACK BLATHER\nQUIT\nY" "appendages and internal organs" "Attacking Blather kills you" "Blather attack"
+
+run_test "Test 70: Ambassador arrives on Deck Nine" "${WAIT_30}QUIT\nY" "Blow'k-bibben-Gordo ambles toward you" "Ambassador arrives" "Ambassador arrival"
+run_test "Test 71: Ambassador makes small talk" "${WAIT_30}QUIT\nY" "The ambassador (introduces|asks|inquires|recites|remarks|offers)" "Ambassador quotes fire" "Ambassador quotes"
+run_test "Test 72: Ambassador leaves for good" "${WAIT_30}QUIT\nY" "grunts a polite farewell" "Ambassador departs" "Ambassador departure"
+run_test "Test 73: Ambassador hands over the brochure" "${WAIT_14}READ BROCHURE\nQUIT\nY" "S. Eric Meretzky" "Brochure text is the full ZIL text" "Brochure text"
+run_test "Test 74: Examining the ambassador" "${WAIT_14}EXAMINE AMBASSADOR\nQUIT\nY" "twenty eyes" "Ambassador description works" "Ambassador examine"
+run_test "Test 75: Celery cannot be taken" "${WAIT_14}TAKE CELERY\nQUIT\nY" "lack of normal protocol" "Celery refuses to be taken" "Celery take"
+run_test "Test 76: Eating the celery is fatal" "${WAIT_14}EAT CELERY\nQUIT\nY" "convulsions" "Eating celery kills you" "Celery eat"
+run_test "Test 77: Slime responds to the senses" "${WAIT_14}EXAMINE SLIME\nQUIT\nY" "didn't step in it" "Slime pseudo-object works" "Slime"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"

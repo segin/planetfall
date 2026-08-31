@@ -404,42 +404,18 @@ int main(int argc, char **argv) {
         }
       }
       break;
+    // Blather, the ambassador and the celery all answer for themselves now, in
+    // blather_f / ambassador_f / celery_f, which dispatch_action reaches first.
     case V_ATTACK:
     case V_KICK:
-      if (prso == O_BLATHER) {
-        tellf("\nBlather removes several of your appendages and internal "
-              "organs. You die.\n");
-        game_running = false;
-      } else if (prso == O_AMBASSADOR) {
-        tellf("\nThe ambassador is startled, and emits an amazing quantity of "
-              "slime which spreads across the section of the deck you just "
-              "polished.\n");
-      } else {
-        tellf("Violence isn't the answer.\n");
-      }
+      tellf("Violence isn't the answer.\n");
       break;
     case V_TALK:
-      if (prso == O_BLATHER) {
-        tellf("\nBlather shouts \"Speak when you're spoken to, Ensign Seventh "
-              "Class!\" He breaks three pencil points in a frenzied rush to "
-              "give you more demerits.\n");
-        game_state.brigs_up++;
-      } else if (prso == O_AMBASSADOR) {
-        tellf("\nThe ambassador taps his translator, and then touches his "
-              "center knee to his left ear (the Blow'k-bibben-Gordoan "
-              "equivalent of shrugging).\n");
-      } else {
-        tellf("Talking to yourself?\n");
-      }
+      tellf("Talking to yourself?\n");
       break;
     case V_EAT:
       if (prso == NOTHING) {
         tellf("Eat what?\n");
-      } else if (prso == O_CELERY) {
-        tellf(
-            "\nOops. Looks like Blow'k-Bibben-Gordoan metabolism is not "
-            "compatible with our own. You die of all sorts of convulsions.\n");
-        game_running = false;
       } else if (obj_has_flag(prso, F_FOODBIT)) {
         if (obj_in(prso, player)) {
           tellf("Delicious.\n");
