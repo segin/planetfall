@@ -16,23 +16,18 @@ Release 39 -- wording drifted between them, and the sources win. Confirmed
 release differences are listed in `KNOWN_DIFFS` in `tests/compare_original.py`
 so they do not drown the real signal.
 
-Current: 14/30 probes match, 10 known release differences, 6 real findings
+Current: 15/30 probes match, 12 known release differences, 3 real findings
 (listed below). Add probes as chapters land.
 
 # Current issues to address:
 
 - Findings from `make compare` that are real port bugs, not release drift:
-  - `READ ID CARD` fails to parse -- the ID card has no adjectives, so "id"
-    is an unknown word. ZIL: `(ADJECTIVE PATROL ID IDENTIFICATION)`.
-  - `EXAMINE UNIFORM` lists the pocket's contents instead of describing it;
-    `patrol_uniform_f` is written but never attached to the object.
-  - An unknown word reports "I don't understand that sentence." where ZIL says
-    "I don't know the word 'xyzzy'." The parser does not distinguish an
-    unrecognised word from a sentence it cannot fit to a syntax line.
-  - A verb with a missing object reports the same generic failure where ZIL
-    asks "What do you want to take?"
+  - **IN PROGRESS** — An unknown word reports "I don't understand that
+    sentence." where ZIL says "I don't know the word 'xyzzy'." The parser does
+    not distinguish an unrecognised word from a sentence it cannot fit to a
+    syntax line. A verb with a missing object hits the same generic failure,
+    where ZIL asks "What do you want to take?"
   - `DIAGNOSE` is unimplemented; ZIL reports health, rest and hunger.
-  - `INVENTORY` lists items in the reverse of ZIL's order.
 
 - Fully implement `zil/planetfall.zil` -- that is, the whole game, since that file
   just includes SYNTAX, MISC, GLOBALS, PARSER, VERBS, COMPONE and COMPTWO. Run

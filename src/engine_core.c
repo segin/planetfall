@@ -59,24 +59,46 @@ void score_obj(ZObjectID obj) {
     }
 }
 
+// ZILCH lays the object table out in declaration order, so objects the compiler
+// placed are traversed in the order they were written, while <MOVE> at runtime
+// links the object in as the new first child. Both matter: the first decides
+// what order your inventory and every room's contents print in, the second is
+// what the game logic depends on. Reproduce both by appending while the world is
+// still being built and prepending once play starts.
+bool world_building = true;
+
 // Moves obj to dest (re-linking parent/child/sibling)
 void obj_move(ZObjectID id, ZObjectID dest_id) {
     if (id == NOTHING) return;
 
     // 1. Remove from current location
     obj_remove(id);
-    
+
     if (dest_id == NOTHING) return;
-    
+
     ZObject* obj = get_obj(id);
     ZObject* dest = get_obj(dest_id);
-    
+
     if (!obj || !dest) return;
-    
-    // 2. Add to new location (as first child)
+
     obj->parent = dest_id;
-    obj->sibling = dest->child;
-    dest->child = id;
+
+    if (world_building) {
+        // 2a. Append, so initial contents list in declaration order.
+        obj->sibling = NOTHING;
+        if (dest->child == NOTHING) {
+            dest->child = id;
+        } else {
+            ZObjectID last = dest->child;
+            while (objects[last].sibling != NOTHING)
+                last = objects[last].sibling;
+            objects[last].sibling = id;
+        }
+    } else {
+        // 2b. Prepend, as the Z-machine's insert_obj does.
+        obj->sibling = dest->child;
+        dest->child = id;
+    }
 }
 
 // Removes obj from its parent (orphans it)

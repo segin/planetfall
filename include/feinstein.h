@@ -43,8 +43,8 @@ bool brig_door_f(int arg);
 bool window_f(int arg);
 bool lights_f(int arg);
 const char *ddesc(ZObjectID door);
-bool ground_f(void);
+bool ground_f(int arg);
 bool chronometer_f(int arg);
-bool patrol_uniform_f(void);
+bool patrol_uniform_f(int arg);
 
 #endif

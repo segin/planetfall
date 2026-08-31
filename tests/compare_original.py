@@ -84,6 +84,9 @@ KNOWN_DIFFS = {
     'deck-eight-east': 'R39 LDESC capitalises "Deck Eight"/"Deck Nine"',
     'deck-eight-north': 'R39 LDESC capitalises "Deck Eight"/"Deck Nine"',
     'version':        'the port reports its own release, not the beta\'s',
+    'inventory':      'R1 calls it a "Patrol ID card"; R39 DESC is "ID card"',
+    'examine-uniform': 'R1 says "radiation and mosquitoes"; R39 says "mild '
+                       'radiation, repels all insects"',
 }
 
 STATUS_RE = re.compile(r'Score:\s*-?\d+\s+Moves:\s*\d+')

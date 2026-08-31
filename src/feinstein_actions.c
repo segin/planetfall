@@ -449,7 +449,8 @@ bool gangway_f(int arg) {
   return false;
 }
 
-bool ground_f(void) {
+bool ground_f(int arg) {
+  (void)arg;
   if (current_cmd.verb == V_PUT && current_cmd.prsi == O_GROUND) {
     // Redirect PUT ON GROUND to DROP
     TELL("Dropped.\n");
@@ -477,7 +478,9 @@ bool chronometer_f(int arg) {
   return false;
 }
 
-bool patrol_uniform_f(void) {
+// PATROL-UNIFORM-F (globals.zil).
+bool patrol_uniform_f(int arg) {
+  (void)arg;
   if (current_cmd.verb == V_EXAMINE) {
     TELL("It is a standard-issue one-pocket Stellar Patrol uniform, a miracle "
          "of modern\n"
@@ -487,19 +490,39 @@ bool patrol_uniform_f(void) {
          "insects,\n"
          "absorbs sweat, promotes healthy skin tone, and on top of everything "
          "else,\n"
-         "it is super-comfy.\n");
+         "it is super-comfy.");
+    if (game_state.trip_counter == 15) {
+      TELL(" There are definitely worse things to find yourself wearing when "
+           "stranded\n"
+           "on a strange planet.");
+    }
+    TELL("\n");
     return true;
   }
-  if (current_cmd.verb == V_TAKE_OFF &&
+  if (current_cmd.verb == V_WEAR &&
+      obj_has_flag(O_LAB_UNIFORM, F_WORNBIT)) {
+    TELL("It won't fit over the lab uniform.\n");
+    return true;
+  }
+  if ((current_cmd.verb == V_TAKE_OFF || current_cmd.verb == V_REMOVE) &&
       obj_has_flag(O_PATROL_UNIFORM, F_WORNBIT)) {
     obj_clear_flag(O_PATROL_UNIFORM, F_WORNBIT);
     TELL("You have removed your Patrol uniform.");
+    if (game_state.trip_counter == 15) {
+      TELL(" You suddenly realize how warm it is. You also feel naked and "
+           "vulnerable.");
+    }
     if (obj_in(O_BLATHER, current_room)) {
       TELL(" \"Removing your uniform while on duty? Five hundred demerits!\"");
     } else if (obj_in(O_FLOYD, current_room)) {
       TELL(" Floyd giggles. \"You look funny without any clothes on.\"");
     }
     TELL("\n");
+    return true;
+  }
+  if (current_cmd.verb == V_OPEN || current_cmd.verb == V_CLOSE) {
+    tellf("There's no way to open or close the pocket of the %s.\n",
+          objects[O_PATROL_UNIFORM].description);
     return true;
   }
   return false;

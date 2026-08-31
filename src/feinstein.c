@@ -306,14 +306,13 @@ void init_feinstein_act() {
   o->description = "floor";
   o->synonyms[0] = "floor";
   o->synonyms[1] = "deck";
+  o->synonyms[2] = "ground";
   o->flags = F_NDESCBIT | F_SURFACEBIT;
-  obj_move(O_GROUND,
-           OBJ_GLOBAL_OBJECTS); // Should be everywhere, but for now we rely on
-                                // explicit placement or global search
-  // Since my parser doesn't do "global objects" well yet (only checks
-  // room/inv), I'll put it in Deck Nine for now. Ideally engine_core needs a
-  // "global" concept.
-  obj_move(O_GROUND, R_DECK_NINE);
+  o->action = ground_f;
+  // GROUND lives in GLOBAL-OBJECTS so it is reachable everywhere. It used to be
+  // parked in Deck Nine as a workaround for a parser that only searched the room
+  // and inventory; snarf_objects walks the global scopes now.
+  obj_move(O_GROUND, OBJ_GLOBAL_OBJECTS);
 
   // SLIME (Pseudo object for Ambassador's slime)
   o = &objects[O_SLIME];

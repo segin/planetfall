@@ -15,7 +15,11 @@ void test_object_linking() {
     objects[parent].id = parent;
     objects[child1].id = child1;
     objects[child2].id = child2;
-    
+
+    // Runtime MOVE links the object in as the new first child, as the
+    // Z-machine's insert_obj does.
+    world_building = false;
+
     // Move child1 to parent
     obj_move(child1, parent);
     assert(objects[child1].parent == parent);
@@ -34,6 +38,18 @@ void test_object_linking() {
     assert(objects[child2].parent == NOTHING);
     assert(objects[parent].child == child1);
     
+    // While the world is being built, placement appends instead, so that a
+    // room's contents and your inventory print in declaration order the way
+    // ZILCH's object table lays them out.
+    obj_remove(child1);
+    world_building = true;
+    obj_move(child1, parent);
+    obj_move(child2, parent);
+    assert(objects[parent].child == child1);   // first declared, first listed
+    assert(objects[child1].sibling == child2);
+    assert(objects[child2].sibling == NOTHING);
+    world_building = false;
+
     printf("Object Linking Passed.\n");
 }
 

@@ -82,16 +82,31 @@ void init_game_data() {
   o = &objects[O_PATROL_UNIFORM];
   o->id = O_PATROL_UNIFORM;
   o->description = "Patrol uniform";
+  o->long_description = "A slightly wrinkled Patrol uniform is lying here.";
   o->synonyms[0] = "uniform";
-  o->flags = F_TAKEBIT | F_WORNBIT | F_WEARBIT | F_CONTBIT | F_OPENBIT;
+  o->synonyms[1] = "pocket";
+  o->synonyms[2] = "suit";
+  o->adjectives[0] = "patrol";
+  o->adjectives[1] = "wrinkled";
+  o->capacity = 10;
+  o->action = patrol_uniform_f;
+  o->flags = F_TAKEBIT | F_WORNBIT | F_WEARBIT | F_CONTBIT | F_SEARCHBIT |
+             F_OPENBIT;
   obj_move(O_PATROL_UNIFORM, player);
 
   o = &objects[O_ID_CARD];
   o->id = O_ID_CARD;
   o->description = "ID card";
   o->synonyms[0] = "card";
+  o->synonyms[1] = "cards";
+  o->adjectives[0] = "patrol";
+  o->adjectives[1] = "id";
+  o->adjectives[2] = "identification";
+  o->size = 3;
   o->flags = F_TAKEBIT | F_READBIT | F_VOWELBIT;
-  o->text = "STELLAR PATROL - ID 6172-531-541";
+  o->text = "\"STELLAR PATROL\n"
+            "Special Assignment Task Force\n"
+            "ID Number:  6172-531-541\"";
   obj_move(O_ID_CARD, O_PATROL_UNIFORM);
 
   o = &objects[O_CHRONOMETER];
@@ -102,6 +117,9 @@ void init_game_data() {
   o->flags = F_TAKEBIT | F_WEARBIT | F_WORNBIT;
   o->action = chronometer_f;
   obj_move(O_CHRONOMETER, player);
+
+  // The world is built; from here on MOVE prepends, as the Z-machine does.
+  world_building = false;
 }
 
 void perform_walk_dir(ZObjectID direction_field) {

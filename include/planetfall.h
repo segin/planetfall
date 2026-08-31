@@ -176,6 +176,9 @@ void init_game_data();
 void init_objects();
 
 extern bool game_running;
+// True while init_game_data is laying the world out, so that initial placement
+// lists in declaration order the way ZILCH's object table does.
+extern bool world_building;
 
 // Object Manipulation
 ZObject *get_obj(ZObjectID id);

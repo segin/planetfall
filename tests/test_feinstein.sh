@@ -74,7 +74,10 @@ run_test "Test 9: VERBOSE command" "VERBOSE\nQUIT\nY" "Maximum verbosity" "VERBO
 run_test "Test 10: BRIEF command" "BRIEF\nQUIT\nY" "Brief descriptions" "BRIEF works" "BRIEF command"
 run_test "Test 11: SUPER-BRIEF command" "SUPER\nQUIT\nY" "Super-brief descriptions" "SUPER-BRIEF works" "SUPER-BRIEF command"
 run_test "Test 12: LOOK object (cretin check)" "LOOK BRUSH\nQUIT\nY" "primitive two-word-parser" "LOOK <OBJECT> cretin message works" "LOOK <OBJECT>"
-run_test "Test 13: EXAMINE container" "EXAMINE UNIFORM\nQUIT\nY" "Patrol uniform contains" "EXAMINE container works" "EXAMINE container"
+# PATROL-UNIFORM-F describes the uniform; it does not list the pocket contents.
+run_test "Test 13: EXAMINE uniform" "EXAMINE UNIFORM\nQUIT\nY" "miracle of modern" "PATROL-UNIFORM-F describes the uniform" "EXAMINE uniform"
+run_test "Test 13a: The uniform pocket cannot be worked" "OPEN UNIFORM\nQUIT\nY" "no way to open or close the pocket" "Uniform open/close refusal works" "Uniform pocket"
+run_test "Test 13b: READ ID CARD resolves" "READ ID CARD\nQUIT\nY" "6172-531-541" "ID card adjectives parse" "ID card parse"
 run_test "Test 14: PRE-EXAMINE absent object" "EXAMINE LADDER\nQUIT\nY" "can't see any" "PRE-EXAMINE absent check works" "PRE-EXAMINE"
 run_test "Test 15: SCORE command" "SCORE\nQUIT\nY" "out of 80 points" "SCORE command works" "SCORE command"
 run_test "Test 16: VERSION command" "VERSION\nQUIT\nY" "Release 37" "VERSION command works" "VERSION command"
@@ -82,7 +85,9 @@ run_test "Test 17: AGAIN command" "LOOK\nAGAIN\nQUIT\nY" "Deck Nine" "AGAIN comm
 run_test "Test 18: QUIT decline" "QUIT\nN\nQUIT\nY" "Ok" "QUIT decline confirmation works" "QUIT decline"
 run_test "Test 19: SAVE and RESTORE" "SAVE\nRESTORE\nQUIT\nY" "Game saved.*Game restored" "SAVE and RESTORE work" "SAVE/RESTORE"
 run_test "Test 20: WALK AROUND" "WALK AROUND BRUSH\nQUIT\nY" "Use compass directions" "WALK AROUND works" "WALK AROUND"
-run_test "Test 21: WALK TO" "WALK TO FLOOR\nQUIT\nY" "It's here" "WALK TO works" "WALK TO"
+# V-WALK-TO only says "It's here!" for something actually in the room; the floor
+# is a global object, so it falls through to USE-DIRECTIONS as the original does.
+run_test "Test 21: WALK TO a global falls through" "WALK TO FLOOR\nQUIT\nY" "compass directions" "WALK TO defers to USE-DIRECTIONS" "WALK TO"
 # GLOBAL-POD-F intercepts WALK-TO and routes it through the bulkhead rather than
 # answering "It's here!", so walking to the pod is refused while it is sealed.
 run_test "Test 21a: WALK TO POD goes through the bulkhead" "WALK TO POD\nQUIT\nY" "escape pod bulkhead is closed" "WALK TO POD routes through the door" "WALK TO POD"
