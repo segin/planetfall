@@ -9,6 +9,19 @@
 // Max number of objects in the game
 #define MAX_OBJECTS 1000
 
+// Time constants, from globals.zil / misc.zil.
+//
+// The clock is denominated in Galactic Standard Time units, not turns. Every
+// action costs C_ELAPSED_DEFAULT unless its handler overrides c_elapsed;
+// movement costs DEFAULT_MOVE. Queued events count down by the cost of the
+// action just taken, so a turn spent walking burns roughly three times as much
+// of the clock as a turn spent looking at something.
+#define C_ELAPSED_DEFAULT 7 // <CONSTANT C-ELAPSED-DEFAULT 7>
+#define DEFAULT_MOVE 20     // <CONSTANT DEFAULT-MOVE 20>
+
+// Time cost the pod trip forces once it is underway (misc.zil MAIN-LOOP).
+#define C_ELAPSED_POD_TRIP 54
+
 // Object IDs
 typedef int ZObjectID;
 
@@ -93,7 +106,8 @@ typedef struct {
 
 // Game State
 typedef struct {
-  int internal_moves;
+  int internal_moves; // Master clock, in Galactic Standard Time units
+  int moves;          // Time as displayed; 0 when the chronometer is not carried
   int day;
   int score;
   int load_allowed;

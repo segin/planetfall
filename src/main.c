@@ -105,6 +105,29 @@ void perform_walk_dir(ZObjectID direction_field) {
   perform_walk(direction_field);
 }
 
+// TIMELESS-VERB? (misc.zil). These consume no Galactic Standard Time, and --
+// because MAIN-LOOP only calls CLOCKER when C-ELAPSED is non-zero -- they do not
+// advance queued events either. Checking the score must never cost you the ship.
+static bool timeless_verb(int verb) {
+  switch (verb) {
+  case V_BRIEF:
+  case V_SUPER_BRIEF:
+  case V_VERBOSE:
+  case V_SAVE:
+  case V_RESTORE:
+  case V_SCORE:
+  case V_SCRIPT:
+  case V_UNSCRIPT:
+  case V_TIME:
+  case V_QUIT:
+  case V_RESTART:
+  case V_VERSION:
+    return true;
+  default:
+    return false;
+  }
+}
+
 bool show_status = true;
 
 void setup_terminal() {
@@ -143,7 +166,6 @@ void update_status_bar() {
 
   ZObject *room = &objects[current_room];
   const char *loc_name = room->description ? room->description : "Unknown";
-  int moves = game_state.internal_moves;
 
   // Save Cursor
   printf("\033[s");
@@ -151,23 +173,12 @@ void update_status_bar() {
   printf("\033[H");
   printf("\033[7m"); // Inverse Video
 
+  // Planetfall is a <VERSION ZIP> game with no TIME flag, so the interpreter
+  // draws a score/moves status line off the SCORE and MOVES globals. MOVES
+  // holds Galactic Standard Time as a bare count -- there is no hours:minutes
+  // rendering anywhere in the ZIL; TELL-TIME prints <TELL N ,INTERNAL-MOVES>.
   char right_text[32];
-  int start_hour = 8;
-  int minutes_per_move = 10;
-  int total_minutes = moves * minutes_per_move;
-  int current_day = game_state.day + (total_minutes / 1440);
-  int daily_minutes = (start_hour * 60) + (total_minutes % 1440);
-
-  if (daily_minutes >= 1440) {
-    current_day++;
-    daily_minutes -= 1440;
-  }
-
-  int hour = daily_minutes / 60;
-  int minute = daily_minutes % 60;
-
-  snprintf(right_text, sizeof(right_text), "Day %d, %02d:%02d", current_day,
-           hour, minute);
+  snprintf(right_text, sizeof(right_text), "Time: %d", game_state.moves);
 
   int right_len = strlen(right_text);
   int loc_len = strlen(loc_name);
@@ -220,6 +231,10 @@ int main(int argc, char **argv) {
       update_status_bar();
       need_repaint = 0;
     }
+
+    // <SETG C-ELAPSED ,C-ELAPSED-DEFAULT> at the top of MAIN-LOOP. Action
+    // handlers overwrite this to charge their own cost.
+    game_state.c_elapsed = C_ELAPSED_DEFAULT;
 
     printf("\n> "); // Prompt (not scripted)
     if (fgets(input, sizeof(input), stdin) == NULL)
@@ -546,13 +561,35 @@ int main(int argc, char **argv) {
     }
 
   end_turn:
-    game_state.internal_moves++;
-    if (!run_events()) {
-      break;
-    }
-
     if (objects[current_room].action) {
       objects[current_room].action(M_END);
+    }
+
+    // MAIN-LOOP's post-action override chain. Once the pod is falling, every
+    // turn costs the same regardless of what you did inside it.
+    if (is_event_enabled(EVT_POD_TRIP)) {
+      game_state.c_elapsed = C_ELAPSED_POD_TRIP;
+    } else if (timeless_verb(current_cmd.verb)) {
+      game_state.c_elapsed = 0;
+    }
+
+    game_state.internal_moves += game_state.c_elapsed;
+
+    // MOVES is the time as displayed. Take off the chronometer and you simply
+    // cannot tell what time it is.
+    if (!obj_in(O_CHRONOMETER, player)) {
+      game_state.moves = 0;
+    } else if (obj_has_flag(O_CHRONOMETER, F_MUNGEDBIT)) {
+      game_state.moves = game_state.munged_time;
+    } else {
+      game_state.moves = game_state.internal_moves;
+    }
+
+    // CLOCKER runs only when time actually passed.
+    if (game_state.c_elapsed != 0) {
+      if (!run_events()) {
+        break;
+      }
     }
 
     if (!game_running) {

@@ -62,9 +62,14 @@ bool run_events() {
             // Daemon: Runs every turn
             run_now = true;
         } else if (events[i].ticks > 0) {
-            // Timer: Decrement
-            events[i].ticks--;
-            if (events[i].ticks == 0) {
+            // Timer: count down by the cost of the action just taken, not by
+            // one. Ticks are Galactic Standard Time units, so a timer queued
+            // for 300 fires after ~15 rooms walked or ~43 turns of standing
+            // around. Matches CLOCKER in planetfall.clocker, including its
+            // fire-at-or-below-1 boundary.
+            events[i].ticks -= game_state.c_elapsed;
+            if (events[i].ticks <= 1) {
+                events[i].ticks = 0;
                 run_now = true;
                 events[i].enabled = false; // Timers fire once
             }

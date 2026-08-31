@@ -8,6 +8,16 @@
 # Current issues to address:
 
 - You can enter the escape pod before the explosions open the escape pod door.
-- You do not have enough time to explore the ship before dying. Compare against original game.
-- Status bar has time and no score. 
+- Status bar has time and no score. The time half is now correct (it shows Galactic
+  Standard Time from the MOVES global, matching ZIL). The score field is still
+  missing: Planetfall is a `<VERSION ZIP>` game with no TIME flag, so the authentic
+  interpreter status line renders SCORE *and* MOVES side by side. Adding it means
+  putting `Score: %d` from `game_state.score` into `update_status_bar` in
+  `src/main.c`.
+- `rand()` is never seeded -- there is no `srand()` call anywhere in `src/`. Every
+  playthrough therefore draws exactly the same "random" numbers, so the explosion
+  delay, `number_needed`, `chemical_required`, and the Blather/ambassador
+  appearance rolls are all fixed constants in practice. Seeding fixes that but
+  makes the 61 scripted tests non-deterministic, so the test harness likely needs
+  a fixed-seed switch at the same time. 
 

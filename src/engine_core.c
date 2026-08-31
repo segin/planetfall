@@ -16,6 +16,11 @@ void init_game() {
     
     // Default Game State
     game_state.day = 1;
+    // <SETG INTERNAL-MOVES <+ 4450 <RANDOM 180>>> -- ZIL RANDOM is 1..N, so the
+    // game opens somewhere in 4451..4630 Galactic Standard Time.
+    game_state.internal_moves = 4450 + (rand() % 180) + 1;
+    game_state.moves = game_state.internal_moves;
+    game_state.c_elapsed = C_ELAPSED_DEFAULT;
     game_state.load_allowed = 100;
     game_state.number_needed = (rand() % 1000) + 1;
     game_state.upper_elevator_up = true;

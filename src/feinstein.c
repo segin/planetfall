@@ -206,9 +206,11 @@ void init_feinstein_act() {
   // Blather appears randomly or via logic, but we'll queue the checker
   queue_event(EVT_BLATHER, -1);
   queue_event(EVT_AMBASSADOR, -1);
-  queue_event(
-      EVT_BLOWUP_FEINSTEIN,
-      5); // Delay before explosion sequence (matches ZIL random delay somewhat)
+  // <ENABLE <QUEUE I-BLOWUP-FEINSTEIN <+ <RANDOM 90> 240>>> from
+  // I-RANDOM-INTERRUPTS in misc.zil. 241..330 GST units, which is a dozen-odd
+  // rooms of walking or forty-some turns of standing still -- enough to look
+  // around the Feinstein before it comes apart.
+  queue_event(EVT_BLOWUP_FEINSTEIN, 240 + (rand() % 90) + 1);
   queue_event(EVT_HUNGER_WARNINGS, -1);
 }
 

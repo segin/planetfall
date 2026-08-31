@@ -749,9 +749,7 @@ int perform_score(bool ask) {
     if (obj_has_flag(O_CHRONOMETER, F_MUNGEDBIT)) {
       tellf("%d", game_state.munged_time);
     } else {
-      int hour = 8 + (game_state.internal_moves / 60);
-      int minute = (game_state.internal_moves % 60);
-      tellf("%d:%02d", hour, minute);
+      tellf("%d", game_state.internal_moves);
     }
   } else {
     tellf("is impossible to determine, since you're not wearing your chronometer");
@@ -994,6 +992,11 @@ void perform_walk(ZObjectID dest) {
   if (objects[dest].action) {
     objects[dest].action(M_ENTER);
   }
+  // V-WALK charges the move cost only once the exit is known to be passable;
+  // every blocked-exit path above returns early and so costs the default 7.
+  // The per-room C-MOVE tables are not ported yet, so this is ZIL's
+  // DEFAULT-MOVE fallback for all movement.
+  game_state.c_elapsed = DEFAULT_MOVE;
   obj_move(player, dest);
   current_room = dest;
   perform_first_look();
@@ -1067,9 +1070,15 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     perform_walk_to(prso);
     return true;
   case V_TIME:
-    // TODO: partial implementation
-    tellf("Day %d, %02d:%02d\n", game_state.day, game_state.internal_moves / 60,
-          game_state.internal_moves % 60);
+    // V-TIME (verbs.zil) defers to TELL-TIME, which needs the chronometer.
+    if (obj_in(O_CHRONOMETER, player)) {
+      tellf("According to the chronometer, the current time is %d.\n",
+            obj_has_flag(O_CHRONOMETER, F_MUNGEDBIT)
+                ? game_state.munged_time
+                : game_state.internal_moves);
+    } else {
+      tellf("It's hard to say, since you've removed your chronometer.\n");
+    }
     return true;
   case V_TELL:
     // Needs proper implementation

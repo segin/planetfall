@@ -60,10 +60,10 @@ bool chronometer_f(int arg) {
   (void)arg;
   if (current_cmd.verb == V_EXAMINE || current_cmd.verb == V_READ) {
     TELL("It is a standard wrist chronometer with a digital display. ");
-    // Display time based on game_state.internal_moves
-    int hour = 8 + (game_state.internal_moves / 60);
-    int minute = (game_state.internal_moves % 60);
-    tellf("According to the chronometer, the current time is %d:%02d.\n", hour, minute);
+    // TELL-TIME (globals.zil): Galactic Standard Time prints as a bare count.
+    tellf("According to the chronometer, the current time is %d.",
+          obj_has_flag(O_CHRONOMETER, F_MUNGEDBIT) ? game_state.munged_time
+                                                   : game_state.internal_moves);
     TELL(" The back is engraved with\n"
          "the message \"Good luck in the Patrol! Love, Mom and Dad.\"\n");
     return true;

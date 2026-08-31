@@ -30,12 +30,36 @@ run_test() {
     fi
 }
 
+# Same as run_test, but fails if the pattern IS present.
+run_test_absent() {
+    local name="$1"
+    local input="$2"
+    local pattern="$3"
+    local pass_msg="$4"
+    local fail_msg="$5"
+
+    echo "$name"
+    OUTPUT=$(echo -e "$input" | ./planetfall 2>/dev/null | strip_ansi)
+    if echo "$OUTPUT" | grep -qiE "$pattern"; then
+        echo "FAIL: $fail_msg"
+        FAILED=$((FAILED + 1))
+    else
+        echo "PASS: $pass_msg"
+    fi
+}
+
 run_test "Test 1: Room navigation (UP from Deck Nine)" "UP\nQUIT\nY" "Gangway" "UP leads to Gangway" "UP navigation"
 run_test "Test 2: Port direction (should go west to pod if open)" "PORT\nQUIT\nY" "pod|closed|can't" "Port direction works" "Port direction"
 run_test "Test 3: Examine ME" "EXAMINE ME\nQUIT\nY" "cretin|nothing special|special" "Examine ME works" "Examine ME"
 run_test "Test 4: Look command" "LOOK\nQUIT\nY" "Deck Nine" "Look works" "Look"
 run_test "Test 5: Inventory" "INVENTORY\nQUIT\nY" "carrying|uniform|chronometer|brush" "Inventory works" "Inventory"
-run_test "Test 6: Wait for events" "WAIT\nWAIT\nWAIT\nWAIT\nWAIT\nQUIT\nY" "ambassador|Blather|explosion" "Events trigger" "Events"
+# The Feinstein explodes on a 241..330 GST timer. Standing still costs 7 units a
+# turn, so the first blast lands somewhere around turn 35-47 -- not turn 5. Give
+# it a wide enough window to fire, and a short one to confirm it does NOT fire
+# early, which is the regression that made the ship unexplorable.
+WAIT_50=$(printf 'WAIT\\n%.0s' $(seq 1 50))
+run_test "Test 6: Explosion eventually triggers" "${WAIT_50}QUIT\nY" "explosion" "Events trigger" "Events"
+run_test_absent "Test 6b: Ship survives long enough to explore" "WAIT\nWAIT\nWAIT\nWAIT\nWAIT\nLOOK\nQUIT\nY" "explosion" "No explosion within the first 5 turns" "Premature explosion"
 run_test "Test 7: Scrub brush exists" "I\nQUIT\nY" "brush" "Scrub brush in inventory" "Scrub brush missing"
 run_test "Test 8: Examine chronometer" "EXAMINE CHRONOMETER\nQUIT\nY" "wrist|digital|time|chronometer" "Chronometer examine works" "Chronometer"
 run_test "Test 9: VERBOSE command" "VERBOSE\nQUIT\nY" "Maximum verbosity" "VERBOSE works" "VERBOSE command"

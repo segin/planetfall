@@ -60,7 +60,12 @@ void test_score_obj() {
     init_game();
     assert(game_state.score == 0);
     assert(game_state.day == 1);
-    assert(game_state.internal_moves == 0);
+    // The clock opens at Galactic Standard Time 4450 + RANDOM(180), i.e. the
+    // closed range 4451..4630, and MOVES starts synced to it.
+    assert(game_state.internal_moves >= 4451);
+    assert(game_state.internal_moves <= 4630);
+    assert(game_state.moves == game_state.internal_moves);
+    assert(game_state.c_elapsed == C_ELAPSED_DEFAULT);
 
     ZObjectID item = 50;
     objects[item].id = item;
