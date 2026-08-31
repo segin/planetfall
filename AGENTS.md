@@ -22,11 +22,13 @@ with the original, modulo catalogued Release 1 wording.
 
 # Current issues to address:
 
-- Floyd is alive but not complete. `I-FLOYD` covers following, wandering off,
-  chatter and the Repair Room / Computer Room reactions. Still missing:
-  `FLOYD-F`'s full verb set (he only answers EXAMINE and TURN ON), `I-FLOYD`'s
-  Alfie/Betty shuttle-cabin clauses (those rooms are not built), `DEAD-FLOYD-F`,
-  `I-FLOYD-FORAY` and `I-CHASE-SCENE` -- the Bio Lab sequence he is famous for.
+- Floyd still needs the half of `FLOYD-F` that answers commands *addressed* to
+  him ("FLOYD, TAKE THE BOARD"). That needs the parser to support a WINNER other
+  than the player, which it has no concept of -- it is the single biggest missing
+  parser feature. `FLOYDS-FAMOUS-DOOR-ROUTINE`, `FLOYD-INTO-LAB` and `FLUSH`
+  belong with it. Also outstanding: `I-FLOYD`'s Alfie/Betty shuttle-cabin clauses
+  (those rooms are not built), `DEAD-FLOYD-F`, `I-FLOYD-FORAY` and
+  `I-CHASE-SCENE` -- the Bio Lab sequence he is famous for.
 - `TELEPORT <room>` cannot reach rooms whose only name is their description,
   e.g. "computer room" -- rooms mostly lack synonyms. It is a debug verb, but it
   is the only practical way to test the planet chapters, so it is worth giving
@@ -43,9 +45,9 @@ with the original, modulo catalogued Release 1 wording.
   | Rooms              |  96/105  |
   | Objects            | 120/150  |
   | Action Routines    | 103/136  |
-  | Verbs and Syntax   | 114/251  |
-  | Routines / Systems | 180/505  |
-  | **Total**          | **613/1147** |
+  | Verbs and Syntax   | 128/251  |
+  | Routines / Systems | 183/505  |
+  | **Total**          | **630/1147** |
 
   The weakest areas by far are Verbs/Syntax and Routines/Systems -- the world is
   largely built but the verb layer behind it is thin.

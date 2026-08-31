@@ -124,7 +124,8 @@ run_test "Test 51: TOOL ROOM flask and pliers" "TELEPORT TOOL ROOM\nEXAMINE FLAS
 run_test "Test 52: MAGNET crevice key extraction" "TELEPORT TOOL ROOM\nTAKE MAGNET\nTELEPORT ADMIN SOUTH\nEXAMINE CREVICE\nPUT MAGNET OVER CREVICE\nQUIT\nY" "metal leaps from" "Magnet pulling key from crevice works" "MAGNET KEY EXTRACTION"
 run_test "Test 53: MACHINE SHOP dispenser and flask filling" "TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH RED BUTTON\nEXAMINE FLASK\nQUIT\nY" "milky white fluid" "Machine shop chemical dispenser and flask work" "MACHINE SHOP"
 run_test "Test 54: ROBOT SHOP devices examine" "TELEPORT ROBOT SHOP\nEXAMINE DEVICES\nQUIT\nY" "disassembled robots" "Robot shop devices examine works" "ROBOT SHOP"
-run_test "Test 55: FLOYD examine and turn on" "TELEPORT ROBOT SHOP\nEXAMINE FLOYD\nTURN ON FLOYD\nQUIT\nY" "comes to life" "Floyd examine and activation work" "FLOYD ACTIVATION"
+# Switching Floyd on prints "Nothing happens."; he wakes 25 GST units later.
+run_test "Test 55: FLOYD examine and turn on" "TELEPORT ROBOT SHOP\nEXAMINE FLOYD\nTURN ON FLOYD\nQUIT\nY" "apparently been turned off" "Deactivated Floyd describes himself" "FLOYD EXAMINE OFF"
 run_test "Test 56: ELEVATOR LOBBY call buttons" "TELEPORT ELEVATOR LOBBY\nPUSH BLUE BUTTON\nPUSH RED BUTTON\nQUIT\nY" "whirring noise" "Elevator lobby call buttons work" "ELEVATOR LOBBY BUTTONS"
 run_test "Test 57: UPPER ELEVATOR card enable" "TELEPORT SMALL OFFICE\nOPEN DESK\nTAKE UPPER ELEVATOR CARD\nTELEPORT UPPER ELEVATOR\nSLIDE UPPER ELEVATOR CARD THROUGH SLOT\nQUIT\nY" "Elivaatur inebuld" "Upper elevator card enable works" "UPPER ELEVATOR CARD"
 run_test "Test 58: UPPER ELEVATOR trip activation" "TELEPORT SMALL OFFICE\nOPEN DESK\nTAKE UPPER ELEVATOR CARD\nTELEPORT UPPER ELEVATOR\nSLIDE UPPER ELEVATOR CARD THROUGH SLOT\nPUSH DOWN BUTTON\nQUIT\nY" "vertical movement" "Upper elevator trip activation works" "UPPER ELEVATOR TRIP"
@@ -226,12 +227,23 @@ run_test "Test 76: Eating the celery is fatal" "${WAIT_14}EAT CELERY\nQUIT\nY" "
 run_test "Test 77: Slime responds to the senses" "${WAIT_14}EXAMINE SLIME\nQUIT\nY" "didn't step in it" "Slime pseudo-object works" "Slime"
 
 # --- Floyd (I-FLOYD / FLOYD-COMES-ALIVE / KLUDGE) ---------------------------
-FLOYD_ON="TELEPORT ROBOT SHOP\nTURN ON FLOYD\n"
+# Switching him on only queues his awakening 25 GST units out, so give him four
+# turns to actually get up before testing anything he does.
+FLOYD_ON="TELEPORT ROBOT SHOP\nTURN ON FLOYD\nWAIT\nWAIT\nWAIT\nWAIT\n"
 FLOYD_WAIT=$(printf 'WAIT\\n%.0s' $(seq 1 40))
 
 run_test "Test 112: Floyd comes alive" "${FLOYD_ON}QUIT\nY" "I'm B-19-7" "FLOYD-COMES-ALIVE works" "Floyd activation"
 run_test "Test 113: Floyd notices what you carry" "${FLOYD_ON}QUIT\nY" "That's a nice .* you are having there" "Floyd remarks on a carried object" "Floyd carried object"
 run_test "Test 114: Turning Floyd on twice" "${FLOYD_ON}TURN ON FLOYD\nQUIT\nY" "already been activated" "Second activation is refused" "Floyd reactivation"
+run_test "Test 114a: Switching him on seems to do nothing" "TELEPORT ROBOT SHOP\nTURN ON FLOYD\nQUIT\nY" "Nothing happens" "Activation is delayed, as in ZIL" "Floyd delayed activation"
+run_test_absent "Test 114b: He does not wake immediately" "TELEPORT ROBOT SHOP\nTURN ON FLOYD\nQUIT\nY" "comes to life" "Floyd stays put on the turn you switch him on" "Floyd instant wake"
+run_test "Test 114c: Switching him off again" "${FLOYD_ON}TURN OFF FLOYD\nQUIT\nY" "whimpers" "LAMP-OFF fells him" "Floyd off"
+run_test "Test 114d: Searching the inert robot yields the card" "TELEPORT ROBOT SHOP\nSEARCH FLOYD\nQUIT\nY" "Loowur Elavaatur Akses Kard" "Searching Floyd finds the elevator card" "Floyd card"
+run_test "Test 114e: Tickling an active Floyd" "${FLOYD_ON}SEARCH FLOYD\nQUIT\nY" "tickling Floyd" "Searching an active Floyd tickles him" "Floyd tickle"
+run_test "Test 114f: Kissing Floyd" "${FLOYD_ON}KISS FLOYD\nQUIT\nY" "painful electric shock" "KISS works" "Floyd kiss"
+run_test "Test 114g: Attacking Floyd" "${FLOYD_ON}ATTACK FLOYD\nQUIT\nY" "Chase and Tag" "ATTACK works" "Floyd attack"
+run_test "Test 114h: Smelling Floyd" "${FLOYD_ON}SMELL FLOYD\nQUIT\nY" "ozone and light machine oil" "SMELL works" "Floyd smell"
+run_test "Test 114i: Taking Floyd" "${FLOYD_ON}TAKE FLOYD\nQUIT\nY" "too heavy" "TAKE works" "Floyd take"
 run_test "Test 115: Floyd follows you" "${FLOYD_ON}WEST\nWAIT\nQUIT\nY" "Floyd follows you" "Floyd follows between rooms" "Floyd follow"
 run_test "Test 116: Floyd chatters" "${FLOYD_ON}${FLOYD_WAIT}QUIT\nY" "paces impatiently|digits of pi|Dr. Fizpick|bruised his knee|Hucka-Bucka-Beanstalk|signs of rust|totally out of key|batteries failing|whistles tunelessly|looks bored" "FLOYDISMS fire" "Floyd chatter"
 run_test "Test 117: Floyd wanders off" "${FLOYD_ON}${FLOYD_WAIT}QUIT\nY" "going exploring" "Floyd leaves FLOYDBIT rooms" "Floyd exploring"

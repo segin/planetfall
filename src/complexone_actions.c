@@ -1518,27 +1518,221 @@ void i_floyd(void) {
   game_state.floyd_spoke = false;
 }
 
+// FLOYD-NOT-HAVE (compone.zil).
+static void floyd_not_have(void) {
+  TELL("\"Floyd does not one of those have!\"\n");
+}
+
+// FLOYD-INTO-LAB and FLOYDS-FAMOUS-DOOR-ROUTINE belong to the half of FLOYD-F
+// that answers commands addressed to him, which needs a WINNER the parser does
+// not have yet. They arrive with the Bio Lab sequence.
+
+// FLOYD-F (compone.zil), the half that handles things done *to* Floyd. The
+// other half -- commands addressed to him, "FLOYD, TAKE THE BOARD" -- needs the
+// parser to support a WINNER other than the player, which it does not yet.
 bool floyd_f(int arg) {
-  if (current_cmd.verb == V_EXAMINE) {
-    TELL("From its design, the robot seems to be of the multi-purpose sort. It "
-         "is\n"
-         "slightly cross-eyed, and its mechanical mouth forms a lopsided "
-         "grin.\n");
-    // TODO: check if broken/off/active
+  (void)arg;
+  int verb = current_cmd.verb;
+  ZObjectID prso = current_cmd.prso_list[0];
+
+  if (verb == V_CLOSE) {
+    TELL("Huh?\n");
     return true;
   }
-  if (current_cmd.verb == V_LAMP_ON) { // Activate Floyd
-    if (!obj_has_flag(O_FLOYD, F_RLANDBIT)) {
-      floyd_comes_alive();
-      // From here he has a life of his own.
+  if (verb == V_LOOK_INSIDE || verb == V_REACH) {
+    return perform(V_OPEN, O_FLOYD, NOTHING);
+  }
+
+  if (obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    // --- Floyd is switched on -------------------------------------------
+    game_state.floyd_spoke = true;
+
+    switch (verb) {
+    case V_LAMP_ON:
+      TELL("He's already been activated.\n");
+      return true;
+    case V_LAMP_OFF:
+      obj_clear_flag(O_FLOYD, F_RLANDBIT);
+      obj_clear_flag(O_FLOYD, F_ACTORBIT);
+      dequeue_event(EVT_FLOYD);
+      TELL("Floyd, shocked by this betrayal from his new-found friend, "
+           "whimpers\n"
+           "and keels over");
+      if (obj_first_child(O_FLOYD) != NOTHING) {
+        TELL(", dropping what he was carrying.\n");
+      } else {
+        TELL(".\n");
+      }
+      obj_rob(O_FLOYD, current_room);
+      return true;
+    case V_EXAMINE:
+      TELL("From its design, the robot seems to be of the multi-purpose sort. "
+           "It is\n"
+           "slightly cross-eyed, and its mechanical mouth forms a lopsided "
+           "grin.\n");
+      return true;
+    case V_KISS:
+      TELL("You receive a painful electric shock.\n");
+      return true;
+    case V_SCOLD:
+      TELL("Floyd looks defensive. \"What did Floyd do wrong?\"\n");
+      return true;
+    case V_PLAY_WITH:
+      game_state.c_elapsed = 30;
+      queue_event(EVT_FLOYD, 1);
+      TELL("You play with Floyd for several centichrons until you drop to the "
+           "floor,\n"
+           "exhausted. Floyd pokes at you gleefully. \"C'mon! Let's play some "
+           "more!\"\n");
+      return true;
+    case V_LISTEN:
+      TELL("Floyd is babbling about this and that.\n");
+      return true;
+    case V_TAKE:
+      TELL("You manage to lift Floyd a few inches off the ground, but he is "
+           "too heavy\n"
+           "and you drop him suddenly. Floyd gives a surprised squeal and "
+           "moves\n"
+           "a respectable distance away.\n");
+      return true;
+    case V_ATTACK:
+    case V_MUNG:
+      TELL("Floyd starts dashing around the room. \"Oh boy oh boy oh boy! I "
+           "haven't played\n"
+           "Chase and Tag for years! You be It! Nah, nah!\"\n");
+      return true;
+    case V_KICK:
+    case V_SHAKE:
+      TELL("\"Why you do that?\" Floyd whines. \"I think a wire now shaken "
+           "loose.\"\n"
+           "He goes off into a corner and sulks.\n");
+      return true;
+    case V_HELLO:
+    case V_TALK:
+      TELL("\"Hi!\" Floyd grins and bounces up and down.\n");
+      return true;
+    case V_SEARCH:
+    case V_SCRUB:
+    case V_OPEN:
+      TELL("Floyd giggles and pushes you away. \"You're tickling Floyd!\" He "
+           "clutches at\n"
+           "his side panels, laughing hysterically. Oil drops stream from his "
+           "eyes.\n");
+      return true;
+    case V_RUB:
+      TELL("Floyd gives a contented sigh.\n");
+      return true;
+    case V_SMELL:
+      TELL("Floyd smells faintly of ozone and light machine oil.\n");
+      return true;
+    case V_ASK_FOR:
+      if (obj_in(current_cmd.prsi, O_FLOYD)) {
+        obj_move(current_cmd.prsi, player);
+        tellf("\"Okay,\" says Floyd, handing you the %s, \"but only\n"
+              "because you're Floyd's best friend.\"\n",
+              objects[current_cmd.prsi].description);
+      } else {
+        floyd_not_have();
+      }
+      return true;
+    case V_GIVE:
+    case V_PUT:
+      if (current_cmd.prsi != O_FLOYD)
+        return false;
+      if (prso == O_LAZARUS_PART) {
+        obj_remove(O_FLOYD);
+        game_state.floyd_follow = false;
+        obj_move(O_LAZARUS_PART, current_room);
+        queue_event(EVT_FLOYD, 40);
+        TELL("At first, Floyd is all grins because of your gift. Then, he "
+             "realizes what\n"
+             "it is, begins weeping, drops the breastplate, and rushes out of "
+             "the room.\n");
+      } else if (prso == O_RED_GOO || prso == O_GREEN_GOO ||
+                 prso == O_BROWN_GOO) {
+        TELL("Floyd looks at the goo. \"Yech! Got any Number Seven Heavy "
+             "Grease?\"\n");
+      } else if (obj_first_child(O_FLOYD) != NOTHING || prob(25)) {
+        obj_move(prso, current_room);
+        tellf("Floyd examines the %s, shrugs, and drops %s\n",
+              objects[prso].description, prso == O_PLIERS ? "them." : "it.");
+      } else {
+        obj_move(prso, O_FLOYD);
+        TELL("\"Neat!\" exclaims Floyd. He thanks you profusely.\n");
+      }
+      return true;
+    case V_SHOW:
+      if (current_cmd.prsi != O_FLOYD)
+        return false;
+      if (prso == O_PRINT_OUT && !game_state.computer_flag) {
+        computer_action();
+      } else if (current_room == R_REC_AREA && prso == O_PSEUDO_OBJECT) {
+        TELL("\"Too intellectual for Floyd. Any paddleball sets around?\"\n");
+      } else if (prso == O_ID_CARD || prso == O_SHUTTLE_CARD ||
+                 prso == O_KITCHEN_CARD || prso == O_UPPER_ELEVATOR_CARD) {
+        TELL("Floyd scratches his head. \"Aren't those things usually "
+             "blue?\"\n");
+      } else if (prso == O_LOWER_ELEVATOR_CARD && !game_state.card_revealed) {
+        game_state.card_revealed = true;
+        TELL("\"I've got one just like that!\" says Floyd. He looks through "
+             "several\n"
+             "of his compartments, then glances at you suspiciously.\n");
+      } else {
+        tellf("Floyd looks over the %s. \"Can you play any games with it?\"\n"
+              "he asks.\n",
+              objects[prso].description);
+      }
+      return true;
+    default:
+      return false;
+    }
+  }
+
+  // --- Floyd is switched off ---------------------------------------------
+  switch (verb) {
+  case V_LAMP_ON:
+    if (game_state.floyd_introduced) {
       queue_event(EVT_FLOYD, -1);
     } else {
-      TELL("He's already been activated.\n");
+      // The joke: nothing seems to happen, and a few turns later he comes
+      // bounding over. I-FLOYD's first branch is what fires when this expires.
+      queue_event(EVT_FLOYD, 25);
+      TELL("Nothing happens.\n");
+      if (!game_state.floyd_score_flag) {
+        game_state.floyd_score_flag = true;
+        game_state.score += 2;
+      }
     }
     return true;
+  case V_LAMP_OFF:
+    TELL("The robot doesn't seem to be on.\n");
+    return true;
+  case V_EXAMINE:
+    TELL("The de-activated robot is leaning against the wall, its head lolling "
+         "to the\n"
+         "side. It is short, and seems to be equipped for general-purpose "
+         "work. It has\n"
+         "apparently been turned off.\n");
+    return true;
+  case V_SEARCH:
+  case V_OPEN:
+    if (!game_state.card_revealed && !game_state.card_stolen) {
+      obj_clear_flag(O_LOWER_ELEVATOR_CARD, F_INVISIBLE);
+      obj_move(O_LOWER_ELEVATOR_CARD, player);
+      score_obj(O_LOWER_ELEVATOR_CARD);
+      game_state.card_stolen = true;
+      TELL("In one of the robot's compartments you find and take a "
+           "magnetic-striped card\n"
+           "embossed \"Loowur Elavaatur Akses Kard.\"\n");
+    } else {
+      TELL("Your search discovers nothing in the robot's compartments except "
+           "a\n"
+           "single crayon which you leave where you found it.\n");
+    }
+    return true;
+  default:
+    return false;
   }
-  // TODO: More floyd logic
-  return false;
 }
 
 // --- Systems Monitors ---

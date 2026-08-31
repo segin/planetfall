@@ -161,6 +161,9 @@ typedef struct {
   bool floyd_spoke;       // did he already say something this turn?
   bool floyd_reactivated; // has he ever been switched on?
   bool achilles_flag;     // has he told you about Achilles?
+  bool floyd_score_flag;  // have you scored for switching him on?
+  bool card_revealed;     // has he admitted to having the elevator card?
+  bool card_stolen;       // have you taken it off him while he was off?
   bool floyd_waiting;
   int waiting_counter;
   bool floyd_gave_up;
