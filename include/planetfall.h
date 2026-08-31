@@ -200,6 +200,28 @@ bool ask_yes();
 void perform_quit();
 void finish(bool died, bool repeating);
 void perform_version();
+#define REXIT 0
+#define UEXIT 1
+#define NEXIT 2
+#define FEXIT 3
+#define CEXIT 4
+#define DEXIT 5
+
+#define NEXITSTR 0
+#define FEXITFCN 0
+#define CEXITFLAG 1
+#define CEXITSTR 1
+#define DEXITOBJ 1
+#define DEXITSTR 1
+
+extern const char *indents[6];
+void use_directions();
+void perform_walk_around();
+void perform_walk_to(ZObjectID obj);
+void perform_walk(ZObjectID dest);
+void perform_save();
+void perform_restore();
+void perform_restart();
 
 // Events (Included from events.h generally, but we need forward decls if not
 // including) Actually, circular include if events.h includes planetfall.h?

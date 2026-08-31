@@ -22,6 +22,12 @@ VocabEntry *lookup_vocab(const char *word) {
       return &vocab_table[i];
     }
   }
+  for (int i = 0; i < vocab_table_size; i++) {
+    if (strlen(vocab_table[i].word) == 6 &&
+        strncasecmp(word, vocab_table[i].word, 6) == 0) {
+      return &vocab_table[i];
+    }
+  }
   return NULL;
 }
 
@@ -243,13 +249,17 @@ bool parse_command(char *input, Command *cmd) {
   for (int i = 0; i < syntax_table_size; i++) {
     SyntaxEntry *se = &syntax_table[i];
 
-    if (strcasecmp(tokens[0].word, se->verb_word) != 0) {
-      if (tokens[0].vocab && tokens[0].vocab->type == VOCAB_SYNONYM) {
-        if (strcasecmp(tokens[0].vocab->target, se->verb_word) != 0)
-          continue;
-      } else {
-        continue;
-      }
+    const char *verb_word = tokens[0].word;
+    if (tokens[0].vocab) {
+      if (tokens[0].vocab->type == VOCAB_SYNONYM)
+        verb_word = tokens[0].vocab->target;
+      else if (tokens[0].vocab->type == VOCAB_VERB)
+        verb_word = tokens[0].vocab->word;
+    }
+
+    if (strcasecmp(tokens[0].word, se->verb_word) != 0 &&
+        strcasecmp(verb_word, se->verb_word) != 0) {
+      continue;
     }
 
     int input_prep1_idx = -1;

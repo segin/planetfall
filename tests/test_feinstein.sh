@@ -48,6 +48,9 @@ run_test "Test 15: SCORE command" "SCORE\nQUIT\nY" "out of 80 points" "SCORE com
 run_test "Test 16: VERSION command" "VERSION\nQUIT\nY" "Release 37" "VERSION command works" "VERSION command"
 run_test "Test 17: AGAIN command" "LOOK\nAGAIN\nQUIT\nY" "Deck Nine" "AGAIN command works" "AGAIN command"
 run_test "Test 18: QUIT decline" "QUIT\nN\nQUIT\nY" "Ok" "QUIT decline confirmation works" "QUIT decline"
+run_test "Test 19: SAVE and RESTORE" "SAVE\nRESTORE\nQUIT\nY" "Game saved.*Game restored" "SAVE and RESTORE work" "SAVE/RESTORE"
+run_test "Test 20: WALK AROUND" "WALK AROUND BRUSH\nQUIT\nY" "Use compass directions" "WALK AROUND works" "WALK AROUND"
+run_test "Test 21: WALK TO" "WALK TO POD\nQUIT\nY" "It's here" "WALK TO works" "WALK TO"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

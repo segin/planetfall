@@ -1,6 +1,7 @@
 *.o
+*.sav
 planetfall
-tests/run_tests
+tests/run_test_*
 zil/*.zap
 zil/*.zip
 zil/*.zabstr

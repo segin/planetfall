@@ -278,8 +278,7 @@ bool firster(ZObjectID obj, int level) {
   }
   if (obj != current_room && !obj_in(obj, OBJ_ROOMS)) {
     if (level > 0) {
-      for (int i = 0; i < level; i++)
-        tellf("  ");
+      tellf("%s", indents[level < 6 ? level : 5]);
     }
     if (obj_has_flag(obj, F_SURFACEBIT)) {
       tellf("Sitting on the %s is:\n", objects[obj].description);
@@ -309,8 +308,7 @@ bool describe_object(ZObjectID obj, bool v, int level) {
       tellf("There is %s %s here.", art, objects[obj].description);
     }
   } else {
-    for (int i = 0; i < level; i++)
-      tellf("  ");
+    tellf("%s", indents[level < 6 ? level : 5]);
     const char *art = obj_has_flag(obj, F_VOWELBIT) ? "An" : "A";
     tellf("%s %s", art, objects[obj].description);
     if (obj_has_flag(obj, F_WORNBIT)) {
@@ -460,19 +458,45 @@ void perform_inventory() {
   }
 }
 
+const char *indents[6] = {"", "  ", "    ", "      ", "        ", "          "};
+
 // Meta Actions
-void perform_save() { save_game("planetfall.sav"); }
+void perform_save() {
+  if (obj_in(O_FLOYD, current_room) && obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    tellf("Floyd's eyes light up. \"Oh boy! Are we gonna try something\n"
+          "dangerous now?\"\n\n");
+  }
+  if (save_game("planetfall.sav")) {
+    tellf("Ok.\n");
+  } else {
+    tellf("Failed.\n");
+  }
+}
 
 void perform_restore() {
+  if (obj_in(O_FLOYD, current_room) && obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    tellf("Floyd looks disappointed, but understanding. \"That part of the game was more\n"
+          "fun than this part,\" he admits.\n\n");
+  }
   if (restore_game("planetfall.sav")) {
+    tellf("Ok.\n");
     perform_first_look();
+  } else {
+    tellf("Failed.\n");
   }
 }
 
 void perform_restart() {
-  tellf("Restarting.\n");
-  init_game_data();
-  perform_first_look();
+  perform_score(true);
+  if (obj_in(O_FLOYD, current_room) && obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+    tellf("Floyd looks sad. \"Going away?\" he asks.\n");
+  }
+  tellf("\nDo you wish to restart? (Y is affirmative): ");
+  if (ask_yes()) {
+    tellf("Restarting.\n");
+    init_game_data();
+    perform_first_look();
+  }
 }
 
 void perform_script() { set_scripting(true); }
@@ -606,8 +630,28 @@ void perform_version() {
   }
 }
 
+void use_directions() {
+  tellf("Use compass directions for movement.\n");
+}
+
+void perform_walk_around() {
+  use_directions();
+}
+
+void perform_walk_to(ZObjectID obj) {
+  if (obj != NOTHING && (obj_in(obj, current_room) || global_in(obj, current_room))) {
+    tellf("It's here!\n");
+  } else {
+    use_directions();
+  }
+}
+
 void perform_walk(ZObjectID dest) {
-  if (dest == NOTHING) {
+  if (dest == NOTHING || dest <= 0) {
+    if (!is_lit(current_room) && (rand() % 100) < 75) {
+      jigs_up("Oh, no! You have walked into the slavering fangs of a lurking grue!");
+      return;
+    }
     tellf("You can't go that way.\n");
     return;
   }
@@ -668,6 +712,12 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return true;
   case V_VERSION:
     perform_version();
+    return true;
+  case V_WALK_AROUND:
+    perform_walk_around();
+    return true;
+  case V_WALK_TO:
+    perform_walk_to(prso);
     return true;
   case V_TIME:
     // TODO: partial implementation
