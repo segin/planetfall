@@ -1,7 +1,8 @@
 #include "complexone_actions.h"
-#include "complexone.h" // For getting objects if needed directly? or just ids.h
-#include "feinstein.h"  // For global flags if any
-#include "planetfall.h" // For game state
+#include "complexone.h"
+#include "feinstein.h"
+#include "parser.h"
+#include "planetfall.h"
 #include <stdio.h>
 
 // Helper macros for ZIL translation
@@ -237,6 +238,252 @@ bool toilet_pseudo_action(int verb) {
     return true;
   }
   return false;
+}
+
+bool can_f(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("This is a rather normal tin can. It is large and is labelled \"Spam\n"
+          "and Egz.\"\n");
+    return true;
+  }
+  if (verb == V_OPEN) {
+    tellf("You certainly can't open it with your hands, and you don't seem to have\n"
+          "found a can opener yet.\n");
+    return true;
+  }
+  return false;
+}
+
+bool ladder_f(int verb) {
+  if (verb == V_TAKE) {
+    if (game_state.ladder_extended) {
+      tellf("You can't possibly carry the ladder while it's extended.\n");
+      return true;
+    }
+  }
+  if (verb == V_EXAMINE) {
+    tellf("It is a heavy-duty ladder built of sturdy aluminum tubing. It is currently ");
+    if (game_state.ladder_extended) {
+      tellf("extended to its full length of about 8 meters, but could be collapsed to\n"
+            "a shorter length for easier carrying.\n");
+    } else {
+      tellf("collapsed and is around two-and-a-half meters long, but if extended would\n"
+            "obviously be much longer.\n");
+    }
+    return true;
+  }
+  if (verb == V_OPEN) {
+    if (game_state.ladder_extended) {
+      tellf("The ladder is already extended.\n");
+    } else if (current_room == R_STORAGE_EAST || current_room == R_STORAGE_WEST ||
+               current_room == R_BOOTH_2 || current_room == R_UPPER_ELEVATOR ||
+               current_room == R_LOWER_ELEVATOR) {
+      tellf("You can't extend the ladder in this tiny space!\n");
+    } else if (obj_in(O_LADDER, player)) {
+      tellf("You couldn't possibly extend the ladder while you're holding it.\n");
+    } else {
+      obj_set_flag(O_LADDER, F_TRYTAKEBIT);
+      game_state.ladder_extended = true;
+      game_state.c_elapsed = 36;
+      tellf("The ladder extends to a length of around eight meters.\n");
+    }
+    return true;
+  }
+  if (verb == V_CLOSE) {
+    if (game_state.ladder_extended) {
+      game_state.c_elapsed = 21;
+      if (game_state.ladder_flag) {
+        game_state.ladder_flag = false;
+        obj_remove(O_LADDER);
+        tellf("As the ladder shortens it plunges into the rift.\n");
+      } else {
+        game_state.ladder_extended = false;
+        obj_clear_flag(O_LADDER, F_TRYTAKEBIT);
+        tellf("The ladder collapses to a length of around two-and-a-half meters.\n");
+      }
+    } else {
+      tellf("The ladder is already in its collapsed state.\n");
+    }
+    return true;
+  }
+  if ((verb == V_SPAN || verb == V_ATTRACT) && current_cmd.prsi == O_RIFT) {
+    if (game_state.ladder_flag) {
+      tellf("The ladder already spans the rift.\n");
+    } else {
+      if (game_state.ladder_extended) {
+        game_state.ladder_flag = true;
+        obj_set_flag(O_LADDER, F_NDESCBIT);
+        tellf("The ladder swings out across the rift and comes to rest on the far edge,\n"
+              "spanning the precipice.\n");
+      } else {
+        obj_remove(O_LADDER);
+        tellf("The ladder, far too short to reach the other edge of the rift, plunges into\n"
+              "the rift and is lost forever.\n");
+      }
+    }
+    return true;
+  }
+  if (verb == V_CLIMB_UP || verb == V_CLIMB_FOO || verb == V_CLIMB_ON) {
+    if (game_state.ladder_flag) {
+      tellf("You can't climb a horizontal ladder!\n");
+    } else if (obj_in(O_LADDER, player)) {
+      tellf("That would be a neat trick, considering that you're holding it.\n");
+    }
+    return true;
+  }
+  return false;
+}
+
+bool walkway_pseudo_action(int verb) {
+  if (verb == V_EXAMINE || verb == V_LAMP_ON) {
+    tellf("The walkway, which hastened the trip down that\n"
+          "long corridor, is no longer in service.\n");
+    return true;
+  }
+  return false;
+}
+
+bool bench_pseudo_action(int verb) {
+  if (verb == V_CLIMB_ON || verb == V_BOARD) {
+    tellf("The benches look uncomfortable.\n");
+    return true;
+  }
+  return false;
+}
+
+bool kitchen_door_f(int verb) {
+  if (verb == V_OPEN) {
+    tellf("A light flashes \"Pleez yuuz kitcin akses kard.\"\n");
+    return true;
+  }
+  return false;
+}
+
+bool dispenser_f(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("This wall-mounted unit contains an octagonal niche beneath a spout. ");
+    if (obj_in(O_CANTEEN, O_DISPENSER)) {
+      tellf("A canteen is resting in the niche, its mouth lying just below the spout. ");
+    }
+    tellf("Above the spout is a button. The machine is labelled \"Hii Prooteen Likwid\n"
+          "Dispensur.\"\n");
+    return true;
+  }
+  if (verb == V_CLOSE) {
+    tellf("You can't close that.\n");
+    return true;
+  }
+  if (verb == V_PUT) {
+    if (current_cmd.prso_list[0] == O_CANTEEN || current_cmd.prso_count == 0) {
+      obj_move(O_CANTEEN, O_DISPENSER);
+      tellf("The canteen fits snugly into the octagonal niche,\n"
+            "its mouth resting just below the spout of the machine.\n");
+      return true;
+    } else {
+      tellf("It doesn't fit in the niche.\n");
+      return true;
+    }
+  }
+  return false;
+}
+
+bool canteen_f(int verb) {
+  return false;
+}
+
+bool high_protein_f(int verb) {
+  if (verb == V_EAT) {
+    if (!obj_in(O_CANTEEN, player)) {
+      tellf("You're not holding the canteen!\n");
+      return true;
+    }
+    if (game_state.hunger_level == 0) {
+      tellf("You are not hungry.\n");
+      return true;
+    }
+    obj_remove(O_HIGH_PROTEIN);
+    game_state.c_elapsed = 15;
+    game_state.hunger_level = 0;
+    tellf("Mmmm....that was good. It certainly quenched your thirst and satisfied your\n"
+          "hunger.\n");
+    return true;
+  }
+  if (verb == V_POUR) {
+    if (!obj_in(O_CANTEEN, player)) {
+      tellf("Maybe if you were holding the canteen...\n");
+      return true;
+    }
+    obj_remove(O_HIGH_PROTEIN);
+    ZObjectID prsi = current_cmd.prsi;
+    const char *target = (prsi != NOTHING) ? objects[prsi].description : "ground";
+    tellf("The protein-rich fluid pours over the %s and then dries up.\n", target);
+    return true;
+  }
+  return false;
+}
+
+bool kitchen_button_pseudo_action(int verb) {
+  if (verb == V_PUSH) {
+    if (obj_has_flag(O_DISPENSER, F_MUNGEDBIT)) {
+      tellf("The dispenser sputters a few times.\n");
+    } else if (obj_in(O_CANTEEN, O_DISPENSER)) {
+      if (!obj_has_flag(O_CANTEEN, F_OPENBIT)) {
+        tellf("A thick, brown liquid spills over the closed canteen, dribbles down the side\n"
+              "of the machine, and forms a puddle on the floor which quickly dries up.\n");
+      } else if (obj_in(O_HIGH_PROTEIN, O_CANTEEN)) {
+        tellf("The brown liquid splashes over the mouth of the already-filled canteen,\n"
+              "creating a mess%s.\n",
+              obj_has_flag(O_PATROL_UNIFORM, F_WORNBIT) ? " and staining your uniform" : "");
+      } else {
+        obj_move(O_HIGH_PROTEIN, O_CANTEEN);
+        tellf("The canteen fills almost to the brim with a brown liquid.\n");
+      }
+    } else {
+      tellf("A thick, brownish liquid pours from the spout\n"
+            "and splashes to the floor, where it quickly evaporates.\n");
+    }
+    return true;
+  }
+  return false;
+}
+
+bool spout_pseudo_action(int verb) {
+  if (verb == V_PUT || verb == V_PUT_UNDER) {
+    if (current_cmd.prso_list[0] == O_CANTEEN || current_cmd.prso_count == 0) {
+      obj_move(O_CANTEEN, O_DISPENSER);
+      tellf("The canteen fits snugly into the octagonal niche,\n"
+            "its mouth resting just below the spout of the machine.\n");
+      return true;
+    }
+  }
+  if (verb == V_LOOK_UNDER) {
+    if (obj_in(O_CANTEEN, O_DISPENSER)) {
+      tellf("The canteen is sitting under the spout.\n");
+      return true;
+    }
+  }
+  return false;
+}
+
+bool kitchen_f(int arg) {
+  if (arg == M_ENTER) {
+    score_obj(R_KITCHEN);
+    return true;
+  }
+  return false;
+}
+
+ZObjectID long_hall_f(void) {
+  tellf("You walk down the long, featureless hallway for a long time. Finally,\n"
+        "you see ");
+  game_state.c_elapsed = 160;
+  if (current_room == R_CORRIDOR_JUNCTION) {
+    tellf("some doorways ahead...\n\n");
+    return R_DORM_CORRIDOR;
+  } else {
+    tellf("an intersection ahead...\n\n");
+    return R_CORRIDOR_JUNCTION;
+  }
 }
 
 #include "parser.h"
@@ -889,68 +1136,16 @@ bool systems_monitors_f(int arg) {
   return false;
 }
 
-// --- Mess Hall / Dispenser ---
-
-bool mess_hall_f(int arg) { return false; }
-
-bool dispenser_f(int arg) { // Protein dispenser
-  if (current_cmd.verb == V_EXAMINE) {
-    TELL(
-        "This wall-mounted unit contains an octagonal niche beneath a spout. ");
-    // Check "IN" relation for dispenser. Assuming O_DISPENSER is defined in
-    // ids.h
-    if (obj_in(O_CANTEEN, O_DISPENSER)) {
-      TELL("A canteen is resting in the niche, its mouth lying just below the "
-           "spout. ");
-    }
-    TELL("Above the spout is a button. The machine is labelled \"Hii Prooteen "
-         "Likwid\n"
-         "Dispensur.\"\n");
-    return true;
-  }
-  if (current_cmd.verb == V_PUT && current_cmd.prso_list[0] == O_CANTEEN) {
-    // MOVE CANTEEN DISPENSER
-    obj_move(O_CANTEEN, O_DISPENSER);
-    TELL("The canteen fits snugly into the octagonal niche,\n"
-         "its mouth resting just below the spout of the machine.\n");
-    return true;
-  }
-  if (current_cmd.verb == V_PUT && current_cmd.prso_list[0] != O_CANTEEN &&
-      current_cmd.prsi == O_DISPENSER) {
-    TELL("It doesn't fit in the niche.\n");
+bool mess_hall_f(int arg) {
+  if (arg == M_LOOK) {
+    tellf("This is a large hall lined with tables and benches. An opening to the north\n"
+          "leads back to the corridor. A door to the south is %s. Next to the door\n"
+          "is a small slot.\n",
+          obj_has_flag(O_KITCHEN_DOOR, F_OPENBIT) ? "open" : "closed");
     return true;
   }
   return false;
 }
-
-bool high_protein_f(int arg) {
-  if (current_cmd.verb == V_EAT) {
-    if (!obj_in(O_CANTEEN, player)) {
-      TELL("You are not holding the canteen.\n");
-      return true;
-    }
-    if (game_state.hunger_level == 0) {
-      TELL("You are not hungry.\n");
-      return true;
-    }
-    obj_remove(O_HIGH_PROTEIN);
-    game_state.c_elapsed = 15; // Set elapsed
-    game_state.hunger_level = 0;
-    TELL("Mmmm....that was good. It certainly quenched your thirst and "
-         "satisfied your\n"
-         "hunger.\n");
-    return true;
-  }
-  if (current_cmd.verb == V_POUR &&
-      current_cmd.prso_list[0] == O_HIGH_PROTEIN) {
-    obj_remove(O_HIGH_PROTEIN);
-    TELL("The protein-rich fluid pours out and dries up.\n");
-    return true;
-  }
-  return false;
-}
-
-bool kitchen_door_f(int arg) { return false; }
 
 bool kalamontee_platform_f(int arg) { return false; }
 bool comm_room_f(int arg) { return false; }

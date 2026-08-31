@@ -546,25 +546,38 @@ void init_complexone() {
   r = &objects[R_MESS_HALL];
   r->id = R_MESS_HALL;
   r->description = "Mess Hall";
+  r->synonyms[0] = "hall";
+  r->adjectives[0] = "mess";
   r->long_description = "This is a large hall lined with tables and benches. "
                         "An opening to the north\n"
                         "leads back to the corridor. A door to the south is "
                         "closed. Next to the door\n"
-                        "is a small slot."; // Dynamic
+                        "is a small slot.";
   r->flags = F_ONBIT | F_RLANDBIT | F_FLOYDBIT;
   r->north = R_MESS_CORRIDOR;
   r->out = R_MESS_CORRIDOR;
-  r->south = R_KITCHEN; // Guarded
-  r->in = R_KITCHEN;    // Guarded
-  // Globals: TABLES, KITCHEN_DOOR, SLOT
+  r->south = R_KITCHEN;
+  r->in = R_KITCHEN;
+  r->action = mess_hall_f;
   r->globals[0] = O_KITCHEN_DOOR;
-  // Missing: TABLES, SLOT (need to add to globs or make sure they are in
-  // local_globals) Pseudo: BENCH
+  r->globals[1] = O_TABLES;
+  r->globals[2] = O_BENCH_PSEUDO;
+
+  // Pseudo Object for Mess Hall
+  o = &objects[O_BENCH_PSEUDO];
+  o->id = O_BENCH_PSEUDO;
+  o->description = "bench";
+  o->synonyms[0] = "bench";
+  o->synonyms[1] = "benches";
+  o->flags = F_NDESCBIT;
+  o->action = bench_pseudo_action;
+  obj_move(O_BENCH_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // R_KITCHEN
   r = &objects[R_KITCHEN];
   r->id = R_KITCHEN;
   r->description = "Kitchen";
+  r->synonyms[0] = "kitchen";
   r->long_description = "This is the food production and dispensary area for "
                         "the dining hall to the\n"
                         "north. Of particular interest is a machine near the "
@@ -573,8 +586,27 @@ void init_complexone() {
   r->flags = F_ONBIT | F_RLANDBIT;
   r->north = R_MESS_HALL;
   r->out = R_MESS_HALL;
+  r->action = kitchen_f;
   r->globals[0] = O_KITCHEN_DOOR;
-  // Pseudo: SPOUT, BUTTON
+  r->globals[1] = O_SPOUT_PSEUDO;
+  r->globals[2] = O_KITCHEN_BUTTON_PSEUDO;
+
+  // Pseudo Objects for Kitchen
+  o = &objects[O_SPOUT_PSEUDO];
+  o->id = O_SPOUT_PSEUDO;
+  o->description = "spout";
+  o->synonyms[0] = "spout";
+  o->flags = F_NDESCBIT;
+  o->action = spout_pseudo_action;
+  obj_move(O_SPOUT_PSEUDO, OBJ_LOCAL_GLOBALS);
+
+  o = &objects[O_KITCHEN_BUTTON_PSEUDO];
+  o->id = O_KITCHEN_BUTTON_PSEUDO;
+  o->description = "button";
+  o->synonyms[0] = "button";
+  o->flags = F_NDESCBIT;
+  o->action = kitchen_button_pseudo_action;
+  obj_move(O_KITCHEN_BUTTON_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // O_KITCHEN_DOOR
   o = &objects[O_KITCHEN_DOOR];
@@ -582,7 +614,8 @@ void init_complexone() {
   o->description = "door";
   o->synonyms[0] = "door";
   o->adjectives[0] = "kitchen";
-  o->flags = F_DOORBIT | F_NDESCBIT; // Initially closed
+  o->flags = F_DOORBIT | F_NDESCBIT;
+  o->action = kitchen_door_f;
   obj_move(O_KITCHEN_DOOR, OBJ_LOCAL_GLOBALS);
 
   // O_DISPENSER
@@ -592,9 +625,11 @@ void init_complexone() {
   o->synonyms[0] = "unit";
   o->synonyms[1] = "niche";
   o->synonyms[2] = "machine";
+  o->synonyms[3] = "dispenser";
   o->adjectives[0] = "dispenser";
   o->flags =
       F_MUNGBIT | F_CONTBIT | F_SEARCHBIT | F_OPENBIT | F_TRANSBIT | F_NDESCBIT;
+  o->action = dispenser_f;
   obj_move(O_DISPENSER, R_KITCHEN);
 
   // O_CANTEEN
@@ -605,6 +640,7 @@ void init_complexone() {
   o->adjectives[0] = "octagonal";
   o->flags = F_TAKEBIT | F_CONTBIT | F_SEARCHBIT;
   o->capacity = 5;
+  o->action = canteen_f;
   obj_move(O_CANTEEN, R_MESS_HALL);
 
   // O_HIGH_PROTEIN
@@ -617,23 +653,21 @@ void init_complexone() {
   o->adjectives[0] = "brown";
   o->adjectives[1] = "protein-rich";
   o->flags = F_FOODBIT;
-  // Floating object, created when needed? Or initially somewhere?
-  // ZIL: (DESC "...") but no (IN ...).
-  // It's likely created by script or inside Canteen.
-  // For now, leave it in NIL or GLOBAL_OBJECTS.
+  o->action = high_protein_f;
   obj_move(O_HIGH_PROTEIN, OBJ_GLOBAL_OBJECTS);
 
   // R_STORAGE_WEST
   r = &objects[R_STORAGE_WEST];
   r->id = R_STORAGE_WEST;
   r->description = "Storage West";
+  r->synonyms[0] = "storage";
+  r->adjectives[0] = "west";
   r->long_description =
       "This is a small room obviously intended as a storage area.";
   r->flags = F_ONBIT | F_RLANDBIT;
-  r->south = R_MESS_CORRIDOR; // Guarded
+  r->south = R_MESS_CORRIDOR;
   r->out = R_MESS_CORRIDOR;
   r->globals[0] = O_STORAGE_WEST_DOOR;
-  // Globals: SHELVES
 
   // O_CAN
   o = &objects[O_CAN];
@@ -645,6 +679,7 @@ void init_complexone() {
   o->adjectives[2] = "unopened";
   o->flags = F_TAKEBIT;
   o->size = 15;
+  o->action = can_f;
   obj_move(O_CAN, R_STORAGE_WEST);
 
   // O_LADDER
@@ -657,12 +692,24 @@ void init_complexone() {
   o->adjectives[2] = "aluminum";
   o->flags = F_TAKEBIT;
   o->size = 80;
+  o->action = ladder_f;
   obj_move(O_LADDER, R_STORAGE_WEST);
+
+  // Pseudo Object for Walkway
+  o = &objects[O_WALKWAY_PSEUDO];
+  o->id = O_WALKWAY_PSEUDO;
+  o->description = "walkway";
+  o->synonyms[0] = "walkway";
+  o->flags = F_NDESCBIT;
+  o->action = walkway_pseudo_action;
+  obj_move(O_WALKWAY_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // R_DORM_CORRIDOR
   r = &objects[R_DORM_CORRIDOR];
   r->id = R_DORM_CORRIDOR;
   r->description = "Dorm Corridor";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "dorm";
   r->long_description =
       "This is a wide, east-west hallway with openings to the north and "
       "south.\n"
@@ -676,15 +723,15 @@ void init_complexone() {
   r->north = R_DORM_D;
   r->south = R_DORM_C;
   r->west = R_MESS_CORRIDOR;
-  r->east = R_KALAMONTEE_PLATFORM; // Simplified from Long Hall routine
-  // Note: ZIL uses `PER LONG-HALL-F` which handles travel time and messages.
-  // We'll set direct link for now or handle in action.
-  r->globals[0] = O_WALKWAY_PSEUDO; // Need to create pseudo object... or reuse
+  r->east = R_CORRIDOR_JUNCTION;
+  r->globals[0] = O_WALKWAY_PSEUDO;
 
   // R_CORRIDOR_JUNCTION
   r = &objects[R_CORRIDOR_JUNCTION];
   r->id = R_CORRIDOR_JUNCTION;
   r->description = "Corridor Junction";
+  r->synonyms[0] = "junction";
+  r->adjectives[0] = "corridor";
   r->long_description = "A north-south corridor intersects the main corridor "
                         "here. To the west, the\n"
                         "main corridor extends as far as you can see; a "
@@ -696,7 +743,8 @@ void init_complexone() {
   r->north = R_ADMIN_CORRIDOR_S;
   r->south = R_MECH_CORRIDOR_N;
   r->east = R_ELEVATOR_LOBBY;
-  r->west = R_DORM_CORRIDOR; // Simplified from LONG-HALL-F (160 moves)
+  r->west = R_DORM_CORRIDOR;
+  r->globals[0] = O_WALKWAY_PSEUDO;
 
   // R_ADMIN_CORRIDOR_S
   r = &objects[R_ADMIN_CORRIDOR_S];

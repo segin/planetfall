@@ -64,6 +64,10 @@ run_test "Test 31: REC AREA dial" "TELEPORT AREA\nEXAMINE DIAL\nSET DIAL TO 500\
 run_test "Test 32: REC AREA games and tapes" "TELEPORT AREA\nEXAMINE GAMES\nEXAMINE TAPES\nQUIT\nY" "All the usual games" "Rec area games/tapes examine works" "GAMES/TAPES"
 run_test "Test 33: DORM and SANFAC" "TELEPORT DORM\nEXAMINE PARTITION\nSOUTH\nEXAMINE TOILET\nFLUSH TOILET\nQUIT\nY" "water seems to be turned off" "Dorm and SanFac interactions work" "DORM/SANFAC"
 run_test "Test 34: MESS CORRIDOR padlock and door" "TELEPORT MESS\nOPEN DOOR\nTAKE PADLOCK\nUNLOCK PADLOCK\nQUIT\nY" "padlock is locked to the door" "Mess corridor door and padlock work" "MESS CORRIDOR"
+run_test "Test 35: STORAGE WEST Can and Ladder" "TELEPORT STORAGE\nEXAMINE CAN\nOPEN CAN\nEXAMINE LADDER\nOPEN LADDER\nQUIT\nY" "tiny space" "Storage West can and ladder examine/extend work" "STORAGE WEST"
+run_test "Test 36: DORM CORRIDOR and Long Hall" "TELEPORT DORM CORRIDOR\nEXAMINE WALKWAY\nEAST\nQUIT\nY" "featureless hallway" "Dorm corridor walkway and long hall travel work" "LONG HALL"
+run_test "Test 37: MESS HALL benches and kitchen door" "TELEPORT MESS HALL\nEXAMINE BENCH\nOPEN DOOR\nQUIT\nY" "Pleez yuuz kitcin akses kard" "Mess hall benches and door work" "MESS HALL"
+run_test "Test 38: KITCHEN dispenser and canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\nOPEN CANTEEN\nTELEPORT KITCHEN\nPUT CANTEEN IN DISPENSER\nPUSH BUTTON\nQUIT\nY" "canteen fills almost to the brim" "Kitchen dispenser canteen filling works" "KITCHEN DISPENSER"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

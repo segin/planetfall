@@ -898,6 +898,10 @@ void perform_walk(ZObjectID dest) {
       dest = water_level_f();
     }
   }
+  if ((current_room == R_DORM_CORRIDOR && dest == R_CORRIDOR_JUNCTION) ||
+      (current_room == R_CORRIDOR_JUNCTION && dest == R_DORM_CORRIDOR)) {
+    dest = long_hall_f();
+  }
   if ((current_room == R_REC_AREA && dest == R_CONFERENCE_ROOM) ||
       (current_room == R_CONFERENCE_ROOM && dest == R_REC_AREA)) {
     if (!obj_has_flag(O_CONFERENCE_DOOR, F_OPENBIT)) {
@@ -908,6 +912,13 @@ void perform_walk(ZObjectID dest) {
   if ((current_room == R_MESS_CORRIDOR && dest == R_STORAGE_WEST) ||
       (current_room == R_STORAGE_WEST && dest == R_MESS_CORRIDOR)) {
     if (!obj_has_flag(O_STORAGE_WEST_DOOR, F_OPENBIT)) {
+      tellf("The door is closed.\n");
+      return;
+    }
+  }
+  if ((current_room == R_MESS_HALL && dest == R_KITCHEN) ||
+      (current_room == R_KITCHEN && dest == R_MESS_HALL)) {
+    if (!obj_has_flag(O_KITCHEN_DOOR, F_OPENBIT)) {
       tellf("The door is closed.\n");
       return;
     }
