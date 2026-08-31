@@ -124,7 +124,7 @@ int snarf_objects(int start, int end, unsigned int search_flags,
       if (!obj_has_flag(curr, F_INVISIBLE)) {
 
         bool flags_match = true;
-        if (find_flags != 0) {
+        if (is_all && find_flags != 0) {
           if ((objects[curr].flags & find_flags) == 0) {
             flags_match = false;
           }
@@ -160,7 +160,7 @@ int snarf_objects(int start, int end, unsigned int search_flags,
         while (inner != NOTHING) {
           if (!obj_has_flag(inner, F_INVISIBLE)) {
             bool inner_flags_match = true;
-            if (find_flags != 0) {
+            if (is_all && find_flags != 0) {
               if ((objects[inner].flags & find_flags) == 0)
                 inner_flags_match = false;
             }
@@ -225,7 +225,7 @@ int snarf_objects(int start, int end, unsigned int search_flags,
     if (gobj != NOTHING && gobj > 0 && gobj < MAX_OBJECTS) {
       if (!obj_has_flag(gobj, F_INVISIBLE)) {
         bool flags_match = true;
-        if (find_flags != 0 && (objects[gobj].flags & find_flags) == 0) {
+        if (is_all && find_flags != 0 && (objects[gobj].flags & find_flags) == 0) {
           flags_match = false;
         }
         if (flags_match) {

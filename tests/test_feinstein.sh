@@ -76,6 +76,9 @@ run_test "Test 43: SYSTEMS MONITORS and equipment" "TELEPORT SYSTEMS MONITORS\nE
 run_test "Test 44: PLAN ROOM cubbyholes and maps" "TELEPORT PLAN ROOM\nEXAMINE CUBBYHOLES\nEXAMINE MAPS\nQUIT\nY" "used to hold maps" "Plan room cubbyholes and maps examine work" "PLAN ROOM"
 run_test "Test 45: SMALL OFFICE desk and access cards" "TELEPORT SMALL OFFICE\nOPEN DESK\nLOOK IN DESK\nREAD KITCHEN CARD\nQUIT\nY" "kitcin akses kard" "Small office desk and kitchen card work" "SMALL OFFICE"
 run_test "Test 46: LARGE OFFICE desk and access cards" "TELEPORT LARGE OFFICE\nOPEN DESK\nLOOK IN DESK\nREAD SHUTTLE CARD\nQUIT\nY" "shutul akses kard" "Large office desk and shuttle card work" "LARGE OFFICE"
+run_test "Test 47: STORAGE EAST box and cracked board" "TELEPORT STORAGE EAST\nLOOK IN BOX\nEXAMINE BOARD\nQUIT\nY" "twisted maze of silicon circuits" "Storage East box and board examine work" "STORAGE EAST"
+run_test "Test 48: OIL CAN and BOX close refusal" "TELEPORT STORAGE EAST\nTAKE OIL CAN\nPOUR CAN\nCLOSE BOX\nQUIT\nY" "You can't close that" "Oil can pour and box close refusal work" "OIL CAN / BOX"
+run_test "Test 49: PHYSICAL PLANT catwalk climb" "TELEPORT PHYSICAL PLANT\nCLIMB CATWALK\nQUIT\nY" "catwalks are too high" "Physical plant catwalk climb refusal works" "PHYSICAL PLANT"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

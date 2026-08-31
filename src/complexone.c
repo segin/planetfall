@@ -1057,6 +1057,172 @@ void init_complexone() {
   o->value = 1;
   o->size = 3;
   obj_move(O_LOWER_ELEVATOR_CARD, O_LARGE_DESK);
+
+  // R_MECH_CORRIDOR_N
+  r = &objects[R_MECH_CORRIDOR_N];
+  r->id = R_MECH_CORRIDOR_N;
+  r->description = "Mech Corridor North";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "mech";
+  r->adjectives[1] = "north";
+  r->long_description =
+      "Entrances to rooms lie to the east and west from this north-south hall.";
+  r->flags = F_RLANDBIT | F_ONBIT;
+  r->north = R_CORRIDOR_JUNCTION;
+  r->south = R_MECH_CORRIDOR;
+  r->east = R_STORAGE_EAST;
+  r->west = R_PHYSICAL_PLANT;
+
+  // R_MECH_CORRIDOR
+  r = &objects[R_MECH_CORRIDOR];
+  r->id = R_MECH_CORRIDOR;
+  r->description = "Mech Corridor";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "mech";
+  r->long_description =
+      "Entrances to rooms lie to the east and west from this north-south hall.";
+  r->flags = F_RLANDBIT | F_ONBIT;
+  r->north = R_MECH_CORRIDOR_N;
+  r->south = R_MECH_CORRIDOR_S;
+  r->east = R_REACTOR_CONTROL;
+  r->west = R_PHYSICAL_PLANT;
+
+  // R_MECH_CORRIDOR_S
+  r = &objects[R_MECH_CORRIDOR_S];
+  r->id = R_MECH_CORRIDOR_S;
+  r->description = "Mech Corridor South";
+  r->synonyms[0] = "corridor";
+  r->adjectives[0] = "mech";
+  r->adjectives[1] = "south";
+  r->long_description =
+      "The corridor ends here with doorways to the southwest, south, and southeast.";
+  r->flags = F_RLANDBIT | F_ONBIT;
+  r->north = R_MECH_CORRIDOR;
+  r->south = R_MACHINE_SHOP;
+  r->sw = R_TOOL_ROOM;
+  r->se = R_ROBOT_SHOP;
+
+  // R_STORAGE_EAST
+  r = &objects[R_STORAGE_EAST];
+  r->id = R_STORAGE_EAST;
+  r->description = "Storage East";
+  r->synonyms[0] = "storage";
+  r->adjectives[0] = "east";
+  r->long_description = "A small room for storage. The exit is to the west.";
+  r->flags = F_RLANDBIT | F_FLOYDBIT | F_ONBIT;
+  r->west = R_MECH_CORRIDOR_N;
+  r->out = R_MECH_CORRIDOR_N;
+  r->globals[0] = O_SHELVES;
+
+  // O_OIL_CAN
+  o = &objects[O_OIL_CAN];
+  o->id = O_OIL_CAN;
+  o->description = "oil can";
+  o->synonyms[0] = "can";
+  o->adjectives[0] = "small";
+  o->adjectives[1] = "oil";
+  o->flags = F_VOWELBIT | F_TAKEBIT;
+  o->size = 10;
+  o->action = oil_can_f;
+  obj_move(O_OIL_CAN, R_STORAGE_EAST);
+
+  // O_CARTON
+  o = &objects[O_CARTON];
+  o->id = O_CARTON;
+  o->description = "cardboard box";
+  o->synonyms[0] = "box";
+  o->synonyms[1] = "carton";
+  o->adjectives[0] = "small";
+  o->adjectives[1] = "cardboard";
+  o->flags = F_TAKEBIT | F_CONTBIT | F_SEARCHBIT | F_OPENBIT;
+  o->size = 10;
+  o->capacity = 50;
+  o->action = carton_f;
+  obj_move(O_CARTON, R_STORAGE_EAST);
+
+  // O_CRACKED_BOARD
+  o = &objects[O_CRACKED_BOARD];
+  o->id = O_CRACKED_BOARD;
+  o->description = "cracked seventeen-centimeter fromitz board";
+  o->synonyms[0] = "board";
+  o->synonyms[1] = "boards";
+  o->adjectives[0] = "cracked";
+  o->adjectives[1] = "seventeen";
+  o->adjectives[2] = "centimeter";
+  o->adjectives[3] = "fromitz";
+  o->flags = F_ACIDBIT | F_TAKEBIT;
+  o->size = 10;
+  o->action = cracked_board_f;
+  obj_move(O_CRACKED_BOARD, O_CARTON);
+
+  // O_MEGAFUSE_B
+  o = &objects[O_MEGAFUSE_B];
+  o->id = O_MEGAFUSE_B;
+  o->description = "B-series megafuse";
+  o->synonyms[0] = "fuse";
+  o->synonyms[1] = "megafuse";
+  o->adjectives[0] = "b-series";
+  o->adjectives[1] = "b";
+  o->adjectives[2] = "series";
+  o->adjectives[3] = "mega";
+  o->flags = F_ACIDBIT | F_TAKEBIT;
+  o->size = 5;
+  obj_move(O_MEGAFUSE_B, O_CARTON);
+
+  // O_MEGAFUSE_K
+  o = &objects[O_MEGAFUSE_K];
+  o->id = O_MEGAFUSE_K;
+  o->description = "K-series megafuse";
+  o->synonyms[0] = "fuse";
+  o->synonyms[1] = "megafuse";
+  o->adjectives[0] = "k-series";
+  o->adjectives[1] = "k";
+  o->adjectives[2] = "series";
+  o->adjectives[3] = "mega";
+  o->flags = F_ACIDBIT | F_TAKEBIT;
+  o->size = 5;
+  obj_move(O_MEGAFUSE_K, O_CARTON);
+
+  // O_GOOD_BEDISTOR
+  o = &objects[O_GOOD_BEDISTOR];
+  o->id = O_GOOD_BEDISTOR;
+  o->description = "good ninety-ohm bedistor";
+  o->synonyms[0] = "bedistor";
+  o->adjectives[0] = "good";
+  o->adjectives[1] = "ninety";
+  o->adjectives[2] = "ohm";
+  o->flags = F_ACIDBIT | F_TAKEBIT;
+  o->size = 8;
+  o->action = good_bedistor_f;
+  obj_move(O_GOOD_BEDISTOR, O_CARTON);
+
+  // R_PHYSICAL_PLANT
+  r = &objects[R_PHYSICAL_PLANT];
+  r->id = R_PHYSICAL_PLANT;
+  r->description = "Physical Plant";
+  r->synonyms[0] = "plant";
+  r->adjectives[0] = "physical";
+  r->long_description =
+      "This is a huge, dim room with exits in the northeast and southeast\n"
+      "corners. The room is criss-crossed with catwalks and is filled with\n"
+      "heavy equipment presumably intended to heat and ventilate this complex.\n"
+      "Hardly any of the equipment is still operating.";
+  r->flags = F_FLOYDBIT | F_RLANDBIT | F_ONBIT;
+  r->ne = R_MECH_CORRIDOR_N;
+  r->se = R_MECH_CORRIDOR;
+  r->globals[0] = O_EQUIPMENT_PSEUDO;
+  r->globals[1] = O_CATWALK_PSEUDO;
+
+  // Pseudo Object for Catwalk
+  o = &objects[O_CATWALK_PSEUDO];
+  o->id = O_CATWALK_PSEUDO;
+  o->description = "catwalk";
+  o->synonyms[0] = "catwalk";
+  o->synonyms[1] = "catwalks";
+  o->flags = F_NDESCBIT;
+  o->action = catwalk_pseudo_action;
+  obj_move(O_CATWALK_PSEUDO, OBJ_LOCAL_GLOBALS);
+
   // R_MACHINE_SHOP
   r = &objects[R_MACHINE_SHOP];
   r->id = R_MACHINE_SHOP;

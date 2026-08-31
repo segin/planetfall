@@ -1224,6 +1224,57 @@ bool desk_f(int verb) {
   return false;
 }
 
+bool oil_can_f(int verb) {
+  if (verb == V_POUR) {
+    ZObjectID prsi = current_cmd.prsi != NOTHING ? current_cmd.prsi : O_GROUND;
+    tellf("A few drops of oil pour out onto the %s.\n", objects[prsi].description);
+    return true;
+  }
+  if (verb == V_EMPTY) {
+    tellf("Pretty much impossible -- you could only do that one drop at a time.\n");
+    return true;
+  }
+  return false;
+}
+
+bool carton_f(int verb) {
+  if (verb == V_CLOSE) {
+    tellf("You can't close that.\n");
+    return true;
+  }
+  return false;
+}
+
+void examine_board(void) {
+  tellf("Like most fromitz boards, it is a twisted maze of silicon circuits. It is\n"
+        "square, approximately seventeen centimeters on each side.");
+}
+
+bool cracked_board_f(int verb) {
+  if (verb == V_EXAMINE) {
+    examine_board();
+    tellf(" This one looks as though it's been dropped.\n");
+    return true;
+  }
+  return false;
+}
+
+bool good_bedistor_f(int verb) {
+  if (verb == V_TAKE && game_state.course_control_fixed) {
+    jigs_up("Kerzap!! You should know better than to touch an active bedistor!");
+    return true;
+  }
+  return false;
+}
+
+bool catwalk_pseudo_action(int verb) {
+  if (verb == V_CLIMB_ON || verb == V_CLIMB_UP || verb == V_CLIMB_FOO) {
+    tellf("The catwalks are too high for you to access.\n");
+    return true;
+  }
+  return false;
+}
+
 bool systems_monitors_f(int arg) {
   if (arg == M_LOOK) {
     TELL("This is a large room filled with tables full of strange equipment. ");
