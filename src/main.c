@@ -198,8 +198,12 @@ void update_status_bar() {
   // draws a score/moves status line off the SCORE and MOVES globals. MOVES
   // holds Galactic Standard Time as a bare count -- there is no hours:minutes
   // rendering anywhere in the ZIL; TELL-TIME prints <TELL N ,INTERNAL-MOVES>.
-  char right_text[32];
-  snprintf(right_text, sizeof(right_text), "Time: %d", game_state.moves);
+  // Verified against the real game, whose bar reads "Score: 0  Moves: 4495".
+  // The interpreter renders "Score: 0        Moves: 4495" from the SCORE and
+  // MOVES globals; MOVES carries Galactic Standard Time.
+  char right_text[48];
+  snprintf(right_text, sizeof(right_text), "Score: %d        Moves: %d",
+           game_state.score, game_state.moves);
 
   int right_len = strlen(right_text);
   int loc_len = strlen(loc_name);

@@ -82,12 +82,6 @@ with the original, modulo catalogued Release 1 wording.
   handlers -- the pod bulkhead bug lived there. The Blather/ambassador work removed
   its ATTACK/KICK/TALK/celery branches; the rest should follow as the verbs get
   proper handlers.
-- Status bar has time and no score. The time half is now correct (it shows Galactic
-  Standard Time from the MOVES global, matching ZIL). The score field is still
-  missing: Planetfall is a `<VERSION ZIP>` game with no TIME flag, so the authentic
-  interpreter status line renders SCORE *and* MOVES side by side. Adding it means
-  putting `Score: %d` from `game_state.score` into `update_status_bar` in
-  `src/main.c`.
 - `rand()` is never seeded -- there is no `srand()` call anywhere in `src/`. Every
   playthrough therefore draws exactly the same "random" numbers, so the explosion
   delay, `number_needed`, `chemical_required`, and the Blather/ambassador

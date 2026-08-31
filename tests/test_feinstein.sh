@@ -59,6 +59,9 @@ run_test "Test 2c: IN is refused the same way" "IN\nQUIT\nY" "escape pod bulkhea
 run_test "Test 2d: Opening the bulkhead early is refused" "OPEN BULKHEAD\nQUIT\nY" "if there's no emergency" "Pod bulkhead cannot be opened early" "Pod bulkhead opened early"
 run_test "Test 2e: Deck Nine reports the bulkhead state" "LOOK\nQUIT\nY" "pod bulkhead is closed" "Deck Nine describes the sealed bulkhead" "Bulkhead state not described"
 run_test "Test 3: Examine ME" "EXAMINE ME\nQUIT\nY" "eyes are prehensile" "CRETIN-F handles examining yourself" "Examine ME"
+# The status bar mirrors the interpreter's: location, score, and MOVES, which
+# carries Galactic Standard Time.
+run_test "Test 4a: Status bar shows score and time" "LOOK\nQUIT\nY" "Score: 0 +Moves: 4[0-9]+" "Status bar matches the original's layout" "Status bar"
 run_test "Test 4: Look command" "LOOK\nQUIT\nY" "Deck Nine" "Look works" "Look"
 run_test "Test 5: Inventory" "INVENTORY\nQUIT\nY" "carrying|uniform|chronometer|brush" "Inventory works" "Inventory"
 # The Feinstein explodes on a 241..330 GST timer. Standing still costs 7 units a
