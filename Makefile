@@ -13,15 +13,20 @@ TEST_EVENTS_BIN = tests/run_test_events
 
 BIN = planetfall
 
+.PHONY: all test check clean
+
 all: $(BIN)
 
 $(BIN): $(OBJ)
 	$(CC) $(CFLAGS) -o $(BIN) $(OBJ)
 
-test: $(TEST_ENGINE_BIN) $(TEST_PARSER_BIN) $(TEST_EVENTS_BIN)
+test: $(TEST_ENGINE_BIN) $(TEST_PARSER_BIN) $(TEST_EVENTS_BIN) $(BIN)
 	$(TEST_ENGINE_BIN)
 	$(TEST_PARSER_BIN)
 	$(TEST_EVENTS_BIN)
+	bash tests/test_feinstein.sh
+
+check: test
 
 $(TEST_ENGINE_BIN): src/engine_core.o $(TEST_ENGINE_SRC)
 	$(CC) $(CFLAGS) -o $(TEST_ENGINE_BIN) $(TEST_ENGINE_SRC) src/engine_core.o
@@ -29,8 +34,8 @@ $(TEST_ENGINE_BIN): src/engine_core.o $(TEST_ENGINE_SRC)
 $(TEST_PARSER_BIN): src/engine_core.o src/parser.o src/syntax_gen.o $(TEST_PARSER_SRC)
 	$(CC) $(CFLAGS) -o $(TEST_PARSER_BIN) $(TEST_PARSER_SRC) src/engine_core.o src/parser.o src/syntax_gen.o
 
-$(TEST_EVENTS_BIN): src/events.o src/feinstein.o src/engine_core.o $(TEST_EVENTS_SRC)
-	$(CC) $(CFLAGS) -o $(TEST_EVENTS_BIN) $(TEST_EVENTS_SRC) src/events.o src/feinstein.o src/engine_core.o
+$(TEST_EVENTS_BIN): src/events.o $(TEST_EVENTS_SRC)
+	$(CC) $(CFLAGS) -o $(TEST_EVENTS_BIN) $(TEST_EVENTS_SRC) src/events.o
 
 clean:
-	rm -f src/*.o tests/run_tests $(BIN)
+	rm -f src/*.o $(TEST_ENGINE_BIN) $(TEST_PARSER_BIN) $(TEST_EVENTS_BIN) $(BIN)

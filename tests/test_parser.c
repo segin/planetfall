@@ -11,20 +11,20 @@ void setup_parser_test() {
     current_room = 20;
     
     objects[player].id = 10;
-    objects[player].child = 30; // Has item 30
+    objects[player].child = NOTHING;
     
     objects[20].id = 20; // Room
-    objects[20].child = 40; // Has item 40
+    objects[20].child = 30; // Has item 30
     
     objects[30].id = 30;
     objects[30].synonyms[0] = "item";
-    objects[30].flags = 0;
-    objects[30].sibling = NOTHING;
-    objects[30].parent = player;
+    objects[30].flags = F_TAKEBIT;
+    objects[30].sibling = 40;
+    objects[30].parent = 20;
     
     objects[40].id = 40;
     objects[40].synonyms[0] = "flooritem";
-    objects[40].flags = 0;
+    objects[40].flags = F_TAKEBIT;
     objects[40].sibling = NOTHING;
     objects[40].parent = 20;
 }
@@ -54,7 +54,8 @@ void test_tokenize() {
     res = parse_command(input2, &cmd);
     assert(res);
     assert(cmd.verb == V_TAKE);
-    assert(cmd.direct_object == 30);
+    assert(cmd.prso_count == 1);
+    assert(cmd.prso_list[0] == 30);
     
     printf("Tokenizer/Parser Basic Passed.\n");
 }

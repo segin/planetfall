@@ -10,9 +10,12 @@ void routine_mock() {
     printf("Mock Event Ran\n");
 }
 
-void perform_look() {
-    // Stub
-}
+void routine_blowup_feinstein() {}
+void routine_blather() {}
+void routine_ambassador() {}
+void routine_pod_trip() {}
+void routine_sink_pod() {}
+void routine_hunger() {}
 
 void test_events() {
     printf("Testing Event Queue...\n");

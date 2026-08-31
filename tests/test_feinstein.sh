@@ -3,51 +3,45 @@
 
 echo "=== Feinstein Chapter Verification ==="
 
-cd /home/segin/planetfall
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR/.."
+
+FAILED=0
 
 # Helper to strip ANSI codes
 strip_ansi() {
     sed 's/\x1b\[[0-9;]*m//g' | sed 's/\x1b\[[0-9]*[A-Za-z]//g' | sed 's/\x1b\[[^m]*m//g' | tr -d '[:cntrl:]'
 }
 
-# Test 1: Basic room navigation
-echo "Test 1: Room navigation (UP from Deck Nine)"
-OUTPUT=$(echo -e "UP\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qi "Gangway" && echo "PASS: UP leads to Gangway" || echo "FAIL: UP navigation"
+run_test() {
+    local name="$1"
+    local input="$2"
+    local pattern="$3"
+    local pass_msg="$4"
+    local fail_msg="$5"
 
-# Test 2: Port/Starboard directions  
-echo "Test 2: Port direction (should go west to pod if open)"
-OUTPUT=$(echo -e "PORT\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qiE "pod|closed|can't" && echo "PASS: Port direction works" || echo "FAIL: Port direction"
+    echo "$name"
+    OUTPUT=$(echo -e "$input" | ./planetfall 2>/dev/null | strip_ansi)
+    if echo "$OUTPUT" | grep -qiE "$pattern"; then
+        echo "PASS: $pass_msg"
+    else
+        echo "FAIL: $fail_msg"
+        FAILED=$((FAILED + 1))
+    fi
+}
 
-# Test 3: Examine ME
-echo "Test 3: Examine ME"
-OUTPUT=$(echo -e "EXAMINE ME\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qiE "cretin|nothing special|special" && echo "PASS: Examine ME works" || echo "FAIL: Examine ME"
-
-# Test 4: Look command
-echo "Test 4: Look command"
-OUTPUT=$(echo -e "LOOK\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qi "Deck Nine" && echo "PASS: Look works" || echo "FAIL: Look"
-
-# Test 5: Inventory
-echo "Test 5: Inventory"
-OUTPUT=$(echo -e "INVENTORY\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qiE "carrying|uniform|chronometer|brush" && echo "PASS: Inventory works" || echo "FAIL: Inventory"
-
-# Test 6: Wait for Ambassador (several turns)
-echo "Test 6: Wait for events"
-OUTPUT=$(echo -e "WAIT\nWAIT\nWAIT\nWAIT\nWAIT\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qiE "ambassador|Blather|explosion" && echo "PASS: Events trigger" || echo "FAIL: Events"
-
-# Test 7: Scrub brush in inventory
-echo "Test 7: Scrub brush exists"
-OUTPUT=$(echo -e "I\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qi "brush" && echo "PASS: Scrub brush in inventory" || echo "FAIL: Scrub brush missing"
-
-# Test 8: Chronometer examine
-echo "Test 8: Examine chronometer"
-OUTPUT=$(echo -e "EXAMINE CHRONOMETER\nQUIT\nY" | ./planetfall 2>/dev/null | strip_ansi)
-echo "$OUTPUT" | grep -qiE "wrist|digital|time|chronometer" && echo "PASS: Chronometer examine works" || echo "FAIL: Chronometer"
+run_test "Test 1: Room navigation (UP from Deck Nine)" "UP\nQUIT\nY" "Gangway" "UP leads to Gangway" "UP navigation"
+run_test "Test 2: Port direction (should go west to pod if open)" "PORT\nQUIT\nY" "pod|closed|can't" "Port direction works" "Port direction"
+run_test "Test 3: Examine ME" "EXAMINE ME\nQUIT\nY" "cretin|nothing special|special" "Examine ME works" "Examine ME"
+run_test "Test 4: Look command" "LOOK\nQUIT\nY" "Deck Nine" "Look works" "Look"
+run_test "Test 5: Inventory" "INVENTORY\nQUIT\nY" "carrying|uniform|chronometer|brush" "Inventory works" "Inventory"
+run_test "Test 6: Wait for events" "WAIT\nWAIT\nWAIT\nWAIT\nWAIT\nQUIT\nY" "ambassador|Blather|explosion" "Events trigger" "Events"
+run_test "Test 7: Scrub brush exists" "I\nQUIT\nY" "brush" "Scrub brush in inventory" "Scrub brush missing"
+run_test "Test 8: Examine chronometer" "EXAMINE CHRONOMETER\nQUIT\nY" "wrist|digital|time|chronometer" "Chronometer examine works" "Chronometer"
 
 echo "=== Tests Complete ==="
+if [ $FAILED -ne 0 ]; then
+    echo "$FAILED test(s) failed!"
+    exit 1
+fi
+exit 0
