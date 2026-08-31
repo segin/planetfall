@@ -82,6 +82,9 @@ run_test "Test 49: PHYSICAL PLANT catwalk climb" "TELEPORT PHYSICAL PLANT\nCLIMB
 run_test "Test 50: REACTOR CONTROL elevator door button" "TELEPORT REACTOR CONTROL\nPUSH BUTTON\nEAST\nLOOK\nWEST\nQUIT\nY" "Reactor Elevator" "Reactor control elevator door button works" "REACTOR CONTROL"
 run_test "Test 51: TOOL ROOM flask and pliers" "TELEPORT TOOL ROOM\nEXAMINE FLASK\nEXAMINE PLIERS\nQUIT\nY" "wide-nosed pliers" "Tool room flask and pliers examine work" "TOOL ROOM"
 run_test "Test 52: MAGNET crevice key extraction" "TELEPORT TOOL ROOM\nTAKE MAGNET\nTELEPORT ADMIN SOUTH\nEXAMINE CREVICE\nPUT MAGNET OVER CREVICE\nQUIT\nY" "metal leaps from" "Magnet pulling key from crevice works" "MAGNET KEY EXTRACTION"
+run_test "Test 53: MACHINE SHOP dispenser and flask filling" "TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH RED BUTTON\nEXAMINE FLASK\nQUIT\nY" "milky white fluid" "Machine shop chemical dispenser and flask work" "MACHINE SHOP"
+run_test "Test 54: ROBOT SHOP devices examine" "TELEPORT ROBOT SHOP\nEXAMINE DEVICES\nQUIT\nY" "disassembled robots" "Robot shop devices examine works" "ROBOT SHOP"
+run_test "Test 55: FLOYD examine and turn on" "TELEPORT ROBOT SHOP\nEXAMINE FLOYD\nTURN ON FLOYD\nQUIT\nY" "comes to life" "Floyd examine and activation work" "FLOYD ACTIVATION"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

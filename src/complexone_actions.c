@@ -718,40 +718,52 @@ bool padlock_f(int arg) {
 
 bool machine_shop_f(int arg) {
   if (arg == M_LOOK) {
-    TELL("This room is probably some sort of machine shop filled with a "
-         "variety\n"
-         "of unusual machines. Doorways lead north, east, and west.\n\n"
-         "Standing against the rear wall is a large dispensing machine with a\n"
-         "spout. ");
-    if (game_state.spout_placed != O_GROUND &&
-        game_state.spout_placed != NOTHING) {
-      TELL("Sitting under the spout is a object. "); // Simplified
+    tellf("This room is probably some sort of machine shop filled with a variety\n"
+          "of unusual machines. Doorways lead north, east, and west.\n\n"
+          "Standing against the rear wall is a large dispensing machine with a\n"
+          "spout. ");
+    if (game_state.spout_placed != O_GROUND && game_state.spout_placed != NOTHING) {
+      const char *art = obj_has_flag(game_state.spout_placed, F_VOWELBIT) ? "an " : "a ";
+      tellf("Sitting under the spout is %s%s. ", art, objects[game_state.spout_placed].description);
     }
-    TELL(
-        "The dispenser is lined with brightly-colored buttons. The first four\n"
-        "buttons, labelled \"KUULINTS 1 - 4\", are colored red, blue, green, "
-        "and\n"
-        "yellow. The next three buttons, labelled \"KATALISTS 1 - 3\", are "
-        "colored\n"
-        "gray, brown, and black. The last two buttons are both white. One of\n"
-        "these is square and says \"BAAS.\" The other white button is round "
-        "and\n"
-        "says \"ASID.\"\n");
+    tellf("The dispenser is lined with brightly-colored buttons. The first four\n"
+          "buttons, labelled \"KUULINTS 1 - 4\", are colored red, blue, green, and\n"
+          "yellow. The next three buttons, labelled \"KATALISTS 1 - 3\", are colored\n"
+          "gray, brown, and black. The last two buttons are both white. One of\n"
+          "these is square and says \"BAAS.\" The other white button is round and\n"
+          "says \"ASID.\"\n");
     return true;
   }
   return false;
 }
 
-bool chemical_dispenser_f(int arg) {
-  if (current_cmd.verb == V_PUT_UNDER &&
-      current_cmd.prsi == O_CHEMICAL_DISPENSER) {
-    if (game_state.spout_placed == O_GROUND ||
-        game_state.spout_placed == NOTHING) {
-      game_state.spout_placed = current_cmd.prso_list[0];
-      TELL("The object is now sitting under the spout.\n");
+bool chem_spout_pseudo_action(int verb) {
+  if (verb == V_LOOK_INSIDE || verb == V_EXAMINE) {
+    tellf("The spout is about ten centimeters across. Right below it is a small\n"
+          "stand on which you could place something.\n");
+    return true;
+  }
+  return false;
+}
+
+bool chemical_dispenser_f(int verb) {
+  if (verb == V_PUT_UNDER) {
+    ZObjectID prso = current_cmd.prso_count > 0 ? current_cmd.prso_list[0] : NOTHING;
+    if (game_state.spout_placed == O_GROUND || game_state.spout_placed == NOTHING) {
+      game_state.spout_placed = prso;
+      obj_move(prso, current_room);
+      tellf("The %s is now sitting under the spout.\n", objects[prso].description);
     } else {
-      TELL("The other object is already resting under the spout.\n");
+      tellf("The %s is already resting under the spout.\n", objects[game_state.spout_placed].description);
     }
+    return true;
+  }
+  return false;
+}
+
+bool devices_pseudo_action(int verb) {
+  if (verb == V_EXAMINE) {
+    tellf("They are components of disassembled robots, beyond repair.\n");
     return true;
   }
   return false;
@@ -781,11 +793,11 @@ const char *get_color_name(int color_idx) {
 bool chem_button_f(int arg) {
   if (current_cmd.verb == V_PUSH) {
     if (obj_has_flag(O_CHEMICAL_DISPENSER, F_MUNGEDBIT)) {
-      TELL("The machine coughs a few times, but nothing else happens.\n");
+      tellf("The machine coughs a few times, but nothing else happens.\n");
       return true;
     }
 
-    ZObjectID button = current_cmd.prso_list[0];
+    ZObjectID button = current_cmd.prso_count > 0 ? current_cmd.prso_list[0] : NOTHING;
     int color_val = 0;
     if (button == O_RED_BUTTON)
       color_val = 1;
@@ -808,24 +820,25 @@ bool chem_button_f(int arg) {
 
     if (game_state.spout_placed == O_FLASK) {
       if (obj_in(O_CHEMICAL_FLUID, O_FLASK)) {
-        TELL("Another dose of the chemical fluid pours out of the spout, "
-             "splashes over\n"
-             "the already-full flask, spills onto the floor, and dries up.\n");
+        tellf("Another dose of the chemical fluid pours out of the spout, splashes over\n"
+              "the already-full flask, spills onto the floor, and dries up.\n");
       } else {
         obj_move(O_CHEMICAL_FLUID, O_FLASK);
-        TELL("The flask fills with some %s chemical fluid. The fluid gradually "
-             "turns milky white.\n",
-             get_color_name(color_val));
+        tellf("The flask fills with some %s chemical fluid. The fluid gradually turns milky white.\n",
+              get_color_name(color_val));
         game_state.chemical_flag = color_val;
       }
     } else if (game_state.spout_placed == O_CANTEEN &&
                obj_has_flag(O_CANTEEN, F_OPENBIT)) {
-      TELL("Chemical fluid gushes from the spout. Unfortunately, the mouth of "
-           "the canteen\n"
-           "is very narrow, and the fluid just splashes over it.\n");
+      tellf("Chemical fluid gushes from the spout. Unfortunately, the mouth of the canteen\n"
+            "is very narrow, and the fluid just splashes over it.\n");
     } else {
-      TELL("Some sort of chemical fluid pours out of the spout, spills all "
-           "over the object, and dries up.\n");
+      if (game_state.spout_placed != O_GROUND && game_state.spout_placed != NOTHING) {
+        tellf("Some sort of chemical fluid pours out of the spout, spills all over the %s, and dries up.\n",
+              objects[game_state.spout_placed].description);
+      } else {
+        tellf("Some sort of chemical fluid pours out of the spout, spills all over the floor, and dries up.\n");
+      }
     }
     return true;
   }

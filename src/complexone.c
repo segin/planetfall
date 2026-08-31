@@ -1363,27 +1363,34 @@ void init_complexone() {
   r = &objects[R_MACHINE_SHOP];
   r->id = R_MACHINE_SHOP;
   r->description = "Machine Shop";
+  r->synonyms[0] = "shop";
+  r->adjectives[0] = "machine";
   r->long_description =
       "This room is probably some sort of machine shop filled with a variety\n"
       "of unusual machines. Doorways lead north, east, and west.\n"
       "\n"
       "Standing against the rear wall is a large dispensing machine with a\n"
-      "spout. The dispenser is lined with brightly-colored buttons. The first "
-      "four\n"
-      "buttons, labelled \"KUULINTS 1 - 4\", are colored red, blue, green, "
-      "and\n"
-      "yellow. The next three buttons, labelled \"KATALISTS 1 - 3\", are "
-      "colored\n"
+      "spout. The dispenser is lined with brightly-colored buttons. The first four\n"
+      "buttons, labelled \"KUULINTS 1 - 4\", are colored red, blue, green, and\n"
+      "yellow. The next three buttons, labelled \"KATALISTS 1 - 3\", are colored\n"
       "gray, brown, and black. The last two buttons are both white. One of\n"
       "these is square and says \"BAAS.\" The other white button is round and\n"
       "says \"ASID.\"";
-  // Logic for displaying what is under spout is dynamic in look routine
   r->flags = F_RLANDBIT | F_FLOYDBIT | F_ONBIT;
   r->north = R_MECH_CORRIDOR_S;
   r->east = R_ROBOT_SHOP;
   r->west = R_TOOL_ROOM;
-  // Pseudo: SPOUT
+  r->action = machine_shop_f;
   r->globals[0] = O_CHEM_SPOUT_PSEUDO;
+
+  // Pseudo: SPOUT
+  o = &objects[O_CHEM_SPOUT_PSEUDO];
+  o->id = O_CHEM_SPOUT_PSEUDO;
+  o->description = "spout";
+  o->synonyms[0] = "spout";
+  o->flags = F_NDESCBIT;
+  o->action = chem_spout_pseudo_action;
+  obj_move(O_CHEM_SPOUT_PSEUDO, OBJ_LOCAL_GLOBALS);
 
   // O_CHEMICAL_DISPENSER
   o = &objects[O_CHEMICAL_DISPENSER];
@@ -1394,6 +1401,7 @@ void init_complexone() {
   o->adjectives[0] = "chemical";
   o->adjectives[1] = "large";
   o->flags = F_MUNGBIT | F_NDESCBIT;
+  o->action = chemical_dispenser_f;
   obj_move(O_CHEMICAL_DISPENSER, R_MACHINE_SHOP);
 
   // Buttons in Machine Shop
@@ -1403,6 +1411,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "red";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_RED_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_BLUE_BUTTON];
@@ -1411,6 +1420,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "blue";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_BLUE_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_GREEN_BUTTON];
@@ -1419,6 +1429,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "green";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_GREEN_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_YELLOW_BUTTON];
@@ -1427,6 +1438,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "yellow";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_YELLOW_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_GRAY_BUTTON];
@@ -1435,6 +1447,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "gray";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_GRAY_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_BROWN_BUTTON];
@@ -1443,6 +1456,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "brown";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_BROWN_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_BLACK_BUTTON];
@@ -1451,6 +1465,7 @@ void init_complexone() {
   o->synonyms[0] = "button";
   o->adjectives[0] = "black";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_BLACK_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_ROUND_WHITE_BUTTON];
@@ -1460,6 +1475,7 @@ void init_complexone() {
   o->adjectives[0] = "white";
   o->adjectives[1] = "round";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_ROUND_WHITE_BUTTON, R_MACHINE_SHOP);
 
   o = &objects[O_SQUARE_WHITE_BUTTON];
@@ -1469,12 +1485,24 @@ void init_complexone() {
   o->adjectives[0] = "white";
   o->adjectives[1] = "square";
   o->flags = F_NDESCBIT;
+  o->action = chem_button_f;
   obj_move(O_SQUARE_WHITE_BUTTON, R_MACHINE_SHOP);
+
+  // O_CHEMICAL_FLUID
+  o = &objects[O_CHEMICAL_FLUID];
+  o->id = O_CHEMICAL_FLUID;
+  o->description = "chemical fluid";
+  o->synonyms[0] = "fluid";
+  o->synonyms[1] = "liquid";
+  o->adjectives[0] = "chemical";
+  o->flags = F_TRYTAKEBIT | F_TAKEBIT;
 
   // R_ROBOT_SHOP
   r = &objects[R_ROBOT_SHOP];
   r->id = R_ROBOT_SHOP;
   r->description = "Robot Shop";
+  r->synonyms[0] = "shop";
+  r->adjectives[0] = "robot";
   r->long_description =
       "This room, with exits west and northwest, is filled with robot-like\n"
       "devices of every conceivable description, all in various states of\n"
@@ -1484,19 +1512,32 @@ void init_complexone() {
   r->nw = R_MECH_CORRIDOR_S;
   r->globals[0] = O_DEVICES_PSEUDO;
 
+  // Pseudo: DEVICES
+  o = &objects[O_DEVICES_PSEUDO];
+  o->id = O_DEVICES_PSEUDO;
+  o->description = "devices";
+  o->synonyms[0] = "device";
+  o->synonyms[1] = "devices";
+  o->flags = F_NDESCBIT;
+  o->action = devices_pseudo_action;
+  obj_move(O_DEVICES_PSEUDO, OBJ_LOCAL_GLOBALS);
+
   // O_FLOYD
   o = &objects[O_FLOYD];
   o->id = O_FLOYD;
   o->description = "multiple purpose robot";
-  o->long_description = "Only one robot, about four feet high, looks even "
-                        "remotely close to being\n"
-                        "in working order.";
+  o->long_description =
+      "Only one robot, about four feet high, looks even remotely close to being\n"
+      "in working order.";
   o->synonyms[0] = "floyd";
   o->synonyms[1] = "robot";
   o->synonyms[2] = "companion";
-  // Adjectives: multiple purpose, dim-witted
+  o->adjectives[0] = "multiple";
+  o->adjectives[1] = "purpose";
+  o->adjectives[2] = "dim-witted";
   o->flags = F_CONTBIT | F_SEARCHBIT | F_TRANSBIT | F_OPENBIT | F_LIGHTBIT;
   o->capacity = 5;
+  o->action = floyd_f;
   obj_move(O_FLOYD, R_ROBOT_SHOP);
   // R_ELEVATOR_LOBBY
   r = &objects[R_ELEVATOR_LOBBY];

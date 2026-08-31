@@ -84,6 +84,8 @@ void i_magnet(void);
 void i_reactor_door_close(void);
 bool partition_pseudo_action(int arg);
 bool toilet_pseudo_action(int arg);
+bool chem_spout_pseudo_action(int arg);
+bool devices_pseudo_action(int arg);
 // Add more as needed
 
 #endif
