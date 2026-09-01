@@ -1,0 +1,25 @@
+#!/usr/bin/make -f
+# Build with debhelper. The upstream Makefile already honours DESTDIR, PREFIX
+# and the usual directory variables, so dh's default make invocations do the
+# right thing with very little help.
+
+# Debian keeps games out of the default PATH, in /usr/games.
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	$(MAKE) all
+
+# The upstream suite drives the built binary and diffs transcripts; run it, but
+# do not let a failure here silently pass, since that is the point of it.
+override_dh_auto_test:
+	$(MAKE) test
+
+override_dh_auto_install:
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/planetfall \
+	        PREFIX=/usr BINDIR=/usr/games
+
+override_dh_auto_clean:
+	$(MAKE) clean

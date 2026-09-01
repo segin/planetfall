@@ -24,3 +24,99 @@ jobs:
 
     - name: Run test suite
       run: make CC=${{ matrix.cc }} test
+
+  # --- Packaging -----------------------------------------------------------
+  # Both package builds run the test suite as part of the build, so a package
+  # that builds is a package whose contents were exercised.
+
+  deb:
+    name: deb (debian ${{ matrix.suite }})
+    runs-on: ubuntu-latest
+    container: debian:${{ matrix.suite }}
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [bookworm, trixie]
+
+    steps:
+    - name: Install build dependencies
+      run: |
+        apt-get update
+        apt-get install -y --no-install-recommends \
+          build-essential debhelper devscripts dpkg-dev python3 ca-certificates git
+
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Stage the packaging
+      # debian/ has to sit at the source root for dpkg-buildpackage to find it,
+      # but it lives under package/dpkg/ so the repository root stays tidy.
+      run: cp -r package/dpkg/debian debian
+
+    - name: Build package
+      run: dpkg-buildpackage -us -uc -b
+
+    - name: Show what was produced
+      # dpkg emits a -dbgsym package alongside the real one, so --contents has
+      # to be given them one at a time.
+      run: |
+        ls -l ../*.deb
+        for deb in ../*.deb; do
+          echo "== $deb"
+          dpkg-deb --contents "$deb"
+        done
+
+    - name: Upload package
+      uses: actions/upload-artifact@v4
+      with:
+        name: planetfall-deb-${{ matrix.suite }}
+        path: ../*.deb
+
+  rpm:
+    name: rpm (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: fedora
+            image: fedora:latest
+            install: dnf install -y gcc make python3 rpm-build tar gzip
+          - name: rhel
+            # A RHEL rebuild; the real thing needs a subscription. GCC 11 here,
+            # which is why the Makefile falls back to -std=c2x.
+            image: rockylinux:9
+            install: dnf install -y gcc make python3 rpm-build tar gzip
+          - name: suse
+            image: opensuse/tumbleweed
+            install: zypper --non-interactive install gcc make python3 rpm-build tar gzip
+
+    steps:
+    - name: Install build dependencies
+      run: ${{ matrix.install }}
+
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - name: Build source tarball
+      run: |
+        mkdir -p ~/rpmbuild/SOURCES
+        make dist
+        cp planetfall-*.tar.gz ~/rpmbuild/SOURCES/
+
+    - name: Build package
+      run: rpmbuild -ba package/rpm/planetfall.spec
+
+    - name: Show what was produced
+      run: |
+        find ~/rpmbuild/RPMS ~/rpmbuild/SRPMS -name '*.rpm' -print
+        rpm -qlp ~/rpmbuild/RPMS/*/planetfall-*.rpm
+
+    - name: Upload package
+      uses: actions/upload-artifact@v4
+      with:
+        name: planetfall-rpm-${{ matrix.name }}
+        path: |
+          ~/rpmbuild/RPMS/*/*.rpm
+          ~/rpmbuild/SRPMS/*.rpm

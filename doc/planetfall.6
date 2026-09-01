@@ -1,0 +1,80 @@
+.TH PLANETFALL 6 "2026-08-31" "planetfall 0.1.0" "Games"
+.SH NAME
+planetfall \- a translation of Infocom's Planetfall into C
+.SH SYNOPSIS
+.B planetfall
+.RI [ options ]
+.SH DESCRIPTION
+.B planetfall
+is a reimplementation, in ISO C23, of the 1983 Infocom interactive fiction
+game
+.IR Planetfall ,
+written by Steve Meretzky. It is translated from the original ZIL
+(Zork Implementation Language) sources rather than interpreted from a
+Z-machine story file, so it runs as a native program.
+.PP
+You play an Ensign Seventh Class aboard the Stellar Patrol Ship
+.IR Feinstein .
+Commands are typed at the prompt in plain English, in the usual
+interactive-fiction style:
+.IR "TAKE THE BRUSH" ,
+.IR "GO NORTH" ,
+.IR "FLOYD, DROP THE BOARD" .
+.PP
+The translation is incomplete. Consult the project's own notes for what is
+and is not yet implemented.
+.SH OPTIONS
+.TP
+.B \-\-no\-status
+Do not draw the status bar. The game otherwise reserves the top line of the
+terminal for it, which is unhelpful when piping input or capturing a
+transcript.
+.TP
+.BI \-\-seed " N"
+Seed the random number generator with
+.IR N .
+Without this the generator is seeded from the clock, so the explosion delay,
+the coolant sequence and the various probability rolls differ between runs.
+A fixed seed makes a playthrough reproducible, which is what the test suite
+relies on.
+.SH COMMANDS
+Besides the game's own vocabulary, the following meta-commands are
+recognised:
+.BR SCORE ,
+.BR DIAGNOSE ,
+.BR TIME ,
+.BR VERBOSE ,
+.BR BRIEF ,
+.BR SUPERBRIEF ,
+.BR SAVE ,
+.BR RESTORE ,
+.BR SCRIPT ,
+.BR UNSCRIPT ,
+.BR VERSION ,
+.BR AGAIN ,
+.BR RESTART
+and
+.BR QUIT .
+None of them consume game time.
+.SH FILES
+.TP
+.I planetfall.sav
+Saved position, written to the current directory by
+.B SAVE
+and read back by
+.BR RESTORE .
+.SH EXIT STATUS
+.B planetfall
+exits 0 when the player quits.
+.SH BUGS
+Report bugs at
+.UR https://github.com/segin/planetfall/issues
+.UE .
+.SH AUTHOR
+Kirn Gill II <segin2005@gmail.com>.
+.PP
+.I Planetfall
+was written by Steve Meretzky and published by Infocom in 1983. The game,
+its text and its trademarks remain the property of their respective owners;
+this program is an independent translation and is not affiliated with or
+endorsed by them.

@@ -1,0 +1,37 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: planetfall
+Upstream-Contact: Kirn Gill II <segin2005@gmail.com>
+Source: https://github.com/segin/planetfall
+
+Comment:
+ THIS FILE NEEDS A DECISION FROM THE MAINTAINER BEFORE THE PACKAGE IS FIT
+ TO DISTRIBUTE.
+ .
+ The repository carries no LICENSE file, so the licence below is a
+ placeholder rather than a statement of fact. Two separate questions have
+ to be answered before it can be replaced with something accurate:
+ .
+ 1. Under what terms is the C translation itself offered? That is the
+    maintainer's to choose, and it is what the Files: * stanza should say.
+ .
+ 2. The game's text, plot, characters and the name "Planetfall" are the
+    work of Steve Meretzky, published by Infocom in 1983, and are not the
+    maintainer's to relicense. A translation is a derivative work, so the
+    licence chosen for the code does not by itself make the whole package
+    redistributable.
+ .
+ The original ZIL sources in zil/ are deliberately excluded from the source
+ package: zil/README.md states plainly that they are not under an open
+ licence. They are reference material for developing the translation, not
+ something to ship.
+
+Files: *
+Copyright: 2026 Kirn Gill II <segin2005@gmail.com>
+License: Proprietary
+ Placeholder. See the Comment field above; this is not a considered
+ licensing statement and must be replaced.
+
+Files: debian/*
+Copyright: 2026 Kirn Gill II <segin2005@gmail.com>
+License: Proprietary
+ Placeholder, as above.

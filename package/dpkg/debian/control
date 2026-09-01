@@ -1,0 +1,25 @@
+Source: planetfall
+Section: games
+Priority: optional
+Maintainer: Kirn Gill II <segin2005@gmail.com>
+Build-Depends: debhelper-compat (= 13), python3
+Standards-Version: 4.6.2
+Homepage: https://github.com/segin/planetfall
+Rules-Requires-Root: no
+
+Package: planetfall
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: translation of Infocom's Planetfall into C
+ A reimplementation, in ISO C23, of the 1983 Infocom interactive fiction
+ game Planetfall, written by Steve Meretzky. It is translated from the
+ original ZIL (Zork Implementation Language) sources rather than
+ interpreted from a Z-machine story file, so it runs as a native program
+ with no interpreter required.
+ .
+ You play an Ensign Seventh Class aboard the Stellar Patrol Ship
+ Feinstein. Commands are typed in plain English in the usual
+ interactive-fiction style.
+ .
+ The translation is incomplete; consult the project's notes for what is
+ and is not yet implemented.
