@@ -1326,8 +1326,10 @@ static const char *floydisms[] = {
     "whistles tunelessly",
     "tells you about the time he helped someone sharpen a pencil",
     "yawns and looks bored",
-    "produces a crayon from one of his compartments and scrawls\n"
-    "his name on the wall",
+    // Parenthesised so it reads as one floydism split over two lines rather
+    // than two entries missing a comma -- the ZIL string wraps here too.
+    ("produces a crayon from one of his compartments and scrawls\n"
+     "his name on the wall"),
 };
 #define NUM_FLOYDISMS (sizeof(floydisms) / sizeof(floydisms[0]))
 

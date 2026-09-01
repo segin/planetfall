@@ -8,12 +8,19 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    # -Werror is on, and the two compilers do not warn about identical things,
+    # so build with both or a clang-only warning breaks clang users silently.
+    strategy:
+      fail-fast: false
+      matrix:
+        cc: [gcc, clang]
+
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
 
     - name: Build
-      run: make
+      run: make CC=${{ matrix.cc }}
 
     - name: Run test suite
-      run: make test
+      run: make CC=${{ matrix.cc }} test
