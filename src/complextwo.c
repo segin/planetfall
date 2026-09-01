@@ -667,7 +667,7 @@ void init_complextwo() {
   o->description = "cryo-elevator door";
   o->synonyms[0] = "door";
   o->adjectives[0] = "elevator";
-  o->flags = F_NDESCBIT | F_INVISIBLE | F_DOORBIT;
+  o->flags = F_NDESCBIT | F_INVISIBLE;
 
   // O_PRINT_OUT
   o = &objects[O_PRINT_OUT];
@@ -677,7 +677,7 @@ void init_complextwo() {
   o->synonyms[1] = "paper";
   o->synonyms[2] = "output";
   o->synonyms[3] = "printout";
-  o->flags = F_TAKEBIT | F_READBIT;
+  o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   obj_move(O_PRINT_OUT, R_COMPUTER_ROOM);
 
   // O_MINI_CARD
@@ -739,7 +739,7 @@ void init_complextwo() {
   o->id = O_COMBINATION_PAPER;
   o->description = "piece of paper";
   o->synonyms[0] = "paper";
-  o->flags = F_TAKEBIT | F_READBIT;
+  o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   obj_move(O_COMBINATION_PAPER, O_LAB_UNIFORM);
 
   // O_LAB_DESK
@@ -756,7 +756,7 @@ void init_complextwo() {
   o->id = O_GAS_MASK;
   o->description = "gas mask";
   o->synonyms[0] = "mask";
-  o->flags = F_TAKEBIT | F_WEARBIT;
+  o->flags = F_ACIDBIT | F_TAKEBIT | F_WEARBIT;
   obj_move(O_GAS_MASK, O_LAB_DESK);
 
   // O_MEMO
@@ -764,7 +764,7 @@ void init_complextwo() {
   o->id = O_MEMO;
   o->description = "memo";
   o->synonyms[0] = "memo";
-  o->flags = F_TAKEBIT | F_READBIT;
+  o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   o->text = "Memo to all lab personnel..."; // Simplified
   // Not moved anywhere? ZIL says MOVE MEMO ADVENTURER in action. Wait, ZIL
   // object def doesn't have IN. It says (DESC "memo"). So it's initially
@@ -804,7 +804,7 @@ void init_complextwo() {
   o->description = "brown spool";
   o->synonyms[0] = "spool";
   o->adjectives[0] = "brown";
-  o->flags = F_TAKEBIT | F_READBIT;
+  o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   obj_move(O_BROWN_SPOOL, R_RADIATION_LAB);
 
   // O_LAMP

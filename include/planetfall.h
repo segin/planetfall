@@ -54,7 +54,8 @@ typedef enum {
   F_DOORBIT = 1ULL << 24,
   F_TOOLBIT = 1ULL << 25,
   F_RLANDBIT = 1ULL << 26,
-  F_FLOYDBIT = 1ULL << 27
+  F_FLOYDBIT = 1ULL << 27,
+  F_RWATERBIT = 1ULL << 28 // room is open water
 } ZFlag;
 
 typedef struct {

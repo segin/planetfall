@@ -21,7 +21,7 @@ void init_complexone() {
       "You are momentarily disoriented as you enter the turbulent waters.\n"
       "Currents buffet you against the sharp rocks of an underwater\n"
       "cliff. A dim light filters down from above.";
-  r->flags = F_ONBIT; // F_RWATERBIT?
+  r->flags = F_ONBIT | F_RWATERBIT;
   r->up = R_CRAG;
   // Down/West/North/South -> Underwater (Loop)
   r->down = R_UNDERWATER;
@@ -169,7 +169,7 @@ void init_complexone() {
                         "rubble, allowing a view of the cliff and ocean below. "
                         "Rubble blocks all exits\n"
                         "save one, eastward to the courtyard.";
-  r->flags = F_RLANDBIT | F_ONBIT;
+  r->flags = F_RLANDBIT | F_ONBIT | F_FLOYDBIT;
   r->east = R_COURTYARD;
   // Down leads to refusal message "Certain death." handled in main.c
   r->down = R_CERTAIN_DEATH_MSG;
@@ -1495,7 +1495,7 @@ void init_complexone() {
   o->synonyms[0] = "fluid";
   o->synonyms[1] = "liquid";
   o->adjectives[0] = "chemical";
-  o->flags = F_TRYTAKEBIT | F_TAKEBIT;
+  o->flags = 0;
 
   // R_ROBOT_SHOP
   r = &objects[R_ROBOT_SHOP];
@@ -1925,50 +1925,4 @@ void init_complexone() {
   r->globals[0] = O_GLOBAL_SHUTTLE;
   r->action = kalamontee_platform_f;
 
-  // FLOYDBIT marks the rooms Floyd is willing to wander off from when he gets
-  // bored of following you. Set here rather than at each room's construction so
-  // the list stays legible against the ZIL.
-  static const ZObjectID floyd_rooms[] = {
-      R_COMPUTER_ROOM,
-      R_CORRIDOR_JUNCTION,
-      R_COURTYARD,
-      R_DORM_A,
-      R_DORM_B,
-      R_DORM_C,
-      R_DORM_D,
-      R_ELEVATOR_LOBBY,
-      R_ESCALATOR,
-      R_FORK,
-      R_LAB_STORAGE,
-      R_LARGE_OFFICE,
-      R_LAWANDA_PLATFORM,
-      R_LIBRARY,
-      R_LIBRARY_LOBBY,
-      R_MACHINE_SHOP,
-      R_MAIN_LAB,
-      R_MESS_HALL,
-      R_PHYSICAL_PLANT,
-      R_PHYSICAL_PLANT_TWO,
-      R_PLAN_ROOM,
-      R_PLANETARY_COURSE_CONTROL,
-      R_PLANETARY_DEFENSE,
-      R_PROJCON_OFFICE,
-      R_REACTOR_CONTROL,
-      R_REC_AREA,
-      R_REPAIR_ROOM,
-      R_ROBOT_SHOP,
-      R_SANFAC_A,
-      R_SANFAC_B,
-      R_SANFAC_C,
-      R_SANFAC_D,
-      R_SANFAC_E,
-      R_SANFAC_F,
-      R_SMALL_OFFICE,
-      R_STORAGE_EAST,
-      R_SYSTEMS_MONITORS,
-      R_TOOL_ROOM,
-      R_WEST_WING,
-  };
-  for (size_t i = 0; i < sizeof(floyd_rooms) / sizeof(floyd_rooms[0]); i++)
-    obj_set_flag(floyd_rooms[i], F_FLOYDBIT);
 }

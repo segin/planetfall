@@ -85,7 +85,7 @@ void init_feinstein_act() {
   r->synonyms[0] = "pod";
   r->long_description = "This is one of the Feinstein's primary escape pods. A "
                         "mass of safety webbing fills half the pod.";
-  r->flags = F_RLANDBIT | F_ONBIT | F_VEHBIT;
+  r->flags = F_RLANDBIT | F_ONBIT;
   r->value = 3;
   // POD-EXIT-F: before launch the pod opens back onto Deck Nine and UP goes
   // nowhere; after the landing it opens into the water instead and EAST goes
@@ -307,7 +307,7 @@ void init_feinstein_act() {
   o->synonyms[0] = "floor";
   o->synonyms[1] = "deck";
   o->synonyms[2] = "ground";
-  o->flags = F_NDESCBIT | F_SURFACEBIT;
+  o->flags = F_NDESCBIT;
   o->action = ground_f;
   // GROUND lives in GLOBAL-OBJECTS so it is reachable everywhere. It used to be
   // parked in Deck Nine as a workaround for a parser that only searched the room

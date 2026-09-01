@@ -20,6 +20,13 @@ Current: 16/30 probes match, 14 known release differences, 0 real findings.
 Add probes as chapters land -- everything the existing set covers now agrees
 with the original, modulo catalogued Release 1 wording.
 
+# Auditing the port against the ZIL
+
+`python3 tools/check_flags.py` diffs every built object's flags against the
+`(FLAGS ...)` list in the ZIL that defines it. A missing flag is a silent bug --
+the behaviour it gates simply never happens -- so it is worth re-running after
+adding objects. Currently 209 built, 0 differences, 45 not yet built.
+
 # Current issues to address:
 
 - `dispatch_action` now follows ZIL's PERFORM chain for actor, room `M-BEG`,
