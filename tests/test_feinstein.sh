@@ -264,6 +264,20 @@ run_test "Test 125: Floyd drops what he is holding" "${FLOYD_ON}GIVE BRUSH TO FL
 run_test "Test 126: Floyd has nothing to drop" "${FLOYD_ON}FLOYD, DROP BRUSH\nQUIT\nY" "does not one of those have" "FLOYD-NOT-HAVE fires" "Floyd not have"
 run_test_absent "Test 127: A comma does not confuse ordinary commands" "TAKE BRUSH, DROP BRUSH\nQUIT\nY" "referring to" "Commas outside actor clauses are harmless" "Comma handling"
 
+# --- The corrosive chemicals (CHEMICAL-FLUID-F) -----------------------------
+# The two white buttons make something that eats ACIDBIT objects; every other
+# colour just makes a mess.
+FILL_ACID="TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH ROUND WHITE BUTTON\nTAKE FLASK\n"
+FILL_RED="TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH RED BUTTON\nTAKE FLASK\n"
+
+run_test "Test 128: Acid dissolves what it can" "${FILL_ACID}TELEPORT STORAGE EAST\nPOUR CHEMICAL ON GOOD BEDISTOR\nQUIT\nY" "dissolves right before your eyes" "ACIDBIT objects dissolve" "Acid dissolve"
+run_test "Test 129: Acid on yourself is fatal" "${FILL_ACID}POUR CHEMICAL ON ME\nQUIT\nY" "melting flesh" "Pouring acid on yourself kills you" "Acid self"
+run_test "Test 130: Acid damages what it cannot dissolve" "${FILL_ACID}POUR CHEMICAL ON CHRONOMETER\nQUIT\nY" "undergo some damage" "MUNGBIT objects are damaged" "Acid mung"
+run_test "Test 131: A broken chronometer stops" "${FILL_ACID}POUR CHEMICAL ON CHRONOMETER\nTIME\nWAIT\nTIME\nQUIT\nY" "current time is" "Munged chronometer reports MUNGED-TIME" "Munged clock"
+run_test "Test 132: Pouring into the canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\n${FILL_ACID}POUR CHEMICAL IN CANTEEN\nQUIT\nY" "worthless action" "WORTHLESS-ACTION fires" "Canteen pour"
+run_test "Test 133: Pouring with no target" "${FILL_ACID}POUR CHEMICAL\nQUIT\nY" "all over the floor, making quite a mess" "CHEMICAL-POURS defaults to the ground" "Pour no target"
+run_test "Test 134: Non-acid chemicals just make a mess" "${FILL_RED}TELEPORT STORAGE EAST\nPOUR CHEMICAL ON GOOD BEDISTOR\nQUIT\nY" "making quite a mess" "Coloured coolant does not dissolve" "Non-acid pour"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"

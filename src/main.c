@@ -120,7 +120,9 @@ void init_game_data() {
   o->description = "chronometer";
   o->synonyms[0] = "chronometer";
   o->synonyms[1] = "watch";
-  o->flags = F_TAKEBIT | F_WEARBIT | F_WORNBIT;
+  // MUNGBIT: the chronometer can be broken, after which it reads whatever time
+  // it stopped at -- which is what MUNGED-TIME is for.
+  o->flags = F_MUNGBIT | F_TAKEBIT | F_WEARBIT | F_WORNBIT;
   o->action = chronometer_f;
   obj_move(O_CHRONOMETER, player);
 

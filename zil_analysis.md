@@ -712,7 +712,7 @@
 - [ ] **CHEM-SPOUT-PSEUDO** (globals.zil): Args: 
 - [x] **CHEMICAL-DISPENSER-F** (compone.zil): Args: 
 - [x] **CHEMICAL-FLUID-F** (compone.zil): Args: 
-- [ ] **CHEMICAL-POURS** (compone.zil): Args: 
+- [x] **CHEMICAL-POURS** (compone.zil): Args: 
 - [x] **CHRONOMETER-F** (globals.zil): Args: 
 - [ ] **CLAUSE** (parser.zil): Args: PTR VAL WORD "AUX" OFF NUM (ANDFLG <>
 - [ ] **CLAUSE-ADD** (parser.zil): Args: WRD "AUX" PTR
@@ -742,7 +742,7 @@
 - [x] **CRYO-EXIT-F** (comptwo.zil): Args: 
 - [ ] **CUBBYHOLE-PSEUDO** (globals.zil): Args: 
 - [x] **CUBE-F** (comptwo.zil): Args: 
-- [ ] **CUBE-SEEMS** (compone.zil): Args: 
+- [x] **CUBE-SEEMS** (compone.zil): Args: 
 - [x] **DARK-BUTTON-F** (comptwo.zil): Args: 
 - [x] **DDESC** (globals.zil): Args: DOOR
 - [ ] **DEAD-FLOYD-F** (compone.zil): Args: 
@@ -1180,7 +1180,7 @@
 - [x] **WINDOW-F** (globals.zil): Args: 
 - [ ] **WORD-PRINT** (parser.zil): Args: CNT BUF
 - [ ] **WORD-TYPE** (verbs.zil): Args: OBJ WORD "AUX" SYNS
-- [ ] **WORTHLESS-ACTION** (compone.zil): Args: 
+- [x] **WORTHLESS-ACTION** (compone.zil): Args: 
 - [ ] **WT?** (parser.zil): Args: PTR BIT "OPTIONAL" (B1 5
 - [ ] **YES?** (verbs.zil): Args: 
 - [ ] **ZAP-COUNT** (comptwo.zil): Args: 

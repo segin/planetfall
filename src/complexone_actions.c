@@ -2168,14 +2168,41 @@ bool playback_button_f(int verb) {
   return false;
 }
 
+// CHEMICAL-POURS (compone.zil). PRSI defaults to the ground when you pour
+// without naming a target.
+static void chemical_pours(ZObjectID prsi) {
+  tellf("The chemical pours all over the %s, making quite a mess.\n",
+        objects[prsi != NOTHING ? prsi : O_GROUND].description);
+}
+
+// CUBE-SEEMS (compone.zil).
+static void cube_seems(void) {
+  tellf(" Unfortunately, the cube seems to undergo some damage as well.");
+}
+
+// WORTHLESS-ACTION (compone.zil).
+static void worthless_action(void) {
+  tellf("A worthless action -- and much too difficult for a poorly-written "
+        "program\n"
+        "like this one to handle.\n");
+}
+
 bool chemical_fluid_f(int verb) {
   if (verb == V_EAT) {
     jigs_up("Mmmmm....that tasted just like delicious poisonous chemicals!");
     return true;
   }
+  // "PUT x IN CHEMICAL FLUID" means putting it in the flask.
+  if (verb == V_PUT && current_cmd.prsi == O_CHEMICAL_FLUID) {
+    return perform(V_PUT, current_cmd.prso_list[0], O_FLASK);
+  }
   if (verb == V_PUT || verb == V_POUR) {
     if (!obj_in(O_FLASK, player)) {
       tellf("You're not holding the flask.\n");
+      return true;
+    }
+    if (current_cmd.prsi == O_CANTEEN) {
+      worthless_action();
       return true;
     }
     ZObjectID prsi = current_cmd.prsi;
@@ -2214,11 +2241,91 @@ bool chemical_fluid_f(int verb) {
               "shuts down.\n");
       }
       return true;
-    } else {
-      tellf("The chemical pours all over the %s, making quite a mess.\n",
-            (prsi != NOTHING) ? objects[prsi].description : "floor");
+    }
+
+    // The two white buttons (8 = ASID, 9 = BAAS) make something corrosive.
+    // Anything else is just a mess.
+    if (game_state.chemical_flag != 8 && game_state.chemical_flag != 9) {
+      chemical_pours(prsi);
       return true;
     }
+
+    if (obj_has_flag(prsi, F_ACIDBIT)) {
+      if (prsi == game_state.spout_placed)
+        game_state.spout_placed = O_GROUND;
+      // Say what dissolved before removing it, so the name is still good.
+      tellf("The %s dissolves right before your eyes!",
+            objects[prsi].description);
+      obj_remove(prsi);
+      if (prsi == O_BAD_BEDISTOR && !obj_has_flag(O_BAD_BEDISTOR, F_TOUCHBIT)) {
+        obj_set_flag(O_CUBE, F_MUNGEDBIT);
+        cube_seems();
+      } else if (prsi == O_GOOD_BEDISTOR && game_state.course_control_fixed) {
+        obj_set_flag(O_CUBE, F_MUNGEDBIT);
+        game_state.score -= 6;
+        game_state.course_control_fixed = false;
+        cube_seems();
+      }
+      tellf("\n");
+      return true;
+    }
+
+    if (prsi == O_CREVICE && !obj_has_flag(O_KEY, F_TOUCHBIT)) {
+      // Dissolving the key in the crevice loses you the padlock for good.
+      if (obj_has_flag(O_KEY, F_INVISIBLE)) {
+        tellf("A puff of smoke rises from the crevice.\n");
+      } else {
+        tellf("Although the chemical has no effect on the crevice, it does "
+              "seem to have\n"
+              "dissolved the key that was lying in it.\n");
+      }
+      obj_remove(O_KEY);
+      obj_set_flag(O_KEY, F_TOUCHBIT);
+      obj_clear_flag(O_KEY, F_INVISIBLE);
+      return true;
+    }
+
+    if (prsi == O_HIGH_PROTEIN || prsi == O_MEDICINE) {
+      jigs_up("Unfortunately, those two liquids seem to react quite violently "
+              "with each\n"
+              "other. The resulting exothermic reaction might have been "
+              "interesting to\n"
+              "watch from a distance of, say, several hundred feet.");
+      return true;
+    }
+
+    if (prsi == player || prsi == O_HANDS) {
+      jigs_up("Have you always had this desire to see melting flesh?");
+      return true;
+    }
+
+    if (prsi == O_FLOYD && obj_has_flag(O_FLOYD, F_RLANDBIT)) {
+      tellf("Floyd yelps. \"Hey, cut it out! That stuff burns!\"\n");
+      return true;
+    }
+
+    // ZIL also dissolves the silicon strip and the relay here, and has the
+    // microbe writhe before it goes; those live in comptwo and are not built.
+
+    if (obj_has_flag(prsi, F_MUNGBIT)) {
+      obj_set_flag(prsi, F_MUNGEDBIT);
+      if (prsi == O_CHRONOMETER) {
+        // A broken chronometer freezes at whatever time it broke.
+        game_state.munged_time = game_state.internal_moves;
+      }
+      tellf("The %s seems to undergo some damage as a result of your action.\n",
+            objects[prsi].description);
+      if (prsi == O_CUBE && game_state.course_control_fixed) {
+        game_state.course_control_fixed = false;
+        obj_remove(O_GOOD_BEDISTOR);
+        game_state.score -= 6;
+        tellf("The bedistor also happens to dissolve.\n");
+      }
+      return true;
+    }
+
+    chemical_pours(prsi);
+    return true;
   }
   return false;
 }
