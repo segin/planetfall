@@ -181,6 +181,8 @@ run_test "Test 83: Cannot walk while webbed" "${POD_LANDED}OUT\nQUIT\nY" "stand 
 run_test "Test 84: Standing drops the pod into the water" "${POD_LANDED}STAND\nQUIT\nY" "you feel it falling" "Standing starts the pod sinking" "Pod sinking"
 run_test "Test 85: The sinking pod crushes you" "${POD_LANDED}STAND\nWAIT\nWAIT\nWAIT\nWAIT\nQUIT\nY" "pod splits open" "Sinking pod kills a sealed-in player" "Sink death"
 run_test "Test 86: Escaping the sinking pod" "${POD_LANDED}STAND\nOPEN BULKHEAD\nOUT\nUP\nQUIT\nY" "reached a cleft in the cliff wall" "Player can escape the pod to the Crag" "Pod escape"
+# Both the pod and the Crag are worth 3, and GOTO scores a room on arrival.
+run_test "Test 86a: Reaching rooms scores" "${POD_LANDED}STAND\nOPEN BULKHEAD\nOUT\nUP\nSCORE\nQUIT\nY" "score is 6" "SCORE-OBJ fires on entering a room" "Room scoring"
 # The survival kit is closed on arrival (ZIL gives FOOD-KIT no OPENBIT), so the
 # goo is out of scope until you open it.
 run_test "Test 87: Goo must be eaten from the kit" "${POD_LANDED}STAND\nOPEN KIT\nTAKE RED GOO\nQUIT\nY" "ooze through your fingers" "GOO-F refuses to be carried" "Goo take"

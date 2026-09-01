@@ -1104,6 +1104,11 @@ void perform_walk(ZObjectID dest) {
   obj_move(player, dest);
   current_room = dest;
   perform_first_look();
+  // <SCORE-OBJ .RM> in GOTO (verbs.zil): several rooms are worth points the
+  // first time you reach them. It comes after the description, not before --
+  // SCORE-OBJ sets TOUCHBIT, which is also how a room is known to have been
+  // seen already, so scoring first would rob you of the full description.
+  score_obj(dest);
 }
 
 // The direction the current move was issued in, so that NEXIT-style refusals can
