@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
-"""Compare every ported object's flags against the ZIL that defines it.
+"""Compare every ported object's data against the ZIL that defines it.
 
 A missing flag is a quiet bug: the chronometer was built without MUNGBIT, so it
 could not be broken and the whole MUNGED-TIME mechanic was unreachable even
 though it was implemented. Nothing fails loudly when a bit is absent -- the
 behaviour it gates simply never happens -- so it is worth checking wholesale.
 
-Reads the (FLAGS ...) list off each <OBJECT>/<ROOM> in zil/, finds where the C
-constructs the corresponding O_/R_ id, and diffs the two sets.
+The same goes for VALUE: the game scores out of 80, and points an object never
+carries are points no playthrough can reach.
+
+Reads the (FLAGS ...) list and the numeric properties off each <OBJECT>/<ROOM>
+in zil/, finds where the C constructs the corresponding O_/R_ id, and diffs
+them.
 
 Usage:
-    python3 tools/check_flags.py           # objects the port has built
-    python3 tools/check_flags.py --all     # include ones it has not
+    python3 tools/check_objects.py           # objects the port has built
+    python3 tools/check_objects.py --all     # include ones it has not
 """
 
 import os
@@ -42,7 +46,12 @@ def zil_flags():
             fm = re.search(r'\(FLAGS([^)]*)\)', body)
             flags = set(fm.group(1).split()) if fm else set()
             flags = {ALIASES.get(f, f) for f in flags} - IGNORED
-            out[obj] = (kind, flags)
+            props = {}
+            for prop in ('VALUE', 'SIZE', 'CAPACITY'):
+                pm = re.search(r'\(' + prop + r'\s+(\d+)\)', body)
+                if pm:
+                    props[prop.lower()] = int(pm.group(1))
+            out[obj] = (kind, flags, props)
     return out
 
 
@@ -55,20 +64,22 @@ def c_flags():
     text = '\n'.join(blob)
 
     out = {}
-    # Construction runs from "&objects[ID]" to the next one; the flags
-    # assignment inside it is what we want. Also catch objects[ID].flags = ...
     for m in re.finditer(r'objects\[([A-Z0-9_]+)\]\s*\.\s*flags\s*=\s*([^;]+);',
                          text):
-        out.setdefault(m.group(1), set()).update(
-            re.findall(r'F_([A-Z0-9_]+)', m.group(2)))
+        e = out.setdefault(m.group(1), {'flags': set(), 'props': {}})
+        e['flags'].update(re.findall(r'F_([A-Z0-9_]+)', m.group(2)))
 
     blocks = re.split(r'&objects\[([A-Z0-9_]+)\]', text)
     for i in range(1, len(blocks) - 1, 2):
         obj, body = blocks[i], blocks[i + 1]
+        e = out.setdefault(obj, {'flags': set(), 'props': {}})
         fm = re.search(r'->flags\s*=\s*([^;]+);', body)
         if fm:
-            out.setdefault(obj, set()).update(
-                re.findall(r'F_([A-Z0-9_]+)', fm.group(1)))
+            e['flags'].update(re.findall(r'F_([A-Z0-9_]+)', fm.group(1)))
+        for prop in ('value', 'size', 'capacity'):
+            pm = re.search(r'->' + prop + r'\s*=\s*(\d+)\s*;', body)
+            if pm:
+                e['props'][prop] = int(pm.group(1))
     return out
 
 
@@ -78,7 +89,7 @@ def main():
 
     missing_obj = mismatches = checked = 0
     for name in sorted(zil):
-        kind, want = zil[name]
+        kind, want, want_props = zil[name]
         c_id = ('R_' if kind == 'ROOM' else 'O_') + name.replace('-', '_')
         have = built.get(c_id)
         if have is None and kind == 'OBJECT':
@@ -90,17 +101,24 @@ def main():
             continue
 
         checked += 1
-        absent = want - have
-        extra = have - want
-        if absent or extra:
+        absent = want - have['flags']
+        extra = have['flags'] - want
+        bad_props = []
+        for prop, wanted in want_props.items():
+            got = have['props'].get(prop, 0)
+            if got != wanted:
+                bad_props.append(f'{prop} is {got}, ZIL says {wanted}')
+        if absent or extra or bad_props:
             mismatches += 1
             print(f'{name}')
             if absent:
                 print(f'    missing in C: {" ".join(sorted(absent))}')
             if extra:
                 print(f'    extra in C:   {" ".join(sorted(extra))}')
+            for b in bad_props:
+                print(f'    {b}')
 
-    print(f'\n{checked} built, {mismatches} with flag differences, '
+    print(f'\n{checked} built, {mismatches} with differences, '
           f'{missing_obj} not built yet')
     return 0
 

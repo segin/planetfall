@@ -95,7 +95,10 @@ run_test "Test 21: WALK TO a global falls through" "WALK TO FLOOR\nQUIT\nY" "com
 # answering "It's here!", so walking to the pod is refused while it is sealed.
 run_test "Test 21a: WALK TO POD goes through the bulkhead" "WALK TO POD\nQUIT\nY" "escape pod bulkhead is closed" "WALK TO POD routes through the door" "WALK TO POD"
 run_test "Test 22: DROP and TAKE" "DROP BRUSH\nTAKE BRUSH\nQUIT\nY" "Dropped.*Taken" "DROP and TAKE work" "DROP/TAKE"
-run_test "Test 23: PUT" "PUT BRUSH IN UNIFORM\nQUIT\nY" "Done" "PUT works" "PUT"
+# The uniform is a one-pocket affair: capacity 10, and the ID card already
+# takes 3 of it, so the size-10 brush will not go in. The original agrees.
+run_test "Test 23: PUT respects capacity" "PUT BRUSH IN UNIFORM\nQUIT\nY" "no room" "Capacity is enforced" "PUT capacity"
+run_test "Test 23a: PUT works when it fits" "TAKE CARD\nPUT CARD IN UNIFORM\nQUIT\nY" "Done" "PUT works" "PUT"
 run_test "Test 24: THROW" "THROW BRUSH\nQUIT\nY" "Thrown" "THROW works" "THROW"
 run_test "Test 25: SLIDE" "SLIDE BRUSH WITH UNIFORM\nQUIT\nY" "Fat chance|valiant attempt|can't be serious|bloody likely|interesting idea|concept" "SLIDE works" "SLIDE"
 run_test "Test 26: CRAG and STRUCTURE pseudo" "TELEPORT CRAG\nEXAMINE STRUCTURE\nQUIT\nY" "climbed up to it" "Structure pseudo examine works" "STRUCTURE pseudo"
@@ -156,7 +159,10 @@ run_test_absent "Test 111c: No hunger warning early on" "${WAIT_39}QUIT\nY" "get
 run_test "Test 106: Unknown words are named" "XYZZY\nQUIT\nY" "don't know the word \"xyzzy\." "UNKNOWN-WORD reports the word" "Unknown word"
 run_test "Test 107: A verb with no object asks for one" "TAKE\nQUIT\nY" "What do you want to take" "ORPHAN asks for the missing object" "Orphan"
 run_test "Test 108: Empty input" "\nQUIT\nY" "beg your pardon" "Empty input is handled" "Empty input"
-run_test "Test 109: Unparseable but known words" "TAKE BRUSH BRUSH BRUSH\nQUIT\nY" "don't understand that sentence|can't see any" "Known words that do not parse still fail cleanly" "Bad sentence"
+# Known words in an order no syntax line accepts still fail cleanly rather than
+# being reported as an unknown word.
+run_test "Test 109: Unparseable but known words" "BRUSH TAKE\nQUIT\nY" "don't understand that sentence|can't see any" "Known words that do not parse still fail cleanly" "Bad sentence"
+run_test "Test 109a: TAKE reaches into your own pockets" "TAKE CARD\nQUIT\nY" "Taken" "Scope flags do not put carried things out of reach" "Take from pocket"
 run_test "Test 110: Not-here message wording" "READ TOWEL\nQUIT\nY" "can't see any towel here!" "Not-here message matches the R39 source" "Not here"
 
 # --- The escape pod (ESCAPE-POD-F, SAFETY-WEB-F, POD-EXIT-F, I-SINK-POD) -----

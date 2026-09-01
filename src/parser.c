@@ -275,8 +275,11 @@ int snarf_objects(int start, int end, unsigned int search_flags,
     }
   } else {
     bool explicit_scope = (search_flags & (SEARCH_HELD | SEARCH_ROOM | SEARCH_GROUND)) != 0;
-    bool want_held = !explicit_scope || (search_flags & SEARCH_HELD) ||
-                     (search_flags & PARSE_TRY_TAKE);
+    // A syntax line's scope flags bias where ZIL looks; they do not put what
+    // you are carrying out of reach. "TAKE CARD" is declared (ON-GROUND) yet
+    // the real game happily takes the ID card out of your own uniform pocket,
+    // so the held scope is always searched.
+    bool want_held = true;
     // <DO-SL ,WINNER ...> -- when you are ordering someone about, what they are
     // carrying comes into scope too, so "FLOYD, DROP THE BRUSH" finds it in his
     // compartments. It is an extra scope rather than a replacement: FLOYD-F

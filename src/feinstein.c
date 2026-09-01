@@ -334,6 +334,7 @@ void init_feinstein_act() {
   o->adjectives[1] = "emergency";
   o->size = 10;
   o->action = food_kit_f;
+  o->capacity = 25;
   o->flags = F_TAKEBIT | F_CONTBIT | F_SEARCHBIT;
 
   // The goo is deliberately not takeable -- GOO-F insists you eat it straight

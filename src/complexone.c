@@ -35,6 +35,7 @@ void init_complexone() {
   r->id = R_CRAG;
   r->description = "Crag";
   r->synonyms[0] = "crag";
+  r->value = 3;
   r->flags = F_ONBIT | F_RLANDBIT;
   r->long_description = "You have reached a cleft in the cliff wall where the "
                         "island rises from the\n"
@@ -583,6 +584,7 @@ void init_complexone() {
                         "north. Of particular interest is a machine near the "
                         "door. You should probably\n"
                         "examine it more closely.";
+  r->value = 4;
   r->flags = F_ONBIT | F_RLANDBIT;
   r->north = R_MESS_HALL;
   r->out = R_MESS_HALL;
@@ -638,6 +640,7 @@ void init_complexone() {
   o->description = "canteen";
   o->synonyms[0] = "canteen";
   o->adjectives[0] = "octagonal";
+  o->size = 10;
   o->flags = F_TAKEBIT | F_CONTBIT | F_SEARCHBIT;
   o->capacity = 5;
   o->action = canteen_f;
@@ -652,6 +655,7 @@ void init_complexone() {
   o->synonyms[2] = "food";
   o->adjectives[0] = "brown";
   o->adjectives[1] = "protein-rich";
+  o->size = 5;
   o->flags = F_FOODBIT;
   o->action = high_protein_f;
   obj_move(O_HIGH_PROTEIN, OBJ_GLOBAL_OBJECTS);
@@ -664,6 +668,7 @@ void init_complexone() {
   r->adjectives[0] = "west";
   r->long_description =
       "This is a small room obviously intended as a storage area.";
+  r->value = 4;
   r->flags = F_ONBIT | F_RLANDBIT;
   r->south = R_MESS_CORRIDOR;
   r->out = R_MESS_CORRIDOR;
@@ -836,6 +841,7 @@ void init_complexone() {
       "The corridor ends here. Portals lead west, north, and east. Signs above these\n"
       "portals read, respectively, \"Administraativ Awfisiz,\" \"Tranzportaashun\n"
       "Suplii,\" and \"Plan Ruum.\" To the south is a wide rift separating this area from the rest of the building.";
+  r->value = 4;
   r->flags = F_ONBIT | F_RLANDBIT;
   r->south = R_ADMIN_CORRIDOR;
   r->north = R_TRANSPORTATION_SUPPLY;

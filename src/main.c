@@ -82,6 +82,7 @@ void init_game_data() {
   o->description = "Patrol-issue self-contained multi-purpose scrub brush";
   o->synonyms[0] = "brush";
   o->synonyms[1] = "scrub";
+  o->size = 10;
   o->flags = F_TAKEBIT;
   obj_move(O_SCRUB_BRUSH, player);
 
@@ -120,11 +121,19 @@ void init_game_data() {
   o->description = "chronometer";
   o->synonyms[0] = "chronometer";
   o->synonyms[1] = "watch";
+  o->size = 10;
   // MUNGBIT: the chronometer can be broken, after which it reads whatever time
   // it stopped at -- which is what MUNGED-TIME is for.
   o->flags = F_MUNGBIT | F_TAKEBIT | F_WEARBIT | F_WORNBIT;
   o->action = chronometer_f;
   obj_move(O_CHRONOMETER, player);
+
+  // <PROPDEF SIZE 5> (planetfall.zil): anything that never declares a SIZE
+  // still weighs 5, which is what makes LOAD-ALLOWED mean anything.
+  for (int i = 0; i < MAX_OBJECTS; i++) {
+    if (objects[i].id != NOTHING && objects[i].size == 0)
+      objects[i].size = 5;
+  }
 
   // The world is built; from here on MOVE prepends, as the Z-machine does.
   world_building = false;

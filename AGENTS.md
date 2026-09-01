@@ -22,10 +22,16 @@ with the original, modulo catalogued Release 1 wording.
 
 # Auditing the port against the ZIL
 
-`python3 tools/check_flags.py` diffs every built object's flags against the
-`(FLAGS ...)` list in the ZIL that defines it. A missing flag is a silent bug --
-the behaviour it gates simply never happens -- so it is worth re-running after
-adding objects. Currently 209 built, 0 differences, 45 not yet built.
+`python3 tools/check_objects.py` diffs every built object's flags and its VALUE,
+SIZE and CAPACITY against the ZIL that defines it. A missing flag is a silent
+bug -- the behaviour it gates simply never happens -- and points an object never
+carries are points no playthrough can reach. Worth re-running after adding
+objects. Currently 216 built, 0 differences, 38 not yet built.
+
+Scoring is still short of the full 80: the ZIL awards 43 through object VALUE
+properties and 37 through explicit `<SETG SCORE ...>` in routines. The port now
+carries 39 of the 43 (the remainder are on objects not yet built) but only 20 of
+the 37, because the puzzles that award them are not implemented.
 
 # Current issues to address:
 

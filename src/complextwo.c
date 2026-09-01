@@ -21,6 +21,7 @@ void init_complextwo() {
                         "end of the platform. A faded sign reads \"Shutul "
                         "Platform -- Lawanda Staashun.\"";
   // Dynamic descriptions needed based on Alfie/Betty location
+  r->value = 4;
   r->flags = F_FLOYDBIT | F_RLANDBIT | F_ONBIT;
   r->east = R_ESCALATOR;
   r->up = R_ESCALATOR;
@@ -323,6 +324,7 @@ void init_complextwo() {
   o->synonyms[0] = "panel";
   o->synonyms[1] = "door";
   o->synonyms[2] = "socket";
+  o->capacity = 40;
   o->flags = F_VOWELBIT | F_NDESCBIT | F_CONTBIT | F_SEARCHBIT;
   o->capacity = 4;
   o->action = access_panel_f;
@@ -648,6 +650,7 @@ void init_complextwo() {
                         "has no slot or keyboard, so presumably it is intended "
                         "only as a receiving\n"
                         "station. The exit is on the northern side.";
+  r->value = 4;
   r->flags = F_RLANDBIT | F_ONBIT;
   r->north = R_LAB_OFFICE;
   r->out = R_LAB_OFFICE;
@@ -677,6 +680,7 @@ void init_complextwo() {
   o->synonyms[1] = "paper";
   o->synonyms[2] = "output";
   o->synonyms[3] = "printout";
+  o->size = 20;
   o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   obj_move(O_PRINT_OUT, R_COMPUTER_ROOM);
 
@@ -687,6 +691,8 @@ void init_complextwo() {
   o->synonyms[0] = "card";
   o->adjectives[0] = "mini";
   o->adjectives[1] = "access";
+  o->value = 1;
+  o->size = 3;
   o->flags = F_TAKEBIT | F_NDESCBIT | F_INVISIBLE | F_READBIT;
   o->text = "The card is embossed \"minitcurizaashun akses kard.\"";
   obj_move(O_MINI_CARD, R_BIO_LOCK_EAST);
@@ -722,6 +728,7 @@ void init_complextwo() {
   o->description = "lab uniform";
   o->synonyms[0] = "uniform";
   o->adjectives[0] = "lab";
+  o->size = 10;
   o->flags = F_TAKEBIT | F_CONTBIT | F_SEARCHBIT | F_WEARBIT;
   o->capacity = 5;
   obj_move(O_LAB_UNIFORM, R_LAB_STORAGE);
@@ -731,6 +738,7 @@ void init_complextwo() {
   o->id = O_TELEPORTATION_CARD;
   o->description = "teleportation access card";
   o->synonyms[0] = "card";
+  o->size = 3;
   o->flags = F_TAKEBIT | F_READBIT;
   obj_move(O_TELEPORTATION_CARD, O_LAB_UNIFORM);
 
@@ -739,6 +747,7 @@ void init_complextwo() {
   o->id = O_COMBINATION_PAPER;
   o->description = "piece of paper";
   o->synonyms[0] = "paper";
+  o->size = 2;
   o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   obj_move(O_COMBINATION_PAPER, O_LAB_UNIFORM);
 
@@ -756,6 +765,7 @@ void init_complextwo() {
   o->id = O_GAS_MASK;
   o->description = "gas mask";
   o->synonyms[0] = "mask";
+  o->size = 10;
   o->flags = F_ACIDBIT | F_TAKEBIT | F_WEARBIT;
   obj_move(O_GAS_MASK, O_LAB_DESK);
 
@@ -804,6 +814,7 @@ void init_complextwo() {
   o->description = "brown spool";
   o->synonyms[0] = "spool";
   o->adjectives[0] = "brown";
+  o->size = 3;
   o->flags = F_ACIDBIT | F_TAKEBIT | F_READBIT;
   obj_move(O_BROWN_SPOOL, R_RADIATION_LAB);
 
@@ -812,6 +823,7 @@ void init_complextwo() {
   o->id = O_LAMP;
   o->description = "portable lamp";
   o->synonyms[0] = "lamp";
+  o->size = 20;
   o->flags = F_TAKEBIT;
   obj_move(O_LAMP, R_RADIATION_LAB);
 }
