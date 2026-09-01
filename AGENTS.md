@@ -57,7 +57,7 @@ the 37, because the puzzles that award them are not implemented.
 
   | Section            | Done     |
   |--------------------|----------|
-  | Rooms              |  96/105  |
+  | Rooms              | 96/105  |
   | Objects            | 120/150  |
   | Action Routines    | 103/136  |
   | Verbs and Syntax   | 128/251  |
