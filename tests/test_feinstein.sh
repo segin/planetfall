@@ -323,6 +323,16 @@ run_test "Test 148: A leading article is still skipped" "TAKE THE BRUSH\nQUIT\nY
 # not a real ambiguity.
 run_test "Test 149: TELEPORT prefers rooms" "TELEPORT KITCHEN\nQUIT\nY" "food production" "TELEPORT resolves to the room" "Teleport room"
 
+# --- "IT" (P-IT-OBJECT / THIS-IS-IT) -----------------------------------------
+run_test "Test 150: IT follows the last object named" "EXAMINE BRUSH\nDROP IT\nQUIT\nY" "Dropped" "P-IT-OBJECT tracks the direct object" "It tracks"
+# GO seeds it with the pod bulkhead, so IT means something on turn one.
+run_test "Test 151: IT is seeded before you type anything" "OPEN IT\nQUIT\nY" "if there's no emergency" "GO seeds P-IT-OBJECT with the bulkhead" "It seeded"
+run_test "Test 152: IT out of reach is refused" "EXAMINE BRUSH\nDROP IT\nUP\nTAKE IT\nQUIT\nY" "don't see what you are referring to" "An unreachable IT is reported" "It unreachable"
+# Movement does not steal IT, so it still means what you were handling.
+run_test "Test 153: Movement does not steal IT" "EXAMINE BRUSH\nUP\nDOWN\nDROP IT\nQUIT\nY" "Dropped" "V-WALK is excluded from the update" "It and movement"
+# THIS-IS-IT: naming a door in a refusal makes IT that door.
+run_test "Test 154: A refusal that names a door sets IT" "WEST\nOPEN IT\nQUIT\nY" "if there's no emergency" "THIS-IS-IT fires on the door refusal" "It door"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"

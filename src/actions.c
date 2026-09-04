@@ -325,36 +325,7 @@ bool see_inside(ZObjectID obj) {
   return obj_has_flag(obj, F_TRANSBIT) || obj_has_flag(obj, F_OPENBIT);
 }
 
-bool global_in(ZObjectID obj, ZObjectID room) {
-  if (room <= 0 || room >= MAX_OBJECTS)
-    return false;
-  for (int i = 0; i < 10; i++) {
-    if (objects[room].globals[i] == obj && obj != NOTHING)
-      return true;
-  }
-  return false;
-}
 
-bool is_here(ZObjectID obj) {
-  if (obj <= 0 || obj >= MAX_OBJECTS)
-    return false;
-  if (obj == current_room)
-    return true;
-  if (obj_in(obj, OBJ_GLOBAL_OBJECTS))
-    return true;
-  if (obj_in(obj, OBJ_LOCAL_GLOBALS) && global_in(obj, current_room))
-    return true;
-  if (global_in(obj, current_room))
-    return true;
-
-  ZObjectID p = objects[obj].parent;
-  while (p != NOTHING) {
-    if (p == current_room || p == player)
-      return true;
-    p = objects[p].parent;
-  }
-  return false;
-}
 
 bool pre_examine(ZObjectID obj) {
   if (!is_here(obj)) {
@@ -995,6 +966,8 @@ void perform_walk(ZObjectID dest) {
         else
           tellf("The %s is closed.\n",
                 objects[feinstein_doors[i].door].description);
+        // <THIS-IS-IT .OBJ> -- having just named the door, "it" is the door.
+        this_is_it(feinstein_doors[i].door);
         return;
       }
     }
@@ -1156,6 +1129,13 @@ bool perform(int verb, ZObjectID prso, ZObjectID prsi) {
 }
 
 bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
+  // PERFORM records what "it" will mean next time. Movement is excluded, so
+  // "GO NORTH. TAKE IT" still refers to whatever you were handling before.
+  if (prso != NOTHING && verb != V_WALK) {
+    game_state.it_object = prso;
+    game_state.it_loc = current_room;
+  }
+
   // PERFORM's first step (misc.zil) is the actor's own routine, so that
   // "FLOYD, GO NORTH" reaches Floyd rather than being carried out by you.
   ZObjectID actor = current_cmd.winner;

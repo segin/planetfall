@@ -359,6 +359,11 @@ void init_feinstein_act() {
   o->action = goo_f;
   obj_move(O_GREEN_GOO, O_FOOD_KIT);
 
+  // <SETG P-IT-LOC ,DECK-NINE> / <SETG P-IT-OBJECT ,POD-DOOR> in GO: "it"
+  // means the bulkhead before the player has referred to anything.
+  game_state.it_object = O_POD_DOOR;
+  game_state.it_loc = R_DECK_NINE;
+
   // Start Daemons
   // Blather appears randomly or via logic, but we'll queue the checker
   queue_event(EVT_BLATHER, -1);
@@ -515,6 +520,7 @@ void routine_blather() {
       }
     } else if (game_state.blowup_counter == 0) {
       obj_move(O_BLATHER, current_room);
+      this_is_it(O_BLATHER);
       tellf("\nEnsign Blather, his uniform immaculate, enters and notices you "
             "are away\n"
             "from your post. \"Twenty demerits, Ensign Seventh Class!\" bellows "
@@ -536,6 +542,7 @@ void routine_blather() {
     } else if (!obj_in(O_AMBASSADOR, current_room) &&
                game_state.blowup_counter == 0 && (rand() % 100) < 5) {
       obj_move(O_BLATHER, current_room);
+      this_is_it(O_BLATHER);
       tellf("\nEnsign First Class Blather swaggers in. He studies your work "
             "with half-closed\n"
             "eyes. \"You call this polishing, Ensign Seventh Class?\" he "
@@ -590,6 +597,7 @@ void routine_ambassador() {
       obj_move(O_AMBASSADOR, current_room);
       obj_move(O_CELERY, current_room);
       obj_move(O_SLIME, current_room);
+      this_is_it(O_AMBASSADOR);
       // He hands the brochure straight to you.
       obj_move(O_BROCHURE, player);
       tellf("\nThe alien ambassador from the planet Blow'k-bibben-Gordo ambles "

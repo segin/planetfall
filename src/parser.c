@@ -289,10 +289,17 @@ int snarf_objects(int start, int end, unsigned int search_flags,
   bool is_it =
       (strcasecmp(tokens[start].word, "it") == 0 && (end - start == 1));
 
-  // Special case: "IT"
+  // "IT" stands for whatever was last referred to, provided it is still within
+  // reach. MAIN-LOOP substitutes P-IT-OBJECT before the command is performed;
+  // doing it here comes to the same thing and keeps it out of the game loop.
   if (is_it) {
-    // Return P-IT-OBJECT (global, but we need to track it)
-    // For now, fail
+    if (game_state.it_object != NOTHING && is_here(game_state.it_object)) {
+      out_list[0] = game_state.it_object;
+      return 1;
+    }
+    tellf("I don't see what you are referring to.\n");
+    game_state.it_object = NOTHING;
+    asked_which = true; // suppress the follow-on "You can't see any it here!"
     return 0;
   }
 

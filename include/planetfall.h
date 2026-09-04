@@ -131,6 +131,11 @@ typedef struct {
   bool ladder_extended;
   bool ladder_flag;
   int c_elapsed;
+  // P-IT-OBJECT / P-IT-LOC: what "it" currently refers to, and where you were
+  // when it was set. GO seeds them with the pod bulkhead on Deck Nine, so "it"
+  // means something before you have typed anything.
+  ZObjectID it_object;
+  ZObjectID it_loc;
   ZObjectID spout_placed;
   bool upper_elevator_up;
   bool lower_elevator_up;
@@ -204,6 +209,7 @@ bool obj_has_flag(ZObjectID obj, ZFlag flag);
 void obj_set_flag(ZObjectID obj, ZFlag flag);
 void obj_clear_flag(ZObjectID obj, ZFlag flag);
 void score_obj(ZObjectID obj);
+void this_is_it(ZObjectID obj);
 
 // Hierarchy Traversal
 ZObjectID obj_first_child(ZObjectID parent);

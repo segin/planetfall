@@ -16,7 +16,7 @@ Release 39 -- wording drifted between them, and the sources win. Confirmed
 release differences are listed in `KNOWN_DIFFS` in `tests/compare_original.py`
 so they do not drown the real signal.
 
-Current: 16/30 probes match, 14 known release differences, 0 real findings.
+Current: 23/39 probes match, 16 known release differences, 0 real findings.
 Add probes as chapters land -- everything the existing set covers now agrees
 with the original, modulo catalogued Release 1 wording.
 
@@ -110,9 +110,8 @@ the 37, because the puzzles that award them are not implemented.
      only fire well into the planet chapters, and `WAKING-UP` depends on Floyd,
      the canteen and the flask -- so this lands after `compone.zil` is further
      along, not during the Feinstein.
-- Parser gaps in `src/parser.c`: "IT" is a stub that always fails to resolve
-  (`snarf_objects` bails early) though ZIL tracks P-IT-OBJECT from GO onward;
-  container recursion only descends one level.
+- Parser gap in `src/parser.c`: container recursion only descends one level, so
+  something inside a box inside a box cannot be named.
 - `tools/gen_syntax.py` regenerates `src/syntax_gen.c` and `include/syntax_gen.h`
   from `zil/syntax.zil`, but is not wired into the Makefile, so the generated files
   can drift. It has also leaked a parse artifact into the vocabulary table:

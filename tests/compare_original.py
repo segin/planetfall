@@ -12,9 +12,12 @@ Two caveats worth keeping in mind before treating a difference as a bug:
     "total of 80 points" where the source says "out of 80 points" -- and the
     ZIL sources are what this project is translating, so the source wins.
   * Several things are random (Blather and the ambassador turning up, the
-    explosion delay, the dream you get). Probes should avoid depending on them.
-    The port is run with --seed 1 so its own rolls are at least reproducible,
-    but the two sides still roll independently.
+    explosion delay, the dream you get). Both sides are given a fixed seed --
+    --seed 1 to the port, -s 1 to dfrotz -- so a probe gives the same answer
+    every run. The two still roll independently of each other, so an NPC may
+    wander in on one side and not the other; their text is stripped below, but
+    a side effect like an arrival changing what "it" refers to cannot be, so
+    probes spanning several turns are best kept away from Deck Nine.
 
 So this reports differences rather than asserting; it is a research tool for
 finding wording and behaviour drift, not a pass/fail gate. Exit status is 0
@@ -76,6 +79,10 @@ PROBES = [
     ('scrub-floor',       ['scrub floor']),
     ('scrub-brush',       ['scrub brush']),
     ('bare-floor',        ['floor']),
+    # "IT" -- P-IT-OBJECT tracking.
+    ('it-tracks',         ['examine brush', 'drop it']),
+    ('it-seeded',         ['open it']),
+    ('it-unreachable',    ['examine brush', 'drop it', 'up', 'take it']),
 ]
 
 # Probes where the beta and the Release 39 sources genuinely say different
@@ -98,6 +105,10 @@ KNOWN_DIFFS = {
     'read-towel-absent': 'R39 ends the not-here message "here!"; R1 "here."',
     'bad-verb':       'R39 UNKNOWN-WORD quotes the word "like this." and R1 '
                       "'like this'.",
+    'it-seeded':      'R39 GO seeds P-IT-OBJECT with POD-DOOR; R1 does not, so '
+                      'the beta has nothing for "it" to mean on turn one',
+    'it-unreachable': 'passes through the Gangway, whose R39 LDESC capitalises '
+                      '"Deck Eight"/"Deck Nine"',
 }
 
 STATUS_RE = re.compile(r'Score:\s*-?\d+\s+Moves:\s*\d+')
@@ -200,7 +211,7 @@ def main():
         script = '\n'.join(commands + ['quit', 'y']) + '\n'
 
         port_raw = run([PORT, '--no-status', '--seed', '1'], script)
-        orig_raw = run([DFROTZ, '-w', '200', '-p', STORY], script)
+        orig_raw = run([DFROTZ, '-w', '200', '-s', '1', '-p', STORY], script)
 
         # The port prints a banner then the first room; dfrotz prints a status
         # line, banner, intro and first room. Neither is preceded by a prompt,

@@ -158,6 +158,49 @@ ZObjectID obj_parent(ZObjectID obj) {
     return o ? o->parent : NOTHING;
 }
 
+// Is this object listed among the room's GLOBAL objects?
+bool global_in(ZObjectID obj, ZObjectID room) {
+  if (room <= 0 || room >= MAX_OBJECTS)
+    return false;
+  for (int i = 0; i < 10; i++) {
+    if (objects[room].globals[i] == obj && obj != NOTHING)
+      return true;
+  }
+  return false;
+}
+
+// ACCESSIBLE? (verbs.zil): can the player reach this object from where they
+// are? Lives here rather than with the verbs because it asks only about the
+// object tree, and the parser needs it to resolve "it".
+bool is_here(ZObjectID obj) {
+  if (obj <= 0 || obj >= MAX_OBJECTS)
+    return false;
+  if (obj == current_room)
+    return true;
+  if (obj_in(obj, OBJ_GLOBAL_OBJECTS))
+    return true;
+  if (obj_in(obj, OBJ_LOCAL_GLOBALS) && global_in(obj, current_room))
+    return true;
+  if (global_in(obj, current_room))
+    return true;
+
+  ZObjectID p = objects[obj].parent;
+  while (p != NOTHING) {
+    if (p == current_room || p == player)
+      return true;
+    p = objects[p].parent;
+  }
+  return false;
+}
+
+// THIS-IS-IT (verbs.zil): declare what "it" now refers to. Called when
+// something arrives or is drawn to the player's attention, so that "it" means
+// the thing just mentioned rather than the last thing the player named.
+void this_is_it(ZObjectID obj) {
+  game_state.it_object = obj;
+  game_state.it_loc = current_room;
+}
+
 // Moves all children of victim to dest
 void obj_rob(ZObjectID victim, ZObjectID dest) {
     ZObject* v = get_obj(victim);
