@@ -331,6 +331,44 @@ int snarf_objects(int start, int end, unsigned int search_flags,
   return count;
 }
 
+// Does any syntax line start with this word? Used to tell an answer to an
+// orphan question ("FLOOR") from a fresh command ("LOOK"), which is what ZIL's
+// P-OFLAG handling comes down to.
+static bool is_verb_word(const char *word) {
+  for (int i = 0; i < syntax_table_size; i++) {
+    if (strcasecmp(word, syntax_table[i].verb_word) == 0)
+      return true;
+  }
+  VocabEntry *v = lookup_vocab(word);
+  if (v && v->type == VOCAB_SYNONYM && v->target) {
+    for (int i = 0; i < syntax_table_size; i++) {
+      if (strcasecmp(v->target, syntax_table[i].verb_word) == 0)
+        return true;
+    }
+  }
+  return false;
+}
+
+// ORPHAN (parser.zil). When a verb needs an object and none was given we ask
+// for one; the player's reply is a bare noun clause, not a sentence, so it is
+// rejoined to the verb still waiting for it. Cleared as soon as anything else
+// is typed, exactly as P-OFLAG is.
+static char orphan_verb[MAX_WORD_LEN];
+static bool orphan_pending = false;
+
+// Put the remembered verb back on the front of the reply and let the ordinary
+// syntax machinery deal with the result.
+static void adopt_orphan(void) {
+  if (num_tokens >= MAX_TOKENS)
+    return;
+  for (int i = num_tokens; i > 0; i--)
+    tokens[i] = tokens[i - 1];
+  num_tokens++;
+  snprintf(tokens[0].word, MAX_WORD_LEN, "%s", orphan_verb);
+  tokens[0].vocab = lookup_vocab(tokens[0].word);
+  tokens[0].comma_after = false;
+}
+
 // Name the noun rather than the article when reporting that we cannot see it.
 static const char *noun_of(int start, int end) {
   for (int i = start; i < end; i++) {
@@ -356,6 +394,13 @@ bool parse_command(char *input, Command *cmd) {
       return false;
     }
   }
+
+  // A question is outstanding, and this does not look like a fresh command:
+  // treat it as the answer and rejoin it to the verb that asked.
+  bool had_orphan = orphan_pending;
+  orphan_pending = false;
+  if (had_orphan && !is_verb_word(tokens[0].word))
+    adopt_orphan();
 
   // Set when some syntax line for this verb wanted a direct object and the
   // player did not supply one, so we can ask for it the way ORPHAN does.
@@ -547,8 +592,11 @@ bool parse_command(char *input, Command *cmd) {
   }
 
   if (wanted_object) {
-    // ORPHAN (parser.zil): "What do you want to take?"
+    // ORPHAN (parser.zil): "What do you want to take?" -- and remember the
+    // verb, so the reply can be joined to it.
     tellf("What do you want to %s?\n", tokens[0].word);
+    snprintf(orphan_verb, sizeof(orphan_verb), "%s", tokens[0].word);
+    orphan_pending = true;
     return false;
   }
 

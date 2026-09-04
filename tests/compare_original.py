@@ -69,6 +69,13 @@ PROBES = [
     ('diagnose',          ['diagnose']),
     ('version',           ['version']),
     ('wait',              ['wait']),
+    # ORPHAN: the parser asks for a missing object and adopts the reply.
+    ('orphan-scrub',      ['scrub', 'floor']),
+    ('orphan-cleared',    ['scrub', 'look']),
+    ('orphan-put',        ['put', 'brush']),
+    ('scrub-floor',       ['scrub floor']),
+    ('scrub-brush',       ['scrub brush']),
+    ('bare-floor',        ['floor']),
 ]
 
 # Probes where the beta and the Release 39 sources genuinely say different

@@ -293,6 +293,14 @@ run_test "Test 134: Non-acid chemicals just make a mess" "${FILL_RED}TELEPORT ST
 run_test_absent "Test 135: FLOOR is not a direction" "FLOOR\nQUIT\nY" "can't go that way" "FLOOR does not parse as movement" "Floor as direction"
 run_test_absent "Test 136: FLOOR resolves unambiguously" "SCRUB FLOOR\nQUIT\nY" "Ambiguous" "Only GROUND answers to floor" "Floor ambiguity"
 
+# --- ORPHAN: answering the parser's question ---------------------------------
+# The answer must be a pure noun: BRUSH is also a verb (a SCRUB synonym), and a
+# verb ends the question rather than answering it -- as it does in the original.
+run_test "Test 137: An orphan answer is adopted" "DROP\nCHRONOMETER\nQUIT\nY" "take it off, first" "The reply is rejoined to the waiting verb" "Orphan adopt"
+run_test "Test 137a: A verb ends the question instead" "DROP\nBRUSH\nQUIT\nY" "What do you want to brush" "A verb reply starts a new command" "Orphan verb reply"
+run_test "Test 138: A fresh command clears the orphan" "SCRUB\nLOOK\nQUIT\nY" "featureless corridor" "A verb ends the question" "Orphan clear"
+run_test "Test 139: The orphan does not persist" "SCRUB\nFLOOR\nFLOOR\nQUIT\nY" "don't understand that sentence" "One answer only" "Orphan once"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"
