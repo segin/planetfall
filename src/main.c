@@ -439,20 +439,6 @@ int main(int argc, char **argv) {
         }
       }
       break;
-    case V_SCRUB:
-      if (prso == NOTHING) {
-        tellf("Scrub what?\n");
-      } else if (prso == O_BLATHER) {
-        tellf("Blather isn't dirty, though his personality is filthy.\n");
-      } else if (prso == O_AMBASSADOR) {
-        tellf("You've cleaned up maybe one ten-thousandth of the slime.\n");
-      } else {
-        tellf("You scrub furiously. Nothing much happens.\n");
-        if (obj_in(O_BLATHER, current_room)) {
-          tellf("\nBlather sneers. 'Missed a spot, Ensign!'\n");
-        }
-      }
-      break;
     // Blather, the ambassador and the celery all answer for themselves now, in
     // blather_f / ambassador_f / celery_f, which dispatch_action reaches first.
     case V_ATTACK:

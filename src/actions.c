@@ -778,6 +778,22 @@ int perform_score(bool ask) {
   return game_state.score;
 }
 
+// V-SCRUB (verbs.zil). Scrubbing the deck is the job you start the game doing,
+// so it needs something to scrub with -- and the brush and the towel are the
+// only two things that will do.
+void perform_scrub(ZObjectID prso, ZObjectID prsi) {
+  if (prsi == NOTHING && !obj_in(O_SCRUB_BRUSH, player) &&
+      !obj_in(O_TOWEL, player)) {
+    tellf("You don't have anything to scrub with!\n");
+  } else if (prsi != NOTHING && prsi != O_SCRUB_BRUSH && prsi != O_TOWEL) {
+    tellf("You can't scrub something with that!\n");
+  } else if (obj_has_flag(prso, F_ACTORBIT)) {
+    tellf("The %s prefers cleaning himself.\n", objects[prso].description);
+  } else {
+    tellf("The %s is a bit shinier now.\n", objects[prso].description);
+  }
+}
+
 // V-DIAGNOSE (verbs.zil): health, rest and hunger, in that order.
 void perform_diagnose() {
   game_state.c_elapsed = 18;
@@ -1207,6 +1223,9 @@ bool dispatch_action(int verb, ZObjectID prso, ZObjectID prsi) {
     return true;
   case V_DIAGNOSE:
     perform_diagnose();
+    return true;
+  case V_SCRUB:
+    perform_scrub(prso, prsi);
     return true;
   case V_SCRIPT:
     perform_script();

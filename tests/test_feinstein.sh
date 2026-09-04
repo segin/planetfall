@@ -293,6 +293,12 @@ run_test "Test 134: Non-acid chemicals just make a mess" "${FILL_RED}TELEPORT ST
 run_test_absent "Test 135: FLOOR is not a direction" "FLOOR\nQUIT\nY" "can't go that way" "FLOOR does not parse as movement" "Floor as direction"
 run_test_absent "Test 136: FLOOR resolves unambiguously" "SCRUB FLOOR\nQUIT\nY" "Ambiguous" "Only GROUND answers to floor" "Floor ambiguity"
 
+# --- V-SCRUB -----------------------------------------------------------------
+run_test "Test 140: Scrubbing the floor" "SCRUB FLOOR\nQUIT\nY" "floor is a bit shinier now" "V-SCRUB reports the object" "Scrub floor"
+run_test "Test 141: Scrubbing with the wrong thing" "SCRUB FLOOR WITH UNIFORM\nQUIT\nY" "can't scrub something with that" "V-SCRUB rejects other tools" "Scrub tool"
+run_test "Test 142: Scrubbing with nothing to hand" "DROP BRUSH\nSCRUB FLOOR\nQUIT\nY" "don't have anything to scrub with" "V-SCRUB needs the brush or towel" "Scrub empty-handed"
+run_test "Test 143: Scrubbing a person" "UP\nUP\nSCRUB BLATHER\nQUIT\nY" "prefers cleaning himself" "V-SCRUB has an ACTORBIT branch" "Scrub actor"
+
 # --- ORPHAN: answering the parser's question ---------------------------------
 # The answer must be a pure noun: BRUSH is also a verb (a SCRUB synonym), and a
 # verb ends the question rather than answering it -- as it does in the original.
