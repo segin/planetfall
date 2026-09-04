@@ -286,6 +286,13 @@ run_test "Test 132: Pouring into the canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\
 run_test "Test 133: Pouring with no target" "${FILL_ACID}POUR CHEMICAL\nQUIT\nY" "all over the floor, making quite a mess" "CHEMICAL-POURS defaults to the ground" "Pour no target"
 run_test "Test 134: Non-acid chemicals just make a mess" "${FILL_RED}TELEPORT STORAGE EAST\nPOUR CHEMICAL ON GOOD BEDISTOR\nQUIT\nY" "making quite a mess" "Coloured coolant does not dissolve" "Non-acid pour"
 
+# --- Vocabulary collisions ---------------------------------------------------
+# ZIL's direction synonyms are only <SYNONYM DOWN D> and <SYNONYM UP U>. The
+# port had invented "floor" for DOWN and "ceiling" for UP, which made a bare
+# FLOOR parse as a movement command and SCRUB FLOOR ambiguous against GROUND.
+run_test_absent "Test 135: FLOOR is not a direction" "FLOOR\nQUIT\nY" "can't go that way" "FLOOR does not parse as movement" "Floor as direction"
+run_test_absent "Test 136: FLOOR resolves unambiguously" "SCRUB FLOOR\nQUIT\nY" "Ambiguous" "Only GROUND answers to floor" "Floor ambiguity"
+
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
     echo "$FAILED test(s) failed!"

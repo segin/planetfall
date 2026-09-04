@@ -1,5 +1,6 @@
 #include "global_objects.h"
 #include "complexone_actions.h"
+#include "feinstein.h"
 #include "ids.h"
 #include "planetfall.h"
 #include <stdio.h>
@@ -57,6 +58,7 @@ void init_global_objects() {
   o->synonyms[2] = "floor";
   o->synonyms[3] = "deck";
   o->flags = F_NDESCBIT;
+  o->action = ground_f;
   obj_move(O_GROUND, OBJ_GLOBAL_OBJECTS);
 
   // HANDS
@@ -226,15 +228,17 @@ void init_global_objects() {
   o = &objects[O_UP];
   o->id = O_UP;
   o->description = "up";
+  // <SYNONYM UP U> -- and no more. "ceiling" was an invention, and any such
+  // extra collides with the scenery object of the same name.
   o->synonyms[0] = "up";
   o->synonyms[1] = "u";
-  o->synonyms[2] = "ceiling";
   o = &objects[O_DOWN];
   o->id = O_DOWN;
   o->description = "down";
+  // <SYNONYM DOWN D>. "floor" was an invention, and it made bare FLOOR parse
+  // as a movement command and SCRUB FLOOR ambiguous against GROUND.
   o->synonyms[0] = "down";
   o->synonyms[1] = "d";
-  o->synonyms[2] = "floor";
   o = &objects[O_IN];
   o->id = O_IN;
   o->description = "in";

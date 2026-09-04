@@ -300,19 +300,9 @@ void init_feinstein_act() {
   o->text = "\"S.P.S. FEINSTEIN\n  Escape Pod #42\n   Don't Panic!\"";
   // Towel appears later in pod, so don't place yet.
 
-  // GROUND (Generic floor)
-  o = &objects[O_GROUND];
-  o->id = O_GROUND;
-  o->description = "floor";
-  o->synonyms[0] = "floor";
-  o->synonyms[1] = "deck";
-  o->synonyms[2] = "ground";
-  o->flags = F_NDESCBIT;
-  o->action = ground_f;
-  // GROUND lives in GLOBAL-OBJECTS so it is reachable everywhere. It used to be
-  // parked in Deck Nine as a workaround for a parser that only searched the room
-  // and inventory; snarf_objects walks the global scopes now.
-  obj_move(O_GROUND, OBJ_GLOBAL_OBJECTS);
+  // GROUND is a GLOBAL-OBJECTS object and is built in init_global_objects;
+  // it used to be constructed a second time here, silently overwriting the
+  // first with a shorter synonym list.
 
   // SLIME (Pseudo object for Ambassador's slime)
   o = &objects[O_SLIME];
