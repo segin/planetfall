@@ -112,8 +112,7 @@ the 37, because the puzzles that award them are not implemented.
      along, not during the Feinstein.
 - Parser gaps in `src/parser.c`: "IT" is a stub that always fails to resolve
   (`snarf_objects` bails early) though ZIL tracks P-IT-OBJECT from GO onward;
-  disambiguation prints a debug line and silently takes the first match; container
-  recursion only descends one level.
+  container recursion only descends one level.
 - `tools/gen_syntax.py` regenerates `src/syntax_gen.c` and `include/syntax_gen.h`
   from `zil/syntax.zil`, but is not wired into the Makefile, so the generated files
   can drift. It has also leaked a parse artifact into the vocabulary table:

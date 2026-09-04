@@ -106,11 +106,11 @@ run_test "Test 27: BALCONY and PLAQUE" "TELEPORT BALCONY\nREAD PLAQUE\nQUIT\nY" 
 run_test "Test 28: COURTYARD and CASTLE" "TELEPORT COURTYARD\nEXAMINE CASTLE\nQUIT\nY" "ancient and crumbling" "Castle pseudo examine works" "CASTLE pseudo"
 run_test "Test 29: WEST WING and refusal" "TELEPORT WING\nDOWN\nQUIT\nY" "Certain death" "West Wing down refusal works" "WEST WING DOWN"
 run_test "Test 30: UNDERWATER drowning" "TELEPORT UNDERWATER\nWAIT\nWAIT\nQUIT\n" "mighty undertow" "Underwater drowning works" "UNDERWATER drowning"
-run_test "Test 31: REC AREA dial" "TELEPORT AREA\nEXAMINE DIAL\nSET DIAL TO 500\nQUIT\nY" "dial is now set to 500" "Rec area dial setting works" "REC AREA dial"
-run_test "Test 32: REC AREA games and tapes" "TELEPORT AREA\nEXAMINE GAMES\nEXAMINE TAPES\nQUIT\nY" "All the usual games" "Rec area games/tapes examine works" "GAMES/TAPES"
-run_test "Test 33: DORM and SANFAC" "TELEPORT DORM\nEXAMINE PARTITION\nSOUTH\nEXAMINE TOILET\nFLUSH TOILET\nQUIT\nY" "water seems to be turned off" "Dorm and SanFac interactions work" "DORM/SANFAC"
-run_test "Test 34: MESS CORRIDOR padlock and door" "TELEPORT MESS\nOPEN DOOR\nTAKE PADLOCK\nUNLOCK PADLOCK\nQUIT\nY" "padlock is locked to the door" "Mess corridor door and padlock work" "MESS CORRIDOR"
-run_test "Test 35: STORAGE WEST Can and Ladder" "TELEPORT STORAGE\nEXAMINE CAN\nOPEN CAN\nEXAMINE LADDER\nOPEN LADDER\nQUIT\nY" "tiny space" "Storage West can and ladder examine/extend work" "STORAGE WEST"
+run_test "Test 31: REC AREA dial" "TELEPORT REC AREA\nEXAMINE DIAL\nSET DIAL TO 500\nQUIT\nY" "dial is now set to 500" "Rec area dial setting works" "REC AREA dial"
+run_test "Test 32: REC AREA games and tapes" "TELEPORT REC AREA\nEXAMINE GAMES\nEXAMINE TAPES\nQUIT\nY" "All the usual games" "Rec area games/tapes examine works" "GAMES/TAPES"
+run_test "Test 33: DORM and SANFAC" "TELEPORT DORM A\nEXAMINE PARTITION\nSOUTH\nEXAMINE TOILET\nFLUSH TOILET\nQUIT\nY" "water seems to be turned off" "Dorm and SanFac interactions work" "DORM/SANFAC"
+run_test "Test 34: MESS CORRIDOR padlock and door" "TELEPORT MESS CORRIDOR\nOPEN DOOR\nTAKE PADLOCK\nUNLOCK PADLOCK\nQUIT\nY" "padlock is locked to the door" "Mess corridor door and padlock work" "MESS CORRIDOR"
+run_test "Test 35: STORAGE WEST Can and Ladder" "TELEPORT STORAGE WEST\nEXAMINE CAN\nOPEN CAN\nEXAMINE LADDER\nOPEN LADDER\nQUIT\nY" "tiny space" "Storage West can and ladder examine/extend work" "STORAGE WEST"
 run_test "Test 36: DORM CORRIDOR and Long Hall" "TELEPORT DORM CORRIDOR\nEXAMINE WALKWAY\nEAST\nQUIT\nY" "featureless hallway" "Dorm corridor walkway and long hall travel work" "LONG HALL"
 run_test "Test 37: MESS HALL benches and kitchen door" "TELEPORT MESS HALL\nEXAMINE BENCH\nOPEN DOOR\nQUIT\nY" "Pleez yuuz kitcin akses kard" "Mess hall benches and door work" "MESS HALL"
 run_test "Test 38: KITCHEN dispenser and canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\nOPEN CANTEEN\nTELEPORT KITCHEN\nPUT CANTEEN IN DISPENSER\nPUSH BUTTON\nQUIT\nY" "canteen fills almost to the brim" "Kitchen dispenser canteen filling works" "KITCHEN DISPENSER"
@@ -278,13 +278,13 @@ run_test_absent "Test 127: A comma does not confuse ordinary commands" "TAKE BRU
 FILL_ACID="TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH ROUND WHITE BUTTON\nTAKE FLASK\n"
 FILL_RED="TELEPORT TOOL ROOM\nTAKE FLASK\nTELEPORT MACHINE SHOP\nPUT FLASK UNDER DISPENSER\nPUSH RED BUTTON\nTAKE FLASK\n"
 
-run_test "Test 128: Acid dissolves what it can" "${FILL_ACID}TELEPORT STORAGE EAST\nPOUR CHEMICAL ON GOOD BEDISTOR\nQUIT\nY" "dissolves right before your eyes" "ACIDBIT objects dissolve" "Acid dissolve"
-run_test "Test 129: Acid on yourself is fatal" "${FILL_ACID}POUR CHEMICAL ON ME\nQUIT\nY" "melting flesh" "Pouring acid on yourself kills you" "Acid self"
-run_test "Test 130: Acid damages what it cannot dissolve" "${FILL_ACID}POUR CHEMICAL ON CHRONOMETER\nQUIT\nY" "undergo some damage" "MUNGBIT objects are damaged" "Acid mung"
-run_test "Test 131: A broken chronometer stops" "${FILL_ACID}POUR CHEMICAL ON CHRONOMETER\nTIME\nWAIT\nTIME\nQUIT\nY" "current time is" "Munged chronometer reports MUNGED-TIME" "Munged clock"
-run_test "Test 132: Pouring into the canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\n${FILL_ACID}POUR CHEMICAL IN CANTEEN\nQUIT\nY" "worthless action" "WORTHLESS-ACTION fires" "Canteen pour"
-run_test "Test 133: Pouring with no target" "${FILL_ACID}POUR CHEMICAL\nQUIT\nY" "all over the floor, making quite a mess" "CHEMICAL-POURS defaults to the ground" "Pour no target"
-run_test "Test 134: Non-acid chemicals just make a mess" "${FILL_RED}TELEPORT STORAGE EAST\nPOUR CHEMICAL ON GOOD BEDISTOR\nQUIT\nY" "making quite a mess" "Coloured coolant does not dissolve" "Non-acid pour"
+run_test "Test 128: Acid dissolves what it can" "${FILL_ACID}TELEPORT STORAGE EAST\nPOUR CHEMICAL FLUID ON GOOD BEDISTOR\nQUIT\nY" "dissolves right before your eyes" "ACIDBIT objects dissolve" "Acid dissolve"
+run_test "Test 129: Acid on yourself is fatal" "${FILL_ACID}POUR CHEMICAL FLUID ON ME\nQUIT\nY" "melting flesh" "Pouring acid on yourself kills you" "Acid self"
+run_test "Test 130: Acid damages what it cannot dissolve" "${FILL_ACID}POUR CHEMICAL FLUID ON CHRONOMETER\nQUIT\nY" "undergo some damage" "MUNGBIT objects are damaged" "Acid mung"
+run_test "Test 131: A broken chronometer stops" "${FILL_ACID}POUR CHEMICAL FLUID ON CHRONOMETER\nTIME\nWAIT\nTIME\nQUIT\nY" "current time is" "Munged chronometer reports MUNGED-TIME" "Munged clock"
+run_test "Test 132: Pouring into the canteen" "TELEPORT MESS HALL\nTAKE CANTEEN\n${FILL_ACID}POUR CHEMICAL FLUID IN CANTEEN\nQUIT\nY" "worthless action" "WORTHLESS-ACTION fires" "Canteen pour"
+run_test "Test 133: Pouring with no target" "${FILL_ACID}POUR CHEMICAL FLUID\nQUIT\nY" "all over the floor, making quite a mess" "CHEMICAL-POURS defaults to the ground" "Pour no target"
+run_test "Test 134: Non-acid chemicals just make a mess" "${FILL_RED}TELEPORT STORAGE EAST\nPOUR CHEMICAL FLUID ON GOOD BEDISTOR\nQUIT\nY" "making quite a mess" "Coloured coolant does not dissolve" "Non-acid pour"
 
 # --- Vocabulary collisions ---------------------------------------------------
 # ZIL's direction synonyms are only <SYNONYM DOWN D> and <SYNONYM UP U>. The
@@ -309,6 +309,19 @@ run_test "Test 139: The orphan does not persist" "SCRUB\nFLOOR\nFLOOR\nQUIT\nY" 
 # A sentence with no verb at all says so, rather than blaming the sentence.
 run_test "Test 139a: A verbless sentence says so" "UNIFORM\nQUIT\nY" "can't find a verb in that sentence" "Verbless input is reported as such" "Verbless"
 run_test "Test 139b: A sentence with a verb still fails the other way" "BRUSH TAKE\nQUIT\nY" "can't see any|don't understand" "A verb present means a different complaint" "Unparseable with verb"
+
+# --- Disambiguation (WHICH-PRINT) --------------------------------------------
+# Once the emergency bulkheads reveal themselves, three things answer to "door".
+BULKHEADS_OUT=$(printf 'WAIT\\n%.0s' $(seq 1 40))
+run_test "Test 144: Ambiguity is reported, not guessed" "${BULKHEADS_OUT}OPEN DOOR\nQUIT\nY" "Which door do you mean, the .*, the .*, or the " "WHICH-PRINT lists the candidates" "Which print"
+run_test "Test 145: The answer resolves it" "${BULKHEADS_OUT}OPEN DOOR\nNARROW\nQUIT\nY" "any way to open it" "The reply picks one and reruns the command" "Which answer"
+run_test_absent "Test 146: No debug output" "${BULKHEADS_OUT}OPEN DOOR\nQUIT\nY" "Ambiguous" "The old debug line is gone" "Which debug"
+# "A" is an article at the head of a clause and an adjective inside one.
+run_test "Test 147: A trailing A is an adjective" "TELEPORT DORM A\nQUIT\nY" "Dorm A" "dorm a picks Dorm A" "Trailing article"
+run_test "Test 148: A leading article is still skipped" "TAKE THE BRUSH\nQUIT\nY" "already have it" "the brush still parses" "Leading article"
+# TELEPORT is a debug verb that goes to rooms, so a door of the same name is
+# not a real ambiguity.
+run_test "Test 149: TELEPORT prefers rooms" "TELEPORT KITCHEN\nQUIT\nY" "food production" "TELEPORT resolves to the room" "Teleport room"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then

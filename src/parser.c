@@ -140,17 +140,60 @@ static bool word_is_known(const char *word) {
 
 bool phrase_matches_object(ZObject *obj, int start, int end) {
   for (int i = start; i < end; i++) {
-    if (!word_matches_object(obj, tokens[i].word)) {
-      if (strcmp(tokens[i].word, "the") == 0)
-        continue;
-      if (strcmp(tokens[i].word, "a") == 0)
-        continue;
-      if (strcmp(tokens[i].word, "an") == 0)
-        continue;
-      return false;
-    }
+    if (word_matches_object(obj, tokens[i].word))
+      continue;
+    // Skip a leading article -- but only leading. "A" is an article in "a
+    // brush" and an adjective in "dorm a", and skipping it everywhere made
+    // every dorm answer to "dorm a".
+    if (i == start &&
+        (strcmp(tokens[i].word, "the") == 0 ||
+         strcmp(tokens[i].word, "a") == 0 || strcmp(tokens[i].word, "an") == 0))
+      continue;
+    return false;
   }
   return true;
+}
+
+// WHICH-PRINT (parser.zil). More than one thing answers to what was typed, so
+// ask, listing them: "Which door do you mean, the wide bulkhead or the narrow
+// bulkhead?" The answer is handled like an orphan reply -- see below.
+#define MAX_WHICH 8
+static ZObjectID which_candidates[MAX_WHICH];
+static int which_count = 0;
+static char which_input[256];
+static bool which_pending = false;
+// Set for the duration of a re-parse, so the ambiguity resolves to the object
+// the player picked instead of asking again.
+static ZObjectID which_choice = NOTHING;
+// Tells parse_command a question was asked, so it stays quiet rather than
+// adding "You can't see any ... here!" on top.
+static bool asked_which = false;
+// The action of the syntax line currently being tried, so TELEPORT can be
+// treated as taking a room.
+static int parsing_action = 0;
+
+static void which_print(ZObjectID *list, int count, int start, int end) {
+  tellf("Which ");
+  for (int i = start; i < end; i++) {
+    if (i > start)
+      tellf(" ");
+    tellf("%s", tokens[i].word);
+  }
+  tellf(" do you mean, ");
+  for (int i = 0; i < count; i++) {
+    tellf("the %s", objects[list[i]].description);
+    int left = count - i;
+    if (left == 2) {
+      // ZIL puts a comma before the "or" only when there were more than two
+      // to begin with.
+      if (count != 2)
+        tellf(",");
+      tellf(" or ");
+    } else if (left > 2) {
+      tellf(", ");
+    }
+  }
+  tellf("?\n");
 }
 
 // Scan the direct children of `parent` (and one level into open containers) for
@@ -321,11 +364,39 @@ int snarf_objects(int start, int end, unsigned int search_flags,
     }
   }
 
-  // Disambiguation Logic (If not ALL)
+  // Disambiguation. Silently taking the first match is how you end up scrubbing
+  // the wrong thing without being told.
+  if (!is_all && count > 1 && parsing_action == V_TELEPORT) {
+    // TELEPORT is the port's own debug verb and it goes to rooms, so a door or
+    // a keycard sharing the room's name is not a real ambiguity. Every room
+    // carries RLANDBIT or RWATERBIT.
+    int rooms = 0;
+    for (int k = 0; k < count; k++) {
+      if (obj_has_flag(out_list[k], F_RLANDBIT) ||
+          obj_has_flag(out_list[k], F_RWATERBIT))
+        out_list[rooms++] = out_list[k];
+    }
+    if (rooms > 0)
+      count = rooms;
+  }
+
   if (!is_all && count > 1) {
-    printf("[Ambiguous: found %d matches, picking one]\n", count);
-    // Just keep the first one
-    return 1;
+    // Re-parsing after the player answered: take the object they picked.
+    if (which_choice != NOTHING) {
+      for (int k = 0; k < count; k++) {
+        if (out_list[k] == which_choice) {
+          out_list[0] = which_choice;
+          return 1;
+        }
+      }
+    }
+    which_print(out_list, count, start, end);
+    which_count = count < MAX_WHICH ? count : MAX_WHICH;
+    for (int k = 0; k < which_count; k++)
+      which_candidates[k] = out_list[k];
+    which_pending = true;
+    asked_which = true;
+    return 0;
   }
 
   return count;
@@ -380,6 +451,13 @@ static const char *noun_of(int start, int end) {
 }
 
 bool parse_command(char *input, Command *cmd) {
+  // Kept so a "Which do you mean...?" answer can re-run the original command.
+  // Held aside until we know this line is not itself that answer -- committing
+  // it up here would overwrite the very command we need to run again.
+  char this_input[sizeof(which_input)];
+  snprintf(this_input, sizeof(this_input), "%s", input);
+
+  asked_which = false;
   tokenize(input);
   if (num_tokens == 0) {
     tellf("I beg your pardon?\n");
@@ -394,6 +472,36 @@ bool parse_command(char *input, Command *cmd) {
       return false;
     }
   }
+
+  // "Which do you mean...?" is outstanding: narrow the candidates by what was
+  // just typed, then run the original command again with the choice pinned.
+  bool had_which = which_pending;
+  which_pending = false;
+  if (had_which && !is_verb_word(tokens[0].word)) {
+    ZObjectID pick = NOTHING;
+    int matches = 0;
+    for (int k = 0; k < which_count; k++) {
+      if (phrase_matches_object(&objects[which_candidates[k]], 0, num_tokens)) {
+        pick = which_candidates[k];
+        matches++;
+      }
+    }
+    if (matches == 1) {
+      char again[sizeof(which_input)];
+      snprintf(again, sizeof(again), "%s", which_input);
+      which_choice = pick;
+      bool ok = parse_command(again, cmd);
+      which_choice = NOTHING;
+      return ok;
+    }
+    // Still ambiguous, or nothing matched: fall through and read it as an
+    // ordinary command, which will complain in its own way.
+  }
+
+  // Not an answer to anything: this is the line to re-run if it turns out to
+  // be ambiguous itself.
+  if (which_choice == NOTHING)
+    snprintf(which_input, sizeof(which_input), "%s", this_input);
 
   // A question is outstanding, and this does not look like a fresh command:
   // treat it as the answer and rejoin it to the verb that asked.
@@ -562,11 +670,13 @@ bool parse_command(char *input, Command *cmd) {
     // Snarf Objects
     int count1 = 0;
 
+    parsing_action = se->action_id;
     if (se->obj1_present) {
       count1 = snarf_objects(nc1_start, nc1_end, se->obj1_search, se->obj1_find,
                              cmd->prso_list, MAX_OBJECTS_PER_CMD);
       if (count1 == 0) {
-        tellf("You can't see any %s here!\n", noun_of(nc1_start, nc1_end));
+        if (!asked_which)
+          tellf("You can't see any %s here!\n", noun_of(nc1_start, nc1_end));
         return false;
       }
       cmd->prso_count = count1;
@@ -578,7 +688,8 @@ bool parse_command(char *input, Command *cmd) {
       int count2 = snarf_objects(nc2_start, nc2_end, se->obj2_search,
                                  se->obj2_find, prsi_list, 2);
       if (count2 == 0) {
-        tellf("You can't see any %s here!\n", noun_of(nc2_start, nc2_end));
+        if (!asked_which)
+          tellf("You can't see any %s here!\n", noun_of(nc2_start, nc2_end));
         return false;
       }
       cmd->prsi = prsi_list[0];
