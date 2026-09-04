@@ -13,6 +13,17 @@ bool game_running = true;
 void init_game() {
     memset(objects, 0, sizeof(objects));
     memset(&game_state, 0, sizeof(game_state));
+
+    // <PROPDEF SIZE 5> (s3.zil). Reading an undeclared SIZE yields 5, so seed
+    // it before anything is built and let the declarations overwrite it. Doing
+    // it this way round rather than as a pass afterwards is what lets an
+    // object declare SIZE 0 and mean it -- LOCAL-GLOBALS does exactly that,
+    // and a post-pass cannot tell that apart from never having said anything.
+    //
+    // <PROPDEF CAPACITY 0> and <PROPDEF VALUE 0> want zero, which the memset
+    // above already gives them.
+    for (int i = 0; i < MAX_OBJECTS; i++)
+        objects[i].size = 5;
     
     // Default Game State
     game_state.day = 1;

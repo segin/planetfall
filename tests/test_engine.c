@@ -100,6 +100,38 @@ void test_score_obj() {
     printf("Score Obj Passed.\n");
 }
 
+// The three PROPDEFs in s3.zil are the only part of that file with any runtime
+// meaning; everything else in it drives the ZILCH build. SIZE is the one that
+// takes work, because reading an undeclared SIZE has to yield 5 while an object
+// that declares SIZE 0 has to keep it.
+void test_propdefs() {
+    printf("Testing PROPDEF defaults...\n");
+    init_game();
+
+    // <PROPDEF SIZE 5>: an object nobody has said anything about weighs 5.
+    ZObjectID untouched = 60;
+    assert(objects[untouched].size == 5);
+
+    // ...and a declaration overrides it, including a declaration of 0. This is
+    // why the default is seeded before the world is built rather than patched
+    // in afterwards: a later pass cannot tell "declared 0" from "never said".
+    ZObjectID declared_zero = 61;
+    objects[declared_zero].id = declared_zero;
+    objects[declared_zero].size = 0;
+    assert(objects[declared_zero].size == 0);
+
+    ZObjectID declared_ten = 62;
+    objects[declared_ten].id = declared_ten;
+    objects[declared_ten].size = 10;
+    assert(objects[declared_ten].size == 10);
+
+    // <PROPDEF CAPACITY 0> and <PROPDEF VALUE 0>.
+    assert(objects[untouched].capacity == 0);
+    assert(objects[untouched].value == 0);
+
+    printf("PROPDEF defaults Passed.\n");
+}
+
 void init_objects() {
     // Dummy init for test
 }
@@ -108,5 +140,6 @@ int main() {
     test_object_linking();
     test_flags();
     test_score_obj();
+    test_propdefs();
     return 0;
 }

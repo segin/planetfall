@@ -128,13 +128,6 @@ void init_game_data() {
   o->action = chronometer_f;
   obj_move(O_CHRONOMETER, player);
 
-  // <PROPDEF SIZE 5> (planetfall.zil): anything that never declares a SIZE
-  // still weighs 5, which is what makes LOAD-ALLOWED mean anything.
-  for (int i = 0; i < MAX_OBJECTS; i++) {
-    if (objects[i].id != NOTHING && objects[i].size == 0)
-      objects[i].size = 5;
-  }
-
   // The world is built; from here on MOVE prepends, as the Z-machine does.
   world_building = false;
 }

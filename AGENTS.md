@@ -20,6 +20,38 @@ Current: 16/30 probes match, 14 known release differences, 0 real findings.
 Add probes as chapters land -- everything the existing set covers now agrees
 with the original, modulo catalogued Release 1 wording.
 
+# What is and is not translatable in zil/
+
+`zil/planetfall.zil` and `zil/s3.zil` are ZILCH build scripts, not game content
+-- the ZIL equivalent of a Makefile. They were audited form by form; the only
+parts with any runtime meaning are three property declarations, all now
+implemented and pinned by `test_propdefs` in `tests/test_engine.c`:
+
+| Form | Meaning | In the port |
+|---|---|---|
+| `<PROPDEF SIZE 5>` | undeclared SIZE reads 5 | seeded in `init_game` before the world is built, so declarations override it -- including `LOCAL-GLOBALS`'s deliberate `(SIZE 0)`, which a post-pass could not distinguish from silence |
+| `<PROPDEF CAPACITY 0>` | undeclared CAPACITY reads 0 | the `memset` in `init_game` |
+| `<PROPDEF VALUE 0>` | undeclared VALUE reads 0 | the `memset` in `init_game` |
+
+Everything else in those two files drives the compiler and has no runtime
+counterpart: `<GC>` and `<BLOAT>` tune MDL's heap while compiling, `<SET
+REDEFINE T>` lets a later definition replace an earlier one during loading,
+`<SETG WBREAKS ...>` adds `"` and `=` to the *reader's* word-break set for
+parsing ZIL source, `IFILE`/`<INSERT-FILE>` and `<ENDLOAD>` are the load order
+and the resident/swappable split, `<PRINC>` and `<IMAGE 7>` print a banner and
+ring the terminal bell when the build finishes, and `<GASSIGNED? PREDGEN>` is a
+hook for a predicate generator.
+
+One thing worth carrying across from `planetfall.zil` even though it is a build
+directive: `<SETG NEW-VOC? T>`, commented "allows words to be adj/noun/verb all
+at once!". That is why BRUSH can be both the scrub brush and a synonym for the
+verb SCRUB, which the port already handles.
+
+The load order in both scripts -- SYNTAX, MISC, GLOBALS, PARSER, VERBS,
+COMPONE, COMPTWO -- matches the port's init order, which matters because ZILCH
+lays the object table out in declaration order and that decides how room
+contents are listed.
+
 # Auditing the port against the ZIL
 
 `python3 tools/check_objects.py` diffs every built object's flags and its VALUE,
