@@ -600,6 +600,15 @@ bool parse_command(char *input, Command *cmd) {
     return false;
   }
 
-  tellf("I don't understand that sentence.\n");
+  // parser.zil distinguishes a sentence it cannot fit to any syntax line from
+  // one that never had a verb in it. The second is the more useful complaint:
+  // it tells the player what is actually missing.
+  for (int i = 0; i < num_tokens; i++) {
+    if (is_verb_word(tokens[i].word)) {
+      tellf("I don't understand that sentence.\n");
+      return false;
+    }
+  }
+  tellf("I can't find a verb in that sentence!\n");
   return false;
 }

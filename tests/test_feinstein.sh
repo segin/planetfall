@@ -305,7 +305,10 @@ run_test "Test 143: Scrubbing a person" "UP\nUP\nSCRUB BLATHER\nQUIT\nY" "prefer
 run_test "Test 137: An orphan answer is adopted" "DROP\nCHRONOMETER\nQUIT\nY" "take it off, first" "The reply is rejoined to the waiting verb" "Orphan adopt"
 run_test "Test 137a: A verb ends the question instead" "DROP\nBRUSH\nQUIT\nY" "What do you want to brush" "A verb reply starts a new command" "Orphan verb reply"
 run_test "Test 138: A fresh command clears the orphan" "SCRUB\nLOOK\nQUIT\nY" "featureless corridor" "A verb ends the question" "Orphan clear"
-run_test "Test 139: The orphan does not persist" "SCRUB\nFLOOR\nFLOOR\nQUIT\nY" "don't understand that sentence" "One answer only" "Orphan once"
+run_test "Test 139: The orphan does not persist" "SCRUB\nFLOOR\nFLOOR\nQUIT\nY" "can't find a verb" "One answer only" "Orphan once"
+# A sentence with no verb at all says so, rather than blaming the sentence.
+run_test "Test 139a: A verbless sentence says so" "UNIFORM\nQUIT\nY" "can't find a verb in that sentence" "Verbless input is reported as such" "Verbless"
+run_test "Test 139b: A sentence with a verb still fails the other way" "BRUSH TAKE\nQUIT\nY" "can't see any|don't understand" "A verb present means a different complaint" "Unparseable with verb"
 
 echo "=== Tests Complete ==="
 if [ $FAILED -ne 0 ]; then
